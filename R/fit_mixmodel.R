@@ -198,6 +198,13 @@ fit_angmix <- function(model = "vmsin",
   if (missing(ncomp))
     stop("\'ncomp\' is missing, with no default.")
 
+  if (length(ncomp) > 1)
+    stop("\'ncomp\' must be a scalar")
+
+
+  if (any(length(n.chains) > 1, length(n.chains) < 1, n.chains == 0))
+    stop("Invalid n.chains")
+
   zero_cov <- FALSE
 
   if (type == "bi") {
@@ -260,6 +267,38 @@ fit_angmix <- function(model = "vmsin",
     if (missing(pmix.alpha))
       pmix.alpha <- 4
   }
+
+  if (any(length(perm_sampling) > 1, length(perm_sampling) < 1,
+          !is.logical(perm_sampling) ))
+    stop("Invalid perm_sampling")
+
+
+  if (any(length(chains_parallel) > 1, length(chains_parallel) < 1,
+          !is.logical(chains_parallel) ))
+    stop("Invalid chains_parallel")
+
+  if (any(length(chains_parallel) > 1, length(chains_parallel) < 1,
+          !is.logical(chains_parallel) ))
+    stop("Invalid chains_parallel")
+
+  if (any(length(autotune) > 1, length(autotune) < 1,
+          !is.logical(autotune) ))
+    stop("Invalid autotune")
+
+  if (any(length(unimodal.component) > 1, length(unimodal.component) < 1,
+          !is.logical(unimodal.component) ))
+    stop("Invalid unimodal.component")
+
+  if (any(length(return_llik_contri) > 1, length(return_llik_contri) < 1,
+          !is.logical(return_llik_contri) ))
+    stop("Invalid return_llik_contri")
+
+  if (any(length(return_tune_param) > 1, length(return_tune_param) < 1,
+          !is.logical(return_tune_param) ))
+    stop("Invalid return_tune_param")
+
+
+
 
 
   if (length(pmix.alpha) == 1)
@@ -1505,7 +1544,6 @@ fit_angmix <- function(model = "vmsin",
   }
 
 
-  # gc()
 
   if (res_list[[1]]$tcltk_fail)
     warning("tcltk could not be loaded. \'show.progress\' was set to FALSE.")
