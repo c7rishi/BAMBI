@@ -127,6 +127,7 @@ for optimal performance.
 }
 \examples{
 # illustration only - more iterations needed for convergence
+set.seed(1)
 fit.vm.step.15 <- fit_incremental_angmix("vmsin", tim8, "BIC", start_ncomp = 1,
                                           max_ncomp = 3, n.iter = 15,
                                           n.chains = 1, save_fits=FALSE)

@@ -124,7 +124,7 @@ contour.angmcmc <-  function(x, fn = mean, show.data = TRUE,
 #'
 #' # Now fit a vm mixture model
 #' # illustration only - more iterations needed for convergence
-#' fit.vm.20 <- fit_vmmix(wind, ncomp = 3, n.iter =  20,
+#' fit.vm.20 <- fit_vmmix(wind$angle, ncomp = 3, n.iter =  20,
 #'                              n.chains = 1)
 #' densityplot(fit.vm.20)
 #'

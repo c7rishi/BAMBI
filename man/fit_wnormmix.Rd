@@ -17,7 +17,7 @@ Wrapper for \link{fit_angmix} with \code{model = "wnorm"}.
 }
 \examples{
 # illustration only - more iterations needed for convergence
-fit.wnorm.20 <- fit_wnormmix(wind, ncomp = 3, n.iter =  20,
+fit.wnorm.20 <- fit_wnormmix(wind$angle, ncomp = 3, n.iter =  20,
                              n.chains = 1)
 fit.wnorm.20
 

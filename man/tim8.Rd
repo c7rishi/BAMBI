@@ -17,6 +17,8 @@ data(tim8)
 A dataset consisting of 490 pairs of backbone dihedral angles (in radian scale \eqn{[0, 2\pi)} )
 \eqn{(\phi, \psi)} for the protein Triose Phosphate Isomerase (8TIM). The angles were obtained first by using
 the DSSP software on the PDB file for 8TIM to get the backbone angles (in degrees),
-and then by converting all angles into radians.
+and then by converting all angles into radians. Due to the presence of different secondary structures
+(helices, sheets and loops) in the protein, the angular data show considerable variability, and is multimodal
+with noticeably distinct clusters.
 }
 \keyword{datasets}

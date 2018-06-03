@@ -45,7 +45,7 @@ memory intensive, and by default not returned in \link{fit_angmix}.
 \examples{
 # illustration only - more iterations needed for convergence
 fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
-                             n.chains = 1)
+                             n.chains = 1, return_llik_contri = TRUE)
 library(loo)
 waic(fit.vmsin.20)
 

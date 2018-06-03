@@ -71,7 +71,7 @@ densityplot(fit.vmsin.20, theta = 45, phi = 45)
 
 # Now fit a vm mixture model
 # illustration only - more iterations needed for convergence
-fit.vm.20 <- fit_vmmix(wind, ncomp = 3, n.iter =  20,
+fit.vm.20 <- fit_vmmix(wind$angle, ncomp = 3, n.iter =  20,
                              n.chains = 1)
 densityplot(fit.vm.20)
 

@@ -781,7 +781,7 @@ DIC <- function(object, form = 2, ...)
 #' @examples
 #' # illustration only - more iterations needed for convergence
 #' fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
-#'                              n.chains = 1)
+#'                              n.chains = 1, return_llik_contri = TRUE)
 #' library(loo)
 #' waic(fit.vmsin.20)
 #'
@@ -852,7 +852,7 @@ waic.angmcmc <- function(x, ...)
 #' @examples
 #' # illustration only - more iterations needed for convergence
 #' fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
-#'                              n.chains = 1)
+#'                              n.chains = 1, return_llik_contri = TRUE)
 #' library(loo)
 #' loo(fit.vmsin.20)
 #' @export
