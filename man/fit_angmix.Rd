@@ -56,8 +56,7 @@ is very difficult with such a scheme, as there is no simple way of keeping track
 with computing standard deviations of the generated model parameters, thus making the
 scaling step used in tuning for \code{epsilon} or \code{paramscale} problematic as well. As such, \code{perm_sampling} is always turned
 off during burn-in (even if \code{autotune = FALSE}), and turned on thereafter, if \code{TRUE}.
-Defaults to and is set to \code{FALSE} if \code{pmix.alpha} is a vector with non-identical values, which indicates a non-exchangeable
-Dirichlet prior for the mixing proportion.}
+Defaults to and is set to \code{FALSE}.}
 
 \item{n.chains}{number of chains to run. Must be a positive integer.}
 

@@ -636,8 +636,9 @@ summary.angmcmc <- function(object, par.name, comp.label,
 }
 
 #' @export
-print.summary_angmcmc <- function(res)
+print.summary_angmcmc <- function(x, ...)
 {
+  res <- x
   print(est_ci(res$estimate$mean, res$lower, res$upper, digits=2))
 }
 

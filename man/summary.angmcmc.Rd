@@ -20,7 +20,11 @@ in the estimation}
 \item{...}{additional arguments affecting the summary produced.}
 }
 \value{
-Returns a list with elements \code{estimate, lower, upper, llik} and \code{lpd}.
+Returns a list with elements \code{estimate, lower, upper, llik} and \code{lpd}. \code{estimate}
+is itself a list with three elements: \code{mean}, \code{median} and \code{mode} providing the
+sample mean, sample median and (sample) MAP estimates.
+
+Note that \code{summary.angmcmc} has its own print method, providing a table the estimated mean and 95\% credible intervals for each parameter
 }
 \description{
 Summary statistics for parameters from an angmcmc object
