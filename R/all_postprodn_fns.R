@@ -572,7 +572,11 @@ extractsamples <- function(object, par.name, comp.label,
 #' @param object angular MCMC object.
 #' @details Computes (after thinning and discarding burn-in) point estimates with 95\% posterior credible sets for all components and all parameters,
 #' together with the sample averages of log likelihood and log posterior density.
-#' @return Returns a list with elements \code{estimate, lower, upper, llik} and \code{lpd}.
+#' @return Returns a list with elements \code{estimate, lower, upper, llik} and \code{lpd}. \code{estimate}
+#' is itself a list with three elements: \code{mean}, \code{median} and \code{mode} providing the
+#' sample mean, sample median and (sample) MAP estimates.
+#'
+#' Note that \code{summary.angmcmc} has its own print method, providing a table the estimated mean and 95\% credible intervals for each parameter
 #'
 #' @examples
 #' # illustration only - more iterations needed for convergence
@@ -613,6 +617,7 @@ summary.angmcmc <- function(object, par.name, comp.label,
 
 
   est <- pointest(object, mean, par.name, comp.label, chain.no)
+  map <- pointest(object, "MODE", par.name, comp.label, chain.no)
   quants <- quantile(object, par.name, comp.label, chain.no,
                      probs = c(0.5, 0.025, 0.975))
 
@@ -623,7 +628,7 @@ summary.angmcmc <- function(object, par.name, comp.label,
   llik <- as.numeric(logLik(object))
   lpd <- mean(object$lprior) + llik
 
-  res <- list("estimate " = list(mean = est, median = med),  "upper" = up, "lower" = low,
+  res <- list("estimate " = list(mean = est, median = med, mode = map),  "upper" = up, "lower" = low,
               "llik" = llik, "lpd" = lpd)
 
   class(res) <- "summary_angmcmc"

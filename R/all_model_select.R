@@ -322,13 +322,18 @@ fit_incremental_angmix <- function(model, data, crit = "LOOIC",
     if (fix_label & all_ncomp[j] > 1) {
       if(!silent)
         cat("\nCalling fix_label with default settings ...\n")
+
       fit_angmcmc_adj <- fix_label(fit_angmcmc_adj)
+
+      # replace fit_angmcmc by fit_angmcmc_adj if fix_label and !use_best_chain
+      if (!use_best_chain) {
+        fit_angmcmc <- fit_angmcmc_adj
+      }
+
     }
     else if (!silent) {
       cat("\nSkipping fix_label call ...\n")
     }
-
-
 
 
 

@@ -35,8 +35,7 @@
 #' with computing standard deviations of the generated model parameters, thus making the
 #' scaling step used in tuning for \code{epsilon} or \code{paramscale} problematic as well. As such, \code{perm_sampling} is always turned
 #' off during burn-in (even if \code{autotune = FALSE}), and turned on thereafter, if \code{TRUE}.
-#' Defaults to and is set to \code{FALSE} if \code{pmix.alpha} is a vector with non-identical values, which indicates a non-exchangeable
-#' Dirichlet prior for the mixing proportion.
+#' Defaults to and is set to \code{FALSE}.
 #' @param int.displ absolute integer displacement for each coordinate for \code{wnorm} and \code{wnorm2} models (ignored otherwise). Default is 3.
 #' Allowed minimum and maximum are 1 and 5 respectively.
 #' @param epsilon,L  tuning parameters for HMC; ignored if \code{method = "rwmh"}. \code{epsilon} (step-size) is a single number,
@@ -306,8 +305,6 @@ fit_angmix <- function(model = "vmsin",
   else if (length(pmix.alpha) != ncomp)
     stop("length(pmix.alpha) and ncomp differ")
 
-  if (any (diff(pmix.alpha) != 0))
-    perm_sampling <- FALSE
 
   if (n.chains < 1)
     stop("\'n.chains\' must be a positive integer")

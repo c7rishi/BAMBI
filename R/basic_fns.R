@@ -146,22 +146,24 @@ which.max_entry1 <- function(x) {
 
 
 signif_or_round <- function(x, ...) {
-  y <- x
-  y[abs(x) < 1] <- signif(y, ...)
-  y[abs(x) >= 1] <- round(y, ...)
+  for(j in length(x)) {
+    if (abs(x[j]) > 1) return(round(x[j], ...))
+    else return(signif(x[j], ...))
+  }
 }
 
 
+# print est (ci_lower, ci_upper) for each element
 est_ci <- function(est, lower, upper, digits = 2)
 {
   out_mat <- est
   for(j in 1:length(est)) {
     out_mat[j] <- paste0(format(signif_or_round(est[j], digits), nsmall = digits),
-                      " (",
-                      format(signif_or_round(lower[j], digits), nsmall = digits),
-                      ", ",
-                      format(signif_or_round(upper[j], digits), nsmall = digits),
-                      ")")
+                         " (",
+                         format(signif_or_round(lower[j], digits), nsmall = digits),
+                         ", ",
+                         format(signif_or_round(upper[j], digits), nsmall = digits),
+                         ")")
   }
 
   as.data.frame(out_mat)
