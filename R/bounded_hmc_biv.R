@@ -74,19 +74,19 @@ bounded_hmc_biv <- function(lpr_grad,
         }
         else if (dep_cov) {
 
-          if (any(q[1:2] <= 0)) {
-            broken <- TRUE
-            break
-          }
+          # if (any(exp(q[1:2]) <= 0)) {
+          #   broken <- TRUE
+          #   break
+          # }
 
           if (dep_cov_type %in% c("wnorm2_bound", "vmsin_unimodal")) {
-            bd_k1k2 <- sqrt(q[1]*q[2])
+            bd_k1k2 <- sqrt(exp(q[1])*exp(q[2]))
             lower[k] <- max(lower1[k], -bd_k1k2)
             upper[k] <- min(upper1[k], bd_k1k2)
           }
           else {
             # dep_cov_type == "vmcos_unimodal"
-            lower[k] <- max(lower1[k], -q[1]*q[2]/(q[1]+q[2]))
+            lower[k] <- max(lower1[k], -exp(q[1])*exp(q[2])/(exp(q[1])+exp(q[2])))
           }
 
         }
@@ -134,6 +134,7 @@ bounded_hmc_biv <- function(lpr_grad,
     }
 
 
+    # browser()
 
     # Evaluate the gradient at the new position, provided not broken
 

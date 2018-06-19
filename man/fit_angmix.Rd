@@ -10,12 +10,11 @@ fit_angmix(model = "vmsin", data, ncomp, cov.restrict = "NONE",
   chains_parallel = TRUE, return_llik_contri = FALSE, int.displ = 3,
   epsilon = 0.1, L = 10, epsilon.random = TRUE, L.random = FALSE,
   burnin.prop = 0.5, tune.prop = 1, thin = 1, propscale = 0.05,
-  n.iter = 500, gam.loc = 0.001, gam.scale = 1000, pmix.alpha = NULL,
-  norm.var = 1000, autotune = TRUE, show.progress = TRUE,
-  accpt.prob.upper, accpt.prob.lower, epsilon.incr = 0.05, L.incr = 0.075,
-  tune.incr = 0.05, tune_ave_size = 100, kappa_upper = 150,
-  kappa_lower = 1e-04, return_tune_param = FALSE, qrnd_grid = NULL,
-  n_qrnd = NULL, ...)
+  n.iter = 500, pmix.alpha = NULL, norm.var = 1000, autotune = TRUE,
+  show.progress = TRUE, accpt.prob.upper, accpt.prob.lower,
+  epsilon.incr = 0.05, L.incr = 0.075, tune.incr = 0.05,
+  tune_ave_size = 100, kappa_upper = 150, kappa_lower = 1e-04,
+  return_tune_param = FALSE, qrnd_grid = NULL, n_qrnd = NULL, ...)
 }
 \arguments{
 \item{model}{angular model whose mixtures are to be fitted. Available choices are \code{"vmsin", "vmcos"} and \code{"wnorm2"} for
@@ -102,17 +101,14 @@ for the model parameters. Ignored if \code{method = "hmc"}. Can be autotuned dur
 
 \item{n.iter}{number of iterations for the Markov Chain.}
 
-\item{gam.loc, gam.scale}{location and scale (hyper-) parameters for the gamma prior for \code{kappa1} and \code{kappa2}. See
-\link{dgamma}. Defaults are \code{gam.loc = 0, gam.scale = 1000} that makes the prior non-informative.}
-
 \item{pmix.alpha}{concentration parameter(s) for the Dirichlet prior for \code{pmix}. Must either be a positive real number, or a vector
 with positive entries and of length \code{ncomp}. The default is \eqn{(r+r(r+1)/2)/2+3}, where \eqn{r} is 1 or 2 according as whether
 the model is univariate or bivariate. Note that it is recommended to use larger \code{alpha} values to ensure the a good posterior behavior,
 especially when \link{fit_incremental_angmix} is used for model selection, which handles overfitting in "let two component-specific parameters be
 size, and then penalizes for model complexity. See Fruhwirth-Schnatter (2011) for more details on this.}
 
-\item{norm.var}{variance (hyper-) parameter in the normal prior for \code{kappa3}. (Prior mean is zero).
-Default is 1000 that makes the prior non-informative. Ignored if the model is univariate or if cov.restrict = "ZERO".}
+\item{norm.var}{variance (hyper-) parameters in the normal prior for \code{log(kappa), log(kappa1), log(kappa2)} and \code{kappa3}. (Prior mean is zero).
+Can be a vector. Default is 1000 that makes the prior non-informative.}
 
 \item{autotune}{logical. Should the Markov chain auto-tune the parameter \code{epsilon} (in HMC) or
 \code{propscale} (in RWMH) during burn-in?  Set to \code{TRUE} by default. An adaptive tuning strategy is implemented.

@@ -20,22 +20,20 @@ add_burnin_thin <- function(object, burnin.prop=0, thin=1)
   if(thin < 1)
     stop("\"thin\" must be a positive integer")
 
-  n.burnin.final <-
-    ceiling(burnin.prop*object$n.iter.final) +
-    object$n.burnin
-  n.iter.final <- object$n.iter - n.burnin.final
-  burnin_iter <- seq_len(n.burnin.final)
+
+  # browser()
+  final_iter.orig <- object$final_iter
+  final_iter.burn <- setdiff(final_iter.orig,
+                             final_iter.orig[seq_len(ceiling(length(final_iter.orig)*burnin.prop))])
 
   thin <- round(thin)
   thin.final <- object$thin*thin
-  thin_filter <- c(TRUE, rep(FALSE, thin.final-1))
+  final_iter.thin <- final_iter.burn[c(TRUE, rep(FALSE, thin.final-1))]
 
-  final_iter_set <- (seq_len(object$n.iter))[-burnin_iter][thin_filter]
-
-  object$n.burnin <- n.burnin.final
+  object$n.burnin <- final_iter.thin[1] - 1
   object$thin <- thin.final
-  object$n.iter.final <- n.iter.final
-  object$final_iter <- final_iter_set
+  object$n.iter.final <- length(final_iter.thin)
+  object$final_iter <- final_iter.thin
 
   object
 }

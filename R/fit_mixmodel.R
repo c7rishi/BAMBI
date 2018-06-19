@@ -1,3 +1,36 @@
+# find_lscale <- function(x) {
+#   y <- x
+#   y[1:2] <- log(x[1:2])
+#   y
+# }
+
+find_expscale <- function(x) {
+  y <- x
+  y[1:2] <- exp(x[1:2])
+  y
+}
+
+find_expscale_uni <- function(x) {
+  y <- x
+  y[1] <- exp(x[1])
+  y
+}
+
+
+find_lscale_mat <- function(x) {
+  y <- x
+  y[1:2, ] <- log(x[1:2, ])
+  y
+}
+
+find_lscale_mat_uni <- function(x) {
+  y <- x
+  y[1, ] <- log(x[1, ])
+  y
+}
+
+
+
 #' Fitting Bivariate and univariate angular mixture models
 #'
 #' @importFrom gtools rdirichlet
@@ -56,16 +89,16 @@
 #' the variances for the proposal normal densities
 #' for the model parameters. Ignored if \code{method = "hmc"}. Can be autotuned during burnin. See \code{autotune}.
 #' @param n.iter number of iterations for the Markov Chain.
-#' @param gam.loc,gam.scale location and scale (hyper-) parameters for the gamma prior for \code{kappa1} and \code{kappa2}. See
-#' \link{dgamma}. Defaults are \code{gam.loc = 0, gam.scale = 1000} that makes the prior non-informative.
+## @param gam.loc,gam.scale location and scale (hyper-) parameters for the gamma prior for \code{kappa1} and \code{kappa2}. See
+## \link{dgamma}. Defaults are \code{gam.loc = 0, gam.scale = 1000} that makes the prior non-informative.
 #' @param pmix.alpha concentration parameter(s) for the Dirichlet prior for \code{pmix}. Must either be a positive real number, or a vector
 #' with positive entries and of length \code{ncomp}. The default is \eqn{(r+r(r+1)/2)/2+3}, where \eqn{r} is 1 or 2 according as whether
 #' the model is univariate or bivariate. Note that it is recommended to use larger \code{alpha} values to ensure the a good posterior behavior,
 #' especially when \link{fit_incremental_angmix} is used for model selection, which handles overfitting in "let two component-specific parameters be
 #  identical", uses total number of components in the fitted model as the estimator for true component
 #' size, and then penalizes for model complexity. See Fruhwirth-Schnatter (2011) for more details on this.
-#' @param norm.var variance (hyper-) parameter in the normal prior for \code{kappa3}. (Prior mean is zero).
-#' Default is 1000 that makes the prior non-informative. Ignored if the model is univariate or if cov.restrict = "ZERO".
+#' @param norm.var variance (hyper-) parameters in the normal prior for \code{log(kappa), log(kappa1), log(kappa2)} and \code{kappa3}. (Prior mean is zero).
+#' Can be a vector. Default is 1000 that makes the prior non-informative.
 #' @param burnin.prop proportion of iterations to used for burnin. Must be a be a number in [0, 1].
 #' Default is 0.5.
 #' @param thin thining size to be used. Must be a positive integer. If \code{thin = } n, then every nth iteration is reatained
@@ -177,8 +210,8 @@ fit_angmix <- function(model = "vmsin",
                        thin = 1,
                        propscale = 0.05,
                        n.iter = 500,
-                       gam.loc = 0.001,
-                       gam.scale = 1000,
+                       # gam.loc = 0.001,
+                       # gam.scale = 1000,
                        pmix.alpha = NULL,
                        norm.var = 1000,
                        autotune = TRUE,
@@ -355,7 +388,7 @@ fit_angmix <- function(model = "vmsin",
   thin_filter <- c(TRUE, rep(FALSE, thin-1))
   final_iter_set <- (seq_len(n.iter))[-burnin_iter][thin_filter]
 
-  gam.rate <- 1/gam.scale
+  # gam.rate <- 1/gam.scale
 
   curr.model <- model
 
@@ -452,96 +485,100 @@ fit_angmix <- function(model = "vmsin",
       dep_cov_type <- NULL
     }
 
-    # lpd and grad for all components - not required
-    # lpd_grad_model_indep <- function(data, par_mat, obs_group, n.clus) {
-    #   lpd_grad <- matrix(NA, 6, ncomp)
-    #   for(j in 1:ncomp) {
-    #     if (n.clus[j] > 0) {
-    #       lpd_grad[, j] <- grad_llik_vmsin_C(data[obs_group[[j]], , drop=FALSE],
-    #                                          par_mat[, j]) +
-    #         c( # grad for lprior
-    #           (gam.loc - 1)/par_mat[1:2, j] - gam.rate,  -par_mat[3, j]/norm.var, 0, 0,
-    #           # lprior
-    #           sum((gam.loc - 1)*log(par_mat[1:2, j])-
-    #                 gam.rate*par_mat[1:2, j]) - 0.5*par_mat[3, j]^2/norm.var
-    #         )
-    #     } else {
-    #       lpd_grad[, j] <-
-    #         c( # grad for lprior
-    #           (gam.loc - 1)/par_mat[1:2, j] - gam.rate,  -par_mat[3, j]/norm.var, 0, 0,
-    #           # lprior
-    #           sum((gam.loc - 1)*log(par_mat[1:2, j])-
-    #                 gam.rate*par_mat[1:2, j]) - 0.5*par_mat[3, j]^2/norm.var
-    #         )
-    #     }
+
+
+
+
+    # # in log scale
+    # lpd_grad_model_indep_1comp <-  function(data, par_vec_lscale,
+    #                                         obs_group, n.clus) {
+    #   par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
+    #   lpd_grad <- matrix(NA, 6, 1)
+    #   if (n.clus > 0) {
+    #     lpd_grad <- (grad_llik_vmsin_C(data[obs_group, , drop=FALSE],
+    #                                    par_vec) +
+    #                    c( # grad for lprior
+    #                      (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+    #                      # lprior
+    #                      sum((gam.loc - 1)*par_vec_lscale[1:2]-
+    #                            gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+    #                    )) * c(par_vec[1:2], rep(1, 4))
+    #   } else {
+    #     lpd_grad <-
+    #       c( # grad for lprior
+    #         (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+    #         # lprior
+    #         sum((gam.loc - 1)*par_vec_lscale[1:2]-
+    #               gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+    #       ) *
+    #       c(par_vec[1:2], rep(1, 4))
     #   }
-    #   list(lpr = sum(lpd_grad[6, ]), grad = lpd_grad[1:5, ])
+    #
+    #   list(lpr = (lpd_grad[6]), grad = lpd_grad[1:5])
     # }
     #
-    # lpd_model_indep <- function(data, par_mat, obs_group, n.clus) {
-    #   res <- 0
-    #   for(j in 1:ncomp) {
-    #     if (n.clus[j] > 0) {
-    #       # llik + prior
-    #       res <- res +
-    #         llik_vmsin_one_comp(data[obs_group[[j]], , drop=FALSE], par_mat[, j],
-    #                             log(const_vmsin(par_mat[1, j],
-    #                                             par_mat[2, j], par_mat[3, j]))) +
-    #         sum((gam.loc - 1)*log(par_mat[1:2, j])-
-    #               gam.rate*par_mat[1:2, j]) - 0.5*par_mat[3, j]^2/norm.var
-    #     } else{
-    #       # only prior
-    #       res <- res +
-    #         sum((gam.loc - 1)*log(par_mat[1:2, j])-
-    #               gam.rate*par_mat[1:2, j]) - 0.5*par_mat[3, j]^2/norm.var
-    #     }
+    #
+    # lpd_model_indep_1comp <- function(data, par_vec_lscale, obs_group,
+    #                                   n.clus) {
+    #   par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
+    #   if (n.clus > 0) {
+    #     # llik + prior
+    #     res <-
+    #       llik_vmsin_one_comp(data[obs_group, , drop=FALSE], par_vec,
+    #                           log(const_vmsin(par_vec[1],
+    #                                           par_vec[2], par_vec[3]))) +
+    #       sum((gam.loc - 1)*par_vec_lscale[1:2]-
+    #             gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+    #   } else{
+    #     # only prior
+    #     res <-
+    #       sum((gam.loc - 1)*par_vec_lscale[1:2]-
+    #             gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
     #   }
     #   res
     # }
-    #
 
 
 
-    lpd_grad_model_indep_1comp <-  function(data, par_vec,
+    # in log scale
+    lpd_grad_model_indep_1comp <-  function(data, par_vec_lscale,
                                             obs_group, n.clus) {
+      par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       lpd_grad <- matrix(NA, 6, 1)
       if (n.clus > 0) {
         lpd_grad <- grad_llik_vmsin_C(data[obs_group, , drop=FALSE],
-                                      par_vec) +
+                                      par_vec)*
+          c(par_vec[1:2], rep(1, 4)) +
           c( # grad for lprior
-            (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+            -par_vec_lscale[1:3]/norm.var, 0, 0,
             # lprior
-            sum((gam.loc - 1)*log(par_vec[1:2])-
-                  gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
           )
       } else {
-        lpd_grad <-
+        lpd_grad[] <-
           c( # grad for lprior
-            (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+            -par_vec_lscale[1:3]/norm.var, 0, 0,
             # lprior
-            sum((gam.loc - 1)*log(par_vec[1:2])-
-                  gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
           )
       }
-
       list(lpr = (lpd_grad[6]), grad = lpd_grad[1:5])
     }
 
 
-    lpd_model_indep_1comp <- function(data, par_vec, obs_group, n.clus) {
+    lpd_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
+      par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       if (n.clus > 0) {
         # llik + prior
         res <-
           llik_vmsin_one_comp(data[obs_group, , drop=FALSE], par_vec,
                               log(const_vmsin(par_vec[1],
                                               par_vec[2], par_vec[3]))) +
-          sum((gam.loc - 1)*log(par_vec[1:2])-
-                gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+           0.5*sum(-par_vec_lscale[1:3]^2/norm.var)
       } else{
         # only prior
         res <-
-          sum((gam.loc - 1)*log(par_vec[1:2])-
-                gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+          0.5*sum(-par_vec_lscale[1:3]^2/norm.var)
       }
       res
     }
@@ -588,81 +625,85 @@ fit_angmix <- function(model = "vmsin",
       dep_cov_type <- NULL
     }
 
-    # full lpd and grad, not required
-    # lpd_grad_model_indep <- function(data, par_mat, obs_group, n.clus) {
-    #   lpd_grad <- matrix(NA, 6, ncomp)
-    #   for(j in 1:ncomp) {
-    #     if (n.clus[j] > 0) {
-    #       lpd_grad[, j] <- grad_llik_vmcos_C(data[obs_group[[j]], , drop=FALSE],
-    #                                          par_mat[, j], qrnd_grid) +
-    #         c( # grad for lprior
-    #           (gam.loc - 1)/par_mat[1:2, j] - gam.rate,  -par_mat[3, j]/norm.var, 0, 0,
-    #           # lprior
-    #           sum((gam.loc - 1)*log(par_mat[1:2, j])-
-    #                 gam.rate*par_mat[1:2, j]) - 0.5*par_mat[3, j]^2/norm.var
-    #         )
-    #     } else {
-    #       lpd_grad[, j] <-
-    #         c( # grad for lprior
-    #           (gam.loc - 1)/par_mat[1:2, j] - gam.rate,  -par_mat[3, j]/norm.var, 0, 0,
-    #           # lprior
-    #           sum((gam.loc - 1)*log(par_mat[1:2, j])-
-    #                 gam.rate*par_mat[1:2, j]) - 0.5*par_mat[3, j]^2/norm.var
-    #         )
-    #     }
+
+
+    # # in log scale
+    # lpd_grad_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
+    #   par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
+    #   lpd_grad <- matrix(NA, 6, 1)
+    #   if (n.clus > 0) {
+    #     lpd_grad[] <- (grad_llik_vmcos_C(data[obs_group, , drop=FALSE],
+    #                                      par_vec[], qrnd_grid) +
+    #                      c( # grad for lprior
+    #                        (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+    #                        # lprior
+    #                        sum((gam.loc - 1)*par_vec_lscale[1:2]-
+    #                              gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var)
+    #     ) *
+    #       c(par_vec[1:2], rep(1, 4))
+    #   } else {
+    #     lpd_grad[] <-
+    #       c( # grad for lprior
+    #         (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+    #         # lprior
+    #         sum((gam.loc - 1)*par_vec_lscale[1:2]-
+    #               gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+    #       ) *
+    #       c(par_vec[1:2], rep(1, 4))
     #   }
-    #   list(lpr = sum(lpd_grad[6, ]), grad = lpd_grad[1:5, ])
+    #   list(lpr = (lpd_grad[6]), grad = lpd_grad[1:5])
     # }
     #
-    # lpd_model_indep <- function(data, par_mat, obs_group, n.clus) {
-    #   res <- 0
-    #   for(j in 1:ncomp) {
-    #     if (n.clus[j] > 0) {
-    #       # llik + prior
-    #       res <- res +
-    #         llik_vmcos_one_comp(data[obs_group[[j]], , drop=FALSE], par_mat[, j],
-    #                             log(const_vmcos(par_mat[1, j],
-    #                                             par_mat[2, j],
-    #                                             par_mat[3, j],
-    #                                             qrnd_grid))) +
-    #         sum((gam.loc - 1)*log(par_mat[1:2, j])-
-    #               gam.rate*par_mat[1:2, j]) - 0.5*par_mat[3, j]^2/norm.var
-    #     } else{
-    #       # only prior
-    #       res <- res +
-    #         sum((gam.loc - 1)*log(par_mat[1:2, j])-
-    #               gam.rate*par_mat[1:2, j]) - 0.5*par_mat[3, j]^2/norm.var
-    #     }
+    # lpd_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
+    #
+    #   par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
+    #   if (n.clus > 0) {
+    #     # llik + prior
+    #     res <-
+    #       llik_vmcos_one_comp(data[obs_group, , drop=FALSE], par_vec[],
+    #                           log(const_vmcos(par_vec[1],
+    #                                           par_vec[2],
+    #                                           par_vec[3],
+    #                                           qrnd_grid))) +
+    #       sum((gam.loc - 1)*log(par_vec[1:2])-
+    #             gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+    #   } else{
+    #     # only prior
+    #     res <-
+    #       sum((gam.loc - 1)*log(par_vec[1:2])-
+    #             gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
     #   }
     #   res
     # }
 
 
-    lpd_grad_model_indep_1comp <- function(data, par_vec, obs_group, n.clus) {
+    # in log scale
+    lpd_grad_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
+      par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       lpd_grad <- matrix(NA, 6, 1)
       if (n.clus > 0) {
         lpd_grad[] <- grad_llik_vmcos_C(data[obs_group, , drop=FALSE],
-                                        par_vec[], qrnd_grid) +
+                                        par_vec[], qrnd_grid) *
+          c(par_vec[1:2], rep(1, 4)) +
           c( # grad for lprior
-            (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+            -par_vec_lscale[1:3]/norm.var, 0, 0,
             # lprior
-            sum((gam.loc - 1)*log(par_vec[1:2])-
-                  gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
           )
       } else {
         lpd_grad[] <-
           c( # grad for lprior
-            (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+            -par_vec_lscale[1:3]/norm.var, 0, 0,
             # lprior
-            sum((gam.loc - 1)*log(par_vec[1:2])-
-                  gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
           )
       }
       list(lpr = (lpd_grad[6]), grad = lpd_grad[1:5])
     }
 
-    lpd_model_indep_1comp <- function(data, par_vec, obs_group, n.clus) {
+    lpd_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
 
+      par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       if (n.clus > 0) {
         # llik + prior
         res <-
@@ -670,14 +711,12 @@ fit_angmix <- function(model = "vmsin",
                               log(const_vmcos(par_vec[1],
                                               par_vec[2],
                                               par_vec[3],
-                                              qrnd_grid))) +
-          sum((gam.loc - 1)*log(par_vec[1:2])-
-                gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+                                              qrnd_grid))) -
+          0.5*sum(par_vec_lscale[1:3]^2/norm.var)
       } else{
         # only prior
         res <-
-          sum((gam.loc - 1)*log(par_vec[1:2])-
-                gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+          - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
       }
       res
     }
@@ -756,45 +795,94 @@ fit_angmix <- function(model = "vmsin",
     # }
 
 
-    lpd_grad_model_indep_1comp <- function(data, par_vec, obs_group, n.clus) {
+    # # in log scale
+    # lpd_grad_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
+    #   par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
+    #   lpd_grad <- matrix(NA, 6, 1)
+    #   if (n.clus > 0) {
+    #     lpd_grad[] <- (grad_llik_wnorm2_C(data[obs_group, , drop=FALSE],
+    #                                       par_vec[], omega.2pi) +
+    #                      c( # grad for lprior
+    #                        (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+    #                        # lprior
+    #                        sum((gam.loc - 1)*par_vec_lscale[1:2]-
+    #                              gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+    #                      )) *
+    #       c(par_vec[1:2], rep(1, 4))
+    #   } else {
+    #     lpd_grad[] <-
+    #       c( # grad for lprior
+    #         (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+    #         # lprior
+    #         sum((gam.loc - 1)*par_vec_lscale[1:2]-
+    #               gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+    #       ) *
+    #       c(par_vec[1:2], rep(1, 4))
+    #   }
+    #   list(lpr = sum(lpd_grad[6]), grad = lpd_grad[1:5])
+    # }
+    #
+    # lpd_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
+    #   par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
+    #   if (n.clus > 0) {
+    #     # llik + prior
+    #     res <-
+    #       llik_wnorm2_one_comp(data[obs_group, , drop=FALSE], par_vec[],
+    #                            l_const_wnorm2(par_vec[]),
+    #                            omega.2pi) +
+    #       sum((gam.loc - 1)*par_vec_lscale[1:2]-
+    #             gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+    #   } else{
+    #     # only prior
+    #     res <-
+    #       sum((gam.loc - 1)*par_vec_lscale[1:2]-
+    #             gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+    #   }
+    #   unname(res)
+    # }
+
+
+    # in log scale
+    lpd_grad_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
+
+      par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       lpd_grad <- matrix(NA, 6, 1)
       if (n.clus > 0) {
         lpd_grad[] <- grad_llik_wnorm2_C(data[obs_group, , drop=FALSE],
-                                         par_vec[], omega.2pi) +
+                                         par_vec[], omega.2pi) *
+          c(par_vec[1:2], rep(1, 4)) +
           c( # grad for lprior
-            (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+            -par_vec_lscale[1:3]/norm.var, 0, 0,
             # lprior
-            sum((gam.loc - 1)*log(par_vec[1:2])-
-                  gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
           )
       } else {
         lpd_grad[] <-
           c( # grad for lprior
-            (gam.loc - 1)/par_vec[1:2] - gam.rate,  -par_vec[3]/norm.var, 0, 0,
+            -par_vec_lscale[1:3]/norm.var, 0, 0,
             # lprior
-            sum((gam.loc - 1)*log(par_vec[1:2])-
-                  gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
           )
       }
-      list(lpr = sum(lpd_grad[6]), grad = lpd_grad[1:5])
+      list(lpr = (lpd_grad[6]), grad = lpd_grad[1:5])
     }
 
-    lpd_model_indep_1comp <- function(data, par_vec, obs_group, n.clus) {
+    lpd_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
+
+      par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       if (n.clus > 0) {
         # llik + prior
         res <-
           llik_wnorm2_one_comp(data[obs_group, , drop=FALSE], par_vec[],
                                l_const_wnorm2(par_vec[]),
-                               omega.2pi) +
-          sum((gam.loc - 1)*log(par_vec[1:2])-
-                gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+                               omega.2pi)-
+          0.5*sum(par_vec_lscale[1:3]^2/norm.var)
       } else{
         # only prior
         res <-
-          sum((gam.loc - 1)*log(par_vec[1:2])-
-                gam.rate*par_vec[1:2]) - 0.5*par_vec[3]^2/norm.var
+          - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
       }
-      unname(res)
+      res
     }
 
 
@@ -860,42 +948,69 @@ fit_angmix <- function(model = "vmsin",
     #   unname(res)
     # }
 
-    lpd_grad_model_indep_1comp <- function(data, par_vec, obs_group, n.clus) {
+    # lpd_grad_model_indep_1comp <- function(data, par_vec, obs_group, n.clus) {
+    #   lpd_grad <- matrix(NA, 3, 1)
+    #   if (n.clus > 0) {
+    #     lpd_grad[] <- grad_llik_univm_C(data[obs_group],
+    #                                     par_vec[]) +
+    #       c( # grad for lprior
+    #         (gam.loc - 1)/par_vec[1] - gam.rate,  0,
+    #         # lprior
+    #         (gam.loc - 1)*log(par_vec[1])-
+    #           gam.rate*par_vec[1]
+    #       )
+    #
+    #   } else {
+    #     lpd_grad[] <-
+    #       c( # grad for lprior
+    #         (gam.loc - 1)/par_vec[1] - gam.rate,  0,
+    #         # lprior
+    #         (gam.loc - 1)*log(par_vec[1])-
+    #           gam.rate*par_vec[1]
+    #       )
+    #   }
+    #   list(lpr = (lpd_grad[3 ]), grad = lpd_grad[1:2 ])
+    # }
+    #
+
+    # in log scale
+    lpd_grad_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
       lpd_grad <- matrix(NA, 3, 1)
+      par_vec <- c(exp(par_vec_lscale[1]), par_vec_lscale[2])
       if (n.clus > 0) {
         lpd_grad[] <- grad_llik_univm_C(data[obs_group],
-                                        par_vec[]) +
+                                        par_vec[]) * c(par_vec[1], 1, 1) +
+
           c( # grad for lprior
-            (gam.loc - 1)/par_vec[1] - gam.rate,  0,
+            -par_vec_lscale[1]/norm.var, 0,
             # lprior
-            (gam.loc - 1)*log(par_vec[1])-
-              gam.rate*par_vec[1]
+            - 0.5*sum(par_vec_lscale[1]^2/norm.var)
           )
 
       } else {
         lpd_grad[] <-
           c( # grad for lprior
-            (gam.loc - 1)/par_vec[1] - gam.rate,  0,
+            -par_vec_lscale[1]/norm.var, 0,
             # lprior
-            (gam.loc - 1)*log(par_vec[1])-
-              gam.rate*par_vec[1]
+            - 0.5*sum(par_vec_lscale[1]^2/norm.var)
           )
       }
       list(lpr = (lpd_grad[3 ]), grad = lpd_grad[1:2 ])
     }
 
-    lpd_model_indep_1comp <- function(data, par_vec, obs_group, n.clus) {
+    lpd_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
+      par_vec <- c(exp(par_vec_lscale[1]), par_vec_lscale[2])
       if (n.clus > 0) {
         # llik + prior
         res <-
           llik_univm_one_comp(data[obs_group], par_vec[],
-                              log(const_univm(par_vec[1]))) +
-          (gam.loc - 1)*log(par_vec[1]) - gam.rate*par_vec[1]
+                              log(const_univm(par_vec[1]))) -
+          0.5*sum(par_vec_lscale[1]^2/norm.var)
 
       } else{
         # only prior
         res <-
-          (gam.loc - 1)*log(par_vec[1]) - gam.rate*par_vec[1]
+          - 0.5*sum(par_vec_lscale[1]^2/norm.var)
       }
       unname(res)
     }
@@ -974,48 +1089,49 @@ fit_angmix <- function(model = "vmsin",
     #       unname(res)
     #     }
 
-    lpd_grad_model_indep_1comp <- function(data, par_vec, obs_group, n.clus) {
+    lpd_grad_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
       lpd_grad <- matrix(NA, 3, 1)
+      par_vec <- c(exp(par_vec_lscale[1]), par_vec_lscale[2])
       if (n.clus > 0) {
         lpd_grad[] <- grad_llik_uniwnorm_C(data[obs_group],
-                                           par_vec[], omega.2pi) +
+                                           par_vec[], omega.2pi) * c(par_vec[1], 1, 1) +
+
           c( # grad for lprior
-            (gam.loc - 1)/par_vec[1] - gam.rate,  0,
+            -par_vec_lscale[1]/norm.var, 0,
             # lprior
-            (gam.loc - 1)*log(par_vec[1])-
-              gam.rate*par_vec[1]
+            - 0.5*sum(par_vec_lscale[1]^2/norm.var)
           )
 
       } else {
         lpd_grad[] <-
           c( # grad for lprior
-            (gam.loc - 1)/par_vec[1] - gam.rate,  0,
+            -par_vec_lscale[1]/norm.var, 0,
             # lprior
-            (gam.loc - 1)*log(par_vec[1])-
-              gam.rate*par_vec[1]
+            - 0.5*sum(par_vec_lscale[1]^2/norm.var)
           )
       }
-
-      list(lpr = sum(lpd_grad[3, ]), grad = lpd_grad[1:2, ])
+      list(lpr = (lpd_grad[3 ]), grad = lpd_grad[1:2 ])
     }
 
-    lpd_model_indep_1comp <- function(data, par_vec, obs_group, n.clus) {
+
+    lpd_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
+      par_vec <- c(exp(par_vec_lscale[1]), par_vec_lscale[2])
       if (n.clus > 0) {
         # llik + prior
         res <-
           llik_uniwnorm_one_comp(data[obs_group], par_vec[],
                                  l_const_uniwnorm(par_vec[1]),
-                                 omega.2pi) +
-          (gam.loc - 1)*log(par_vec[1]) - gam.rate*par_vec[1]
+                                 omega.2pi)  -
+          0.5*sum(par_vec_lscale[1]^2/norm.var)
 
       } else{
         # only prior
         res <-
-          (gam.loc - 1)*log(par_vec[1]) - gam.rate*par_vec[1]
+          - 0.5*sum(par_vec_lscale[1]^2/norm.var)
       }
-
       unname(res)
     }
+
 
 
 
@@ -1103,6 +1219,7 @@ fit_angmix <- function(model = "vmsin",
     starting$par.mat[abs(starting$par.mat) <= 2*kappa_lower] <- 2*kappa_lower
 
     par.mat.all <- array(0, dim = c(npar_1_comp, ncomp, n.iter))
+    par.mat_lscale.all <- par.mat.all
     pi.mix.all <- matrix(1, nrow = ncomp, ncol = n.iter)
     llik.all <- lprior.all <- lpd.all <- rep(-Inf, (n.iter))
     accpt.par.mat.all <- matrix(NA, ncomp, n.iter)
@@ -1125,6 +1242,7 @@ fit_angmix <- function(model = "vmsin",
 
     pi.mix <- starting$pi.mix
     par.mat <- as.matrix(starting$par.mat)
+
     if (zero_cov) {
       par.mat[3, ] <- 0
     } else if (cov.restrict == "POSITIVE") {
@@ -1133,6 +1251,16 @@ fit_angmix <- function(model = "vmsin",
       par.mat[3, ] <- pmin(par.mat[3, ], 0)
     }
 
+
+    if (type == "bi") {
+    par.mat_lscale <- find_lscale_mat(par.mat)
+    par_lower_lscale <- find_lscale_mat(par_lower)
+    par_upper_lscale <- find_lscale_mat(par_upper)
+    } else {
+      par.mat_lscale <- find_lscale_mat_uni(par.mat)
+      par_lower_lscale <- find_lscale_mat_uni(par_lower)
+      par_upper_lscale <- find_lscale_mat_uni(par_upper)
+    }
 
     # browser()
 
@@ -1248,21 +1376,23 @@ fit_angmix <- function(model = "vmsin",
           # browser()
 
           for (j in 1:ncomp) {
+            # browser()
             hmc_curr <-
               bounded_hmc_biv(lpr_grad =
-                                function(par_vec)
-                                  lpd_grad_model_indep_1comp(data.rad, par_vec,
+                                function(par_vec_lscale)
+                                  lpd_grad_model_indep_1comp(data.rad, par_vec_lscale,
                                                              obs_group[[j]], n.clus[j]),
-                              init =  par.mat[, j, drop=FALSE],
-                              lower = par_lower[, j, drop=FALSE],
-                              upper = par_upper[, j, drop=FALSE],
+                              init =  par.mat_lscale[, j, drop=FALSE],
+                              lower = par_lower_lscale[, j, drop=FALSE],
+                              upper = par_upper_lscale[, j, drop=FALSE],
                               dep_cov = dep_cov,
                               dep_cov_type = dep_cov_type,
                               zero_cov = zero_cov,
                               nsteps = L,
                               step = tune_param_final[, j, drop=FALSE])
 
-            par.mat[, j] <- hmc_curr$final
+            par.mat[, j] <- find_expscale(hmc_curr$final)
+            par.mat_lscale[, j] <- hmc_curr$final
             accpt.par.mat.all[j, iter] <- hmc_curr$acc
           }
         }
@@ -1286,18 +1416,19 @@ fit_angmix <- function(model = "vmsin",
 
           for(j in 1:ncomp) {
             rwmh_curr <- bounded_rwmh_biv(lpr =
-                                            function(par_vec)
-                                              lpd_model_indep_1comp(data.rad, par_vec,
+                                            function(par_vec_lscale)
+                                              lpd_model_indep_1comp(data.rad, par_vec_lscale,
                                                                     obs_group[[j]], n.clus[j]),
-                                          init =  par.mat[, j, drop=FALSE],
-                                          lower = par_lower[, j, drop=FALSE],
-                                          upper = par_upper[, j, drop=FALSE],
+                                          init =  par.mat_lscale[, j, drop=FALSE],
+                                          lower = par_lower_lscale[, j, drop=FALSE],
+                                          upper = par_upper_lscale[, j, drop=FALSE],
                                           dep_cov = dep_cov,
                                           dep_cov_type = dep_cov_type,
                                           zero_cov = zero_cov,
                                           step = tune_param[, j])
 
-            par.mat[, j] <- rwmh_curr$final
+            par.mat[, j] <- find_expscale(rwmh_curr$final)
+            par.mat_lscale[, j] <- rwmh_curr$final
             accpt.par.mat.all[j, iter] <- rwmh_curr$accpt
           }
 
@@ -1305,9 +1436,7 @@ fit_angmix <- function(model = "vmsin",
 
 
         lprior.all[iter] <-
-          sum((gam.loc - 1)*log(par.mat[1:2, ])-
-                gam.rate*par.mat[1:2, ]) -
-          0.5*sum(par.mat[3, ]^2)/norm.var +
+          - 0.5*sum(par.mat_lscale[1:3, ]^2/norm.var) +
           sum(pmix.alpha*log(pi.mix))
 
       }
@@ -1331,20 +1460,25 @@ fit_angmix <- function(model = "vmsin",
           # accpt.par.mat.all[iter] <- hmc_curr$acc
 
           for (j in 1:ncomp) {
+
+
+
             hmc_curr <-
               bounded_hmc_uni(lpr_grad =
-                                function(par_vec)
-                                  lpd_grad_model_indep_1comp(data.rad, par_vec,
+                                function(par_vec_lscale)
+                                  lpd_grad_model_indep_1comp(data.rad, par_vec_lscale,
                                                              obs_group[[j]], n.clus[j]),
-                              init =  par.mat[, j, drop=FALSE],
-                              lower = par_lower[, j, drop=FALSE],
-                              upper = par_upper[, j, drop=FALSE],
+                              init =  par.mat_lscale[, j, drop=FALSE],
+                              lower = par_lower_lscale[, j, drop=FALSE],
+                              upper = par_upper_lscale[, j, drop=FALSE],
                               nsteps = L,
                               step = tune_param_final[, j, drop=FALSE])
 
-            par.mat[, j] <- hmc_curr$final
+            par.mat[, j] <- find_expscale_uni(hmc_curr$final)
+            par.mat_lscale[, j] <- hmc_curr$final
             accpt.par.mat.all[j, iter] <- hmc_curr$acc
           }
+
 
         }
 
@@ -1364,22 +1498,22 @@ fit_angmix <- function(model = "vmsin",
 
           for(j in 1:ncomp) {
             rwmh_curr <- bounded_rwmh_uni(lpr =
-                                            function(par_vec)
-                                              lpd_model_indep_1comp(data.rad, par_vec,
+                                            function(par_vec_lscale)
+                                              lpd_model_indep_1comp(data.rad, par_vec_lscale,
                                                                     obs_group[[j]], n.clus[j]),
-                                          init =  par.mat[, j, drop=FALSE],
-                                          lower = par_lower[, j, drop=FALSE],
-                                          upper = par_upper[, j, drop=FALSE],
+                                          init =  par.mat_lscale[, j, drop=FALSE],
+                                          lower = par_lower_lscale[, j, drop=FALSE],
+                                          upper = par_upper_lscale[, j, drop=FALSE],
                                           step = tune_param[, j])
 
-            par.mat[, j] <- rwmh_curr$final
+            par.mat[, j] <- find_expscale_uni(rwmh_curr$final)
+            par.mat_lscale[, j] <- rwmh_curr$final
             accpt.par.mat.all[j, iter] <- rwmh_curr$accpt
           }
         }
 
         lprior.all[iter] <-
-          sum((gam.loc - 1)*log(par.mat[1, ])-
-                gam.rate*par.mat[1, ]) +
+          - 0.5*sum(par.mat_lscale[1, ]^2/norm.var) +
           sum(pmix.alpha*log(pi.mix))
       }
 
@@ -1392,6 +1526,7 @@ fit_angmix <- function(model = "vmsin",
         clus.ind <- rand_perm[clus.ind] # random label switch
         post.wt <- post.wt[, rand_perm, drop=FALSE]
         par.mat <- par.mat[, rand_perm, drop=FALSE]
+        par.mat_lscale <- par.mat_lscale[, rand_perm, drop=FALSE]
         pi.mix <- pi.mix[rand_perm, drop=FALSE]
 
         par.mat.all.order[, , iter] <- par.mat[, order(rand_perm), drop=FALSE]
@@ -1413,6 +1548,7 @@ fit_angmix <- function(model = "vmsin",
       lpd.all[iter] <- llik.all[iter] + lprior.all[iter]
 
       par.mat.all[, , iter] <- par.mat
+      par.mat_lscale.all[, , iter] <- par.mat_lscale
       pi.mix.all[, iter] <- pi.mix
       mem_prob_all[, , iter] <- post.wt
       clus_ind.all[, iter] <- clus.ind
@@ -1446,7 +1582,7 @@ fit_angmix <- function(model = "vmsin",
 
           if (iter %% nterms == 0) {
 
-            par.sd <- apply(par.mat.all[, j, (iter-nterms+1):iter], 1, sd)
+            par.sd <- apply(par.mat_lscale.all[, j, (iter-nterms+1):iter], 1, sd)
             mean_par.sd <- sum(par.sd)/(npar_1_comp)
             mean_tune_param_j <- sum(tune_param[, j])/(npar_1_comp)
             if(mean_par.sd > 0)
@@ -1629,8 +1765,6 @@ fit_angmix <- function(model = "vmsin",
               "type" = type,
               "data" = data.rad,
               "cov.restrict" = cov.restrict,
-              "gam.loc" = gam.loc,
-              "gam.scale" = gam.scale,
               "pmix.alpha" = pmix.alpha,
               "norm.var" = norm.var,
               "n.data" = n.data,
