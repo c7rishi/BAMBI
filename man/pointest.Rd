@@ -20,7 +20,7 @@ calculated.}
 If \code{NULL}, results for all components are provided.}
 
 \item{chain.no}{vector of chain numbers whose samples are to be be used.
-in the estimation}
+in the estimation. By default all chains are used.}
 
 \item{...}{additional arguments to be passed to the function.}
 }

@@ -332,7 +332,7 @@ fix_label <- function(object, ...) {
 #' @param comp.label vector of component labels (positive integers, e.g., \code{1, 2, ...}) for which point estimates are to be computed.
 #' If \code{NULL}, results for all components are provided.
 #' @param chain.no vector of chain numbers whose samples are to be be used.
-#' in the estimation
+#' in the estimation. By default all chains are used.
 #' @param ... additional arguments to be passed to the function.
 #'
 #' @return Returns a matrix of point estimates, or vector of point estimates if \code{length(par.name)==1} or \code{length(comp.label)==1}.

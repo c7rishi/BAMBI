@@ -16,7 +16,7 @@
 If \code{NULL}, results for all components are provided.}
 
 \item{chain.no}{vector of chain numbers whose samples are to be be used.
-in the estimation}
+in the estimation. By default all chains are used.}
 
 \item{probs}{numeric vector of probabilities with values in
     \eqn{[0,1]}.  (Values up to \samp{2e-14} outside that

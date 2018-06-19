@@ -15,7 +15,7 @@ paramtrace(object, par.name, comp.label, chain.no, press.enter = TRUE, ...)
 If \code{NULL}, results for all components are provided.}
 
 \item{chain.no}{vector of chain numbers whose samples are to be be used.
-in the estimation}
+in the estimation. By default all chains are used.}
 
 \item{press.enter}{logical. Should the next plot in the series
 be shown after you press "Enter"? Ignored if only a single plot

@@ -152,6 +152,19 @@ Warning: values much larger or smaller than the default are not recommended as t
 \description{
 Fitting Bivariate and univariate angular mixture models
 }
+\note{
+Parallelization is done by default when more than one chain is used,
+but the chains can be run sequentially as well by setting
+\code{chains_parallel = FALSE}. To retain reproducibility while running
+multiple chains in parallel, the same RNG state is passed to each chain
+(then the state is changed across chains so that no two chains can become
+identical, even if they have the same starting and tuning parameters). This,
+however creates a difference between a  \code{fit_angmix} call with multiple
+chains, one run sequentially by setting \code{chains_parallel = FALSE}, and
+another run sequentially due to a sequential \code{plan()} (or no \code{plan()})
+used before the \code{fit_angmix} call, with \code{chains_parallel = TRUE}.
+In the former, different RNG states are passed at the initiation of each chain.
+}
 \examples{
 # illustration only - more iterations needed for convergence
 fit.vmsin.20 <- fit_angmix("vmsin", tim8, ncomp = 3, n.iter =  20,

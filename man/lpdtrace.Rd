@@ -11,7 +11,7 @@ lpdtrace(object, chain.no, use.llik = FALSE, plot.autocor = FALSE,
 \item{object}{angular MCMC object.}
 
 \item{chain.no}{vector of chain numbers whose samples are to be be used.
-in the estimation}
+in the estimation. By default all chains are used.}
 
 \item{use.llik}{logical. Should log likelihood be plotted instead of log posterior? Set
 to \code{FALSE} by default.}
