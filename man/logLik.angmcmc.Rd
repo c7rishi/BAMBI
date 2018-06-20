@@ -30,7 +30,7 @@ then log likelihood is estimated by applying \code{fn} (defaults to max, if meth
 direclty on the iteration-wise log likelihood values from the MCMC.
 On the other hand, if \code{method == 2}, then  parameter estimates
 are first computed using \code{pointest} with \code{fn}
-(defaults to mean, if \code{method == 2}) applied on the MCMC samples,
+(defaults to "MODE", if \code{method == 2}) applied on the MCMC samples,
 and then then log likelihood is evaluated at the parameter estimates.
 
 

@@ -1207,6 +1207,8 @@ fit_angmix <- function(model = "vmsin",
     # no two c chains turn out to be identical
     change_rng_state <- runif(chain_no)
 
+
+
     if (method == "hmc") # using hmc
     {
       L_vec <- rep(L, n.iter)

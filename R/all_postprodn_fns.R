@@ -1034,7 +1034,7 @@ r_fitted <- function(n=1, object, fn = mean, ...)
 #' direclty on the iteration-wise log likelihood values from the MCMC.
 #' On the other hand, if \code{method == 2}, then  parameter estimates
 #' are first computed using \code{pointest} with \code{fn}
-#' (defaults to mean, if \code{method == 2}) applied on the MCMC samples,
+#' (defaults to "MODE", if \code{method == 2}) applied on the MCMC samples,
 #' and then then log likelihood is evaluated at the parameter estimates.
 #'
 #'
@@ -1063,10 +1063,20 @@ logLik.angmcmc <- function(object, method = 1, fn, ...)
 
   if (missing(fn)) {
     if (method == 1) fn <- "max"
-    else fn <- "mean"
+    else fn <- "MODE"
   }
 
-  fn <- match.fun(fn)
+  do_MAP <- FALSE
+
+  if (is.character(fn)) {
+    if (fn %in% c("MODE", "MAP")) {
+      if (method == 1)
+        stop("fn can be \'MODE\' or \'MAP\' only when method = 2")
+      else do_MAP <- TRUE
+    }
+  }
+
+  if (!do_MAP) fn <- match.fun(fn)
 
   ell <- list(...)
   if (any(!is.null(ell$burnin),  !is.null(ell$thin)))
@@ -1164,6 +1174,11 @@ bridge_sampler.angmcmc <- function(samples, ..., ave_over_chains = TRUE)
   gam.rate <- 1/object$gam.scale
 
 
+  norm.var <- object$norm.var
+
+  if (object$type == "bi" & length(norm.var) == 1) norm.var <- rep(norm.var, 3)
+
+
   if (object$ncomp == 1) {
 
     calc_lpd <- function(par_vec, data) {
@@ -1186,12 +1201,11 @@ bridge_sampler.angmcmc <- function(samples, ..., ave_over_chains = TRUE)
       llik <- sum(do.call(paste0("d", object$model), inargs))
 
       if (object$type == "bi") {
-        lprior <- sum((gam.loc - 1)*log(allpar_mat[1:2, ])-
-                        gam.rate*allpar_mat[1:2, ]) -
-          0.5*allpar_mat[3, ]^2/object$norm.var
+        lprior <- sum(-0.5*c((log(allpar_mat[1, ]))^2/norm.var[1],
+                             (log(allpar_mat[2, ]))^2/norm.var[2],
+                             ((allpar_mat[3, ]))^2/norm.var[3]))
       } else {
-        lprior <- (gam.loc - 1)*log(allpar_mat[1, ])-
-          gam.rate*allpar_mat[1, ]
+        lprior <- sum(-0.5*log(allpar_mat[1, ])^2/norm.var)
       }
 
       unname(llik+lprior)
@@ -1292,15 +1306,25 @@ bridge_sampler.angmcmc <- function(samples, ..., ave_over_chains = TRUE)
 
 
       if (object$type == "bi") {
-        lprior <- sum((gam.loc - 1)*log(par_mat[1:2, ]) -
-                        gam.rate*par_mat[1:2, ]) -
-          0.5*sum(par_mat[3, ]^2)/object$norm.var +
+        lprior <- sum(-0.5*c((log(allpar_mat[1, ]))^2/norm.var[1],
+                             (log(allpar_mat[2, ]))^2/norm.var[2],
+                             ((allpar_mat[3, ]))^2/norm.var[3])) +
           sum(object$pmix.alpha*log(pmix_vec))
       } else {
-        lprior <- sum((gam.loc - 1)*log(allpar_mat[1, ]) -
-                        gam.rate*allpar_mat[1, ]) +
+        lprior <- sum(-0.5*log(allpar_mat[1, ])^2/norm.var) +
           sum(object$pmix.alpha*log(pmix_vec))
       }
+
+      # if (object$type == "bi") {
+      #   lprior <- sum((gam.loc - 1)*log(par_mat[1:2, ]) -
+      #                   gam.rate*par_mat[1:2, ]) -
+      #     0.5*sum(par_mat[3, ]^2)/object$norm.var +
+      #     sum(object$pmix.alpha*log(pmix_vec))
+      # } else {
+      #   lprior <- sum((gam.loc - 1)*log(allpar_mat[1, ]) -
+      #                   gam.rate*allpar_mat[1, ]) +
+      #     sum(object$pmix.alpha*log(pmix_vec))
+      # }
 
       unname(llik+lprior)
     }
