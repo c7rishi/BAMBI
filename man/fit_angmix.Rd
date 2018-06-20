@@ -149,6 +149,9 @@ Warning: values much larger or smaller than the default are not recommended as t
 Fitting Bivariate and univariate angular mixture models
 }
 \note{
+Sampling is done in log scale for the concentration parameters (kappa, kappa1 and kappa2).
+
+
 Parallelization is done by default when more than one chain is used,
 but the chains can be run sequentially as well by setting
 \code{chains_parallel = FALSE}. To retain reproducibility while running

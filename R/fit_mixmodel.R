@@ -135,6 +135,9 @@ find_lscale_mat_uni <- function(x) {
 #' @param ... Unused.
 #'
 #' @note
+#' Sampling is done in log scale for the concentration parameters (kappa, kappa1 and kappa2).
+#'
+#'
 #' Parallelization is done by default when more than one chain is used,
 #' but the chains can be run sequentially as well by setting
 #' \code{chains_parallel = FALSE}. To retain reproducibility while running
@@ -1206,8 +1209,6 @@ fit_angmix <- function(model = "vmsin",
     # just to change the RNG state across chains, so that
     # no two c chains turn out to be identical
     change_rng_state <- runif(chain_no)
-
-
 
     if (method == "hmc") # using hmc
     {
