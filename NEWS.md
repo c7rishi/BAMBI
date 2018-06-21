@@ -4,8 +4,8 @@
 * coda::as.mcmc.list method for mcmc objects is added.
 * Added 'add_burnin_thin' as a post-processing function.
 * Added 'bridge_sampler.angmcmc' method for bridgesampling::bridge_sampler
-* WAIC computation is now done through the S3 method waic.angmcmc for loo::angmcmc.
-* Added loo.angmcmc method for loo::loo.
+* WAIC computation is now done through the S3 method waic.angmcmc from package loo.
+* Added loo.angmcmc function.
 * fix_label now supports all methods for label.switching::label.switching
 * A plot method for angmcmc objects is addedd.
 * A naive rejection sampling method for vmsin and vmcos generation is added.
