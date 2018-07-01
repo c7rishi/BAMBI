@@ -1,3 +1,8 @@
+# BAMBI v2.0.1
+This is a resubmission. In this version we have fixed the following NOTE from R check:
+"Namespace in Imports field not imported from: ‘future’"
+
+
 # BAMBI v2.0.0
 
 ## Resubmission
