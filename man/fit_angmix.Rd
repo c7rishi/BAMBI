@@ -62,7 +62,7 @@ Defaults to and is set to \code{FALSE}.}
 \item{chains_parallel}{logical. Should the chains be run in parallel? Defaluts to TRUE, and ignored if \code{n.chains} = 1.
 Note that parallelization is implemented via \link{future_lapply} from package \code{future.apply} which
 uses futures for this purpose, and thus provides a convenient way of parallelization across various OSs and computing environments.
-However, a proper \link{plan} must be set for the parallization before running the chain. Otherwise the chains will run sequentially.}
+However, a proper \link[future]{plan} must be set for the parallization before running the chain. Otherwise the chains will run sequentially.}
 
 \item{return_llik_contri}{logical. Should the log likelihood contribution of each data point for each MCMC iteration in each chain be returned? This makes
 computation of \link{waic.angmcmc} and \link{loo.angmcmc} much faster. *Warning*: Depending on the length of data and \code{n.iter}, this can be

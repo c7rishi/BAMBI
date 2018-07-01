@@ -59,7 +59,7 @@ find_lscale_mat_uni <- function(x) {
 #' @param chains_parallel logical. Should the chains be run in parallel? Defaluts to TRUE, and ignored if \code{n.chains} = 1.
 #' Note that parallelization is implemented via \link{future_lapply} from package \code{future.apply} which
 #' uses futures for this purpose, and thus provides a convenient way of parallelization across various OSs and computing environments.
-#' However, a proper \link{plan} must be set for the parallization before running the chain. Otherwise the chains will run sequentially.
+#' However, a proper \link[future]{plan} must be set for the parallization before running the chain. Otherwise the chains will run sequentially.
 #' @param method MCMC strategy to be used for the model paramters:  \code{"hmc"} or \code{"rwmh"}.
 #' @param perm_sampling logical. Should the permutation sampling algorithm of Fruhwirth-Schnatter (2001) be used?
 #' If TRUE, at every iteration after burnin, once model parameters and mixing proportions are sampled,
