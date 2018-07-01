@@ -34,6 +34,7 @@ find_lscale_mat_uni <- function(x) {
 #' Fitting Bivariate and univariate angular mixture models
 #'
 #' @importFrom gtools rdirichlet
+#' @importFrom future.apply future_lapply
 #'
 #' @param model angular model whose mixtures are to be fitted. Available choices are \code{"vmsin", "vmcos"} and \code{"wnorm2"} for
 #' bivariate data, and \code{"vm"} and \code{"wnorm"} for univariate data.
@@ -577,7 +578,7 @@ fit_angmix <- function(model = "vmsin",
           llik_vmsin_one_comp(data[obs_group, , drop=FALSE], par_vec,
                               log(const_vmsin(par_vec[1],
                                               par_vec[2], par_vec[3]))) +
-           0.5*sum(-par_vec_lscale[1:3]^2/norm.var)
+          0.5*sum(-par_vec_lscale[1:3]^2/norm.var)
       } else{
         # only prior
         res <-
@@ -1256,9 +1257,9 @@ fit_angmix <- function(model = "vmsin",
 
 
     if (type == "bi") {
-    par.mat_lscale <- find_lscale_mat(par.mat)
-    par_lower_lscale <- find_lscale_mat(par_lower)
-    par_upper_lscale <- find_lscale_mat(par_upper)
+      par.mat_lscale <- find_lscale_mat(par.mat)
+      par_lower_lscale <- find_lscale_mat(par_lower)
+      par_upper_lscale <- find_lscale_mat(par_upper)
     } else {
       par.mat_lscale <- find_lscale_mat_uni(par.mat)
       par_lower_lscale <- find_lscale_mat_uni(par_lower)
@@ -1684,10 +1685,10 @@ fit_angmix <- function(model = "vmsin",
   # generate three chains in parallel, if possible
   if (chains_parallel) {
 
-    res_list <- future.apply::future_lapply(1:n.chains,
-                                            function(ii) run_MC(starting[[ii]],
-                                                                L[ii], ii),
-                                            future.seed = TRUE)
+    res_list <- future_lapply(1:n.chains,
+                              function(ii) run_MC(starting[[ii]],
+                                                  L[ii], ii),
+                              future.seed = TRUE)
   } else {
     res_list <- lapply(1:n.chains,
                        function(ii) run_MC(starting[[ii]], L[ii], ii))

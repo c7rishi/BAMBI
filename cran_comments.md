@@ -1,4 +1,4 @@
-# BAMBI v1.2.1
+# BAMBI v2.0.0
 
 ## Resubmission
 This is a resubmission. A number of changes has been made, a summary of which are as follows:
