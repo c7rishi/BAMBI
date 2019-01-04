@@ -5,6 +5,8 @@
 * removed press.enter argument from plot.angmcmc, paramtrace and lpdtrace.
 * changed BESSI, BESSI0, BESSI0_C and BESSI1. They're now all wrappers for R::bessel_i.
 * changed "n"-cluster to "n"-component in print.angmcmc.
+* Deleted AIC.angmcmc, BIC.angmcmc -- they can be directly computed using 
+stats::AIC and stats::BIC.
 
 
 # BAMBI v2.0.1
