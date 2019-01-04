@@ -5,7 +5,7 @@
 \title{Trace and autocorrelation plots of log posterior density or log likelihood from an angmcmc object}
 \usage{
 lpdtrace(object, chain.no, use.llik = FALSE, plot.autocor = FALSE,
-  press.enter = TRUE, lag.max = NULL, ...)
+  lag.max = NULL, ...)
 }
 \arguments{
 \item{object}{angular MCMC object.}
@@ -17,10 +17,6 @@ in the estimation. By default all chains are used.}
 to \code{FALSE} by default.}
 
 \item{plot.autocor}{logical. Should the autocorrelations be plotted as well?}
-
-\item{press.enter}{logical. Should the next plot in the series
-be shown after you press "Enter"? Ignored if only a single plot
-is to be created.}
 
 \item{lag.max}{maximum lag for autocorrelation.  Passed to \link{acf}. Ignored if
 \code{plot.autocor = FALSE}.}

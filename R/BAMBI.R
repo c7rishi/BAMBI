@@ -20,7 +20,7 @@ print.angmcmc <- function(x, ...) {
 
 
   if(grepl(x$method, "hmc")) {
-    output[2] <- paste(x$ncomp, "cluster", x$model, "mixture fitted via HMC for model parameters. Number of chain(s) = ",
+    output[2] <- paste(x$ncomp, "component", x$model, "mixture fitted via HMC for model parameters. Number of chain(s) = ",
                        paste0(x$n.chains, "."))
 
     if(x$epsilon.random) {
@@ -44,7 +44,7 @@ print.angmcmc <- function(x, ...) {
 
    else if(grepl(x$method, "rwmh")) {
 
-    output[2] <- paste(x$ncomp, "cluster", x$model, "mixture fitted via RWMH for model parameters. Number of chain(s) = ",
+    output[2] <- paste(x$ncomp, "component", x$model, "mixture fitted via RWMH for model parameters. Number of chain(s) = ",
                        paste0(x$n.chains, "."))
 
     output[3] <- paste("proposals are independent normal with variances",

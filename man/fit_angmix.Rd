@@ -171,9 +171,9 @@ fit.vmsin.20 <- fit_angmix("vmsin", tim8, ncomp = 3, n.iter =  20,
 fit.vmsin.20
 
 
-# Parallelization is implemented via \\link{future_lapply} from the
+# Parallelization is implemented via future_lapply from the
 # package future.apply. To parallelize, first provide a parallel
-# plan() for futures. Otherwise the chains will run sequentially.
+# plan(); otherwise the chains will run sequentially.
 # Note that not all plan() might work on every OS, as they execute
 # functions defined internally in fit_mixmodel. We suggest
 # plan(multiprocess).

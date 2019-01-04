@@ -1,6 +1,23 @@
+# BAMBI v2.1.0
+
+# Changelog:
+* added alpha shading argument in contour.angmcmc.
+* removed press.enter argument from plot.angmcmc, paramtrace and lpdtrace.
+* changed BESSI, BESSI0, BESSI0_C and BESSI1. They're now all wrappers for R::bessel_i.
+* changed "n"-cluster to "n"-component in print.angmcmc.
+
+
 # BAMBI v2.0.1
-This is a resubmission. In this version we have fixed the following NOTE from R check:
+
+## Resubmission
+This is a resubmission. In this version we have fixed the following NOTE:
 "Namespace in Imports field not imported from: ‘future’"
+
+
+## Test environments
+* local Windows 10 install, R 3.5.0
+* win-builder (devel)
+* Ubuntu release 16.04, R 3.4.0
 
 
 # BAMBI v2.0.0

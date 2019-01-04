@@ -6,7 +6,8 @@
 \usage{
 \method{contour}{angmcmc}(x, fn = mean, show.data = TRUE, xpoints = seq(0,
   2 * pi, length.out = 100), ypoints = seq(0, 2 * pi, length.out = 100),
-  levels, nlevels = 20, cex = 1, col = "red", ...)
+  levels, nlevels = 20, cex = 1, col = "red", alpha = 0.4, pch = 19,
+  ...)
 }
 \arguments{
 \item{x}{angular MCMC object (with bivariate data).}
@@ -30,7 +31,10 @@ passed to the \link{contour} function in graphics.}
 \item{nlevels}{number of contour levels desired \strong{if} levels is not supplied;
 passed to the \link{contour} function in graphics.}
 
-\item{cex, col}{graphical parameters passed to \code{\link{points}} in graphics for plotting the data points.
+\item{cex, col, pch}{graphical parameters passed to \code{\link{points}} from graphics for plotting the data points.
+Ignored if {show.data == FALSE}.}
+
+\item{alpha}{color transparency for the data points, implemented via \code{\link[scales]{alpha}} from package \code{scales}.
 Ignored if {show.data == FALSE}.}
 
 \item{...}{additional arguments to be passed to the function \code{\link{contour}}.}

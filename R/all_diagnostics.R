@@ -3,7 +3,9 @@
 #' @inheritParams pointest
 #' @param x angular MCMC object (with bivariate data).
 #' @param show.data logical. Should the data points be added to the contour plot? Ignored if \code{object} is NOT supplied.
-#' @param cex,col graphical parameters passed to \code{\link{points}} in graphics for plotting the data points.
+#' @param cex,col,pch graphical parameters passed to \code{\link{points}} from graphics for plotting the data points.
+#' Ignored if {show.data == FALSE}.
+#' @param alpha color transparency for the data points, implemented via \code{\link[scales]{alpha}} from package \code{scales}.
 #' Ignored if {show.data == FALSE}.
 #' @inheritParams contour_model
 #' @param ... additional arguments to be passed to the function \code{\link{contour}}.
@@ -29,7 +31,8 @@ contour.angmcmc <-  function(x, fn = mean, show.data = TRUE,
                              xpoints = seq(0, 2*pi, length.out = 100),
                              ypoints = seq(0, 2*pi, length.out = 100),
                              levels, nlevels = 20,
-                             cex = 1, col = "red", ...)
+                             cex = 1, col = "red", alpha = 0.4,
+                             pch = 19, ...)
 {
   object <- x
 
@@ -61,7 +64,8 @@ contour.angmcmc <-  function(x, fn = mean, show.data = TRUE,
   dens <- d_fitted(coords, x, fn = fn)
   contour(xpoints, ypoints, matrix(dens, nrow=length(xpoints)), levels=levels)
 
-  if(show.data) points(x$data, col = col, cex = cex)
+  if(show.data) points(x$data, col = scales::alpha(col, alpha),
+                       cex = cex, pch = pch)
 
   title(main = main, xlab = xlab, ylab = ylab)
 }
@@ -291,9 +295,9 @@ densityplot.angmcmc <- function(x, fn = mean, log.density = FALSE,
 #' @inheritParams pointest
 #' @param object angular MCMC object.
 #' @param par parameter for which trace plot is to be created.
-#' @param press.enter logical. Should the next plot in the series
-#' be shown after you press "Enter"? Ignored if only a single plot
-#' is to be created.
+# #' @param press.enter logical. Should the next plot in the series
+# #' be shown after you press "Enter"? Ignored if only a single plot
+# #' is to be created.
 #' @param ... unused
 #' @return
 #' Returns a single plot if a single \code{par} and a single \code{comp.label} is supplied.
@@ -316,7 +320,8 @@ densityplot.angmcmc <- function(x, fn = mean, log.density = FALSE,
 #' @export
 
 paramtrace <- function(object, par.name, comp.label, chain.no,
-                       press.enter = TRUE, ...)
+                       # press.enter = TRUE,
+                       ...)
 {
   if(!class(object) %in% "angmcmc") stop("\'object\' must be an angmcmc object")
 
@@ -393,12 +398,15 @@ paramtrace <- function(object, par.name, comp.label, chain.no,
         }
 
         title(main = main, ylab = ylab)
-        if(currplotno < nplots) {
-          if(press.enter) {
-            press_enter()
-            frame()
-          }
-        }
+
+        # --not required--
+        # if(currplotno < nplots) {
+        #   if(press.enter) {
+        #     press_enter()
+        #     frame()
+        #   }
+        # }
+
         currplotno <- currplotno + 1
       }
     }
@@ -427,7 +435,8 @@ paramtrace <- function(object, par.name, comp.label, chain.no,
 #' @export
 
 lpdtrace <- function(object, chain.no, use.llik = FALSE,
-                     plot.autocor = FALSE, press.enter = TRUE,
+                     plot.autocor = FALSE,
+                     # press.enter = TRUE,
                      lag.max = NULL, ...)
 {
   if(class(object) != "angmcmc") stop("lpdtrace can only be used for \'angmcmc\' objects")
@@ -473,10 +482,10 @@ lpdtrace <- function(object, chain.no, use.llik = FALSE,
 
 
 
-    if (press.enter & plot.autocor) {
-      press_enter()
-      frame()
-    }
+    # if (press.enter & plot.autocor) {
+    #   press_enter()
+    #   frame()
+    # }
 
     if (plot.autocor) {
       all_autocors <- lapply(1:n.chains,
@@ -530,11 +539,10 @@ lpdtrace <- function(object, chain.no, use.llik = FALSE,
     title(main = main)
 
 
-    if (press.enter & plot.autocor) {
-      press_enter()
-      frame()
-
-    }
+    # if (press.enter & plot.autocor) {
+    #   press_enter()
+    #   frame()
+    # }
 
     if (plot.autocor) {
 
@@ -590,24 +598,25 @@ lpdtrace <- function(object, chain.no, use.llik = FALSE,
 #' # illustration only - more iterations needed for convergence
 #' fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
 #'                              n.chains = 1)
-#' plot(fit.vmsin.20, press.enter = FALSE)
+#' plot(fit.vmsin.20)
 #' @export
 
 plot.angmcmc <- function(x, par.name, comp.label, chain.no,
                          do.paramtrace = TRUE,
                          do.lpdtrace = TRUE, use.llik = FALSE,
-                         press.enter = TRUE, ...)
+                         # press.enter = TRUE,
+                         ...)
 {
   if (!is.angmcmc(x))
     stop("\'x\' must be an angmcmc object")
 
   if (do.paramtrace)
-    paramtrace(x, par.name, comp.label, chain.no, press.enter, ...)
+    paramtrace(x, par.name, comp.label, chain.no, ...)
 
-  if (press.enter) {
-    press_enter()
-    frame()
-  }
+  # if (press.enter) {
+  #   press_enter()
+  #   frame()
+  # }
 
   if (do.lpdtrace)
     lpdtrace(x, chain.no, use.llik)

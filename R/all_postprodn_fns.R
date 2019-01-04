@@ -642,51 +642,51 @@ print.summary_angmcmc <- function(x, ...)
 
 
 
-#' AIC and BIC for angmcmc objects
-#' @inheritParams stats::AIC
-#' @inheritParams logLik.angmcmc
-#' @param ... additional argument to be passed to \link{logLik.angmcmc}
-#' @return AIC computes the AIC and BIC computes BIC for \code{angmcmc} objects.
-#'
-#' @details
-#' Note that \code{AIC.angmcmc} and \code{BIC.angmcmc} calls \link{logLik.angmcmc},
-#' which calculates Bayes estimate of the log-likelihood and *not* the maximum
-#' likelihood. As such, care needs to be taken while using theses quantities.
-#'
-#' \eqn{\hat{L}} is estimated by the sample maximum obtained from the MCMC realizations.
-#'
-#' @examples
-#' # illustration only - more iterations needed for convergence
-#' fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
-#'                              n.chains = 1)
-#' AIC(fit.vmsin.20)
-#' BIC(fit.vmsin.20)
-#'
-#' @export
-
-AIC.angmcmc <- function(object, ..., k = 2)
-{
-  if (!is.angmcmc(object))
-    stop("\'object\' must be an angmcmc object")
-
-  ell <- list(...)
-
-  if (any(!is.null(ell$burnin),  !is.null(ell$thin)))
-    warning("Use of burnin and thin are obsolete. Specify \'burnin.prop\' and \'thin\' during original MCMC run, or use \'add_burnin_thin\'.")
-
-  llik <- logLik.angmcmc(object, ...)
-  k*attr(llik, "df") - 2*as.numeric(llik)
-}
-
-
-
-#' @rdname AIC.angmcmc
-#' @export
-
-BIC.angmcmc <- function(object, ...)
-{
-  AIC.angmcmc(object, ..., k=log(object$n.data))
-}
+# #' AIC and BIC for angmcmc objects -- not needed
+# #' @inheritParams stats::AIC
+# #' @inheritParams logLik.angmcmc
+# #' @param ... additional argument to be passed to \link{logLik.angmcmc}
+# #' @return AIC computes the AIC and BIC computes BIC for \code{angmcmc} objects.
+# #'
+# #' @details
+# #' Note that \code{AIC.angmcmc} and \code{BIC.angmcmc} calls \link{logLik.angmcmc},
+# #' which calculates Bayes estimate of the log-likelihood and *not* the maximum
+# #' likelihood. As such, care needs to be taken while using theses quantities.
+# #'
+# #' \eqn{\hat{L}} is estimated by the sample maximum obtained from the MCMC realizations.
+# #'
+# #' @examples
+# #' # illustration only - more iterations needed for convergence
+# #' fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
+# #'                              n.chains = 1)
+# #' AIC(fit.vmsin.20)
+# #' BIC(fit.vmsin.20)
+# #'
+# #' @export
+# #'
+# #' AIC.angmcmc <- function(object, ..., k = 2)
+# #' {
+# #'   if (!is.angmcmc(object))
+# #'     stop("\'object\' must be an angmcmc object")
+# #'
+# #'   ell <- list(...)
+# #'
+# #'   if (any(!is.null(ell$burnin),  !is.null(ell$thin)))
+# #'     warning("Use of burnin and thin are obsolete. Specify \'burnin.prop\' and \'thin\' during original MCMC run, or use \'add_burnin_thin\'.")
+# #'
+# #'   llik <- logLik.angmcmc(object, ...)
+# #'   k*attr(llik, "df") - 2*as.numeric(llik)
+# #' }
+# #'
+# #'
+# #'
+# #' @rdname AIC.angmcmc
+# #' @export
+# #'
+# #' BIC.angmcmc <- function(object, ...)
+# #' {
+# #'   AIC.angmcmc(object, ..., k=log(object$n.data))
+# #' }
 
 
 #' Deviance Information Criterion (DIC) for angmcmc objects

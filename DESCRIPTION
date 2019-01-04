@@ -2,7 +2,7 @@ Package: BAMBI
 Type: Package
 Title: Bivariate Angular Mixture Models
 Version: 2.0.1
-Date: 2018-06-18
+Date: 2018-07-18
 Author: Saptarshi Chakraborty,
         Samuel W.K. Wong
 Maintainer: Saptarshi Chakraborty <chakra.saptarshi@gmail.com>
@@ -29,7 +29,8 @@ Imports: stats,
 		 future.apply,
 		 loo (>= 2.0.0),
 		 RColorBrewer,
-		 bridgesampling
+		 bridgesampling,
+		 scales
 Suggests:  future		 
 Depends: R (>= 3.2.0)
 URL: https://arxiv.org/abs/1708.07804

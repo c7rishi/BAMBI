@@ -5,8 +5,7 @@
 \title{Summary plots for angmcmc objects}
 \usage{
 \method{plot}{angmcmc}(x, par.name, comp.label, chain.no,
-  do.paramtrace = TRUE, do.lpdtrace = TRUE, use.llik = FALSE,
-  press.enter = TRUE, ...)
+  do.paramtrace = TRUE, do.lpdtrace = TRUE, use.llik = FALSE, ...)
 }
 \arguments{
 \item{x}{angmcmc object}
@@ -28,10 +27,6 @@ be plotted?}
 \item{use.llik}{logical. Should the log likelihood be plotted
 instead? Ignored if \code{do.lpdtrace == FALSE}.}
 
-\item{press.enter}{logical. Should the next plot in the series
-be shown after you press "Enter"? Ignored if only a single plot
-is to be created.}
-
 \item{...}{unused}
 }
 \description{
@@ -42,5 +37,5 @@ Summary plots for angmcmc objects
 # illustration only - more iterations needed for convergence
 fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
                              n.chains = 1)
-plot(fit.vmsin.20, press.enter = FALSE)
+plot(fit.vmsin.20)
 }
