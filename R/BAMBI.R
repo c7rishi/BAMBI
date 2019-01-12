@@ -20,7 +20,8 @@ print.angmcmc <- function(x, ...) {
 
 
   if(grepl(x$method, "hmc")) {
-    output[2] <- paste(x$ncomp, "component", x$model, "mixture fitted via HMC for model parameters. Number of chain(s) = ",
+    output[2] <- paste(x$ncomp, "component", x$model, "mixture fitted via HMC for model parameters.",
+                       ifelse(x$n.chains == 1, "Number of chain = ", "Number of chains = "),
                        paste0(x$n.chains, "."))
 
     if(x$epsilon.random) {
@@ -32,10 +33,10 @@ print.angmcmc <- function(x, ...) {
     if(x$L.random){
       output[4] <- paste("L chosen randomly at each iteration with average L =",
                          paste(round(x$L, 2), collapse = ", "),
-                         "across the ", x$n.chains, "chain(s).")
+                         "across the ", x$n.chains, ifelse(n.chains = 1, "chain.", "chains."))
     } else {
       output[4] <- paste("L fixed at", paste(x$L, collapse = ", "),
-                         "across the", x$n.chains, "chain(s).")
+                         "across the", x$n.chains, ifelse(n.chains = 1, "chain.", "chains."))
     }
     output[5] <- paste("acceptance rate for model parameters = ",
                        round(100*mean(x$accpt.modelpar), 2), "%.")
@@ -44,7 +45,8 @@ print.angmcmc <- function(x, ...) {
 
    else if(grepl(x$method, "rwmh")) {
 
-    output[2] <- paste(x$ncomp, "component", x$model, "mixture fitted via RWMH for model parameters. Number of chain(s) = ",
+    output[2] <- paste(x$ncomp, "component", x$model, "mixture fitted via RWMH for model parameters.",
+                       ifelse(x$n.chains == 1, "Number of chain = ", "Number of chains = "),
                        paste0(x$n.chains, "."))
 
     output[3] <- paste("proposals are independent normal with variances",
