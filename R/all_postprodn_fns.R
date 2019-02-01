@@ -1111,7 +1111,9 @@ logLik.angmcmc <- function(object, method = 1, fn, ...)
 
 #' Log Marginal Likelihood via Bridge Sampling for angmcmc objects
 #' @param samples angmcmc object
-#' @param ... additional argument passed to \link{bridge_sampler}
+#' @param ... additional argument passed to \link{bridge_sampler}. Note that default for
+#' the argument \code{method} is \code{"warp3"}, (instead of \code{"normal"} as used in \code{bridgesampling} package)
+#' to account for multi-modality of the posterior density.
 #' @param ave_over_chains logical. Separately call \link{bridge_sampler} on
 #' each chain in the angmcmc object and then take the average? Defaults to \code{TRUE}.
 #' See details.
@@ -1152,6 +1154,11 @@ bridge_sampler.angmcmc <- function(samples, ..., ave_over_chains = TRUE)
 
 
   ell <- list(...)
+
+  if (is.null(ell$method)) {
+    ell$method <- "warp3"
+  }
+
   n.chains <- object$n.chains
 
   if (object$model == "wnorm2") {
@@ -1234,10 +1241,13 @@ bridge_sampler.angmcmc <- function(samples, ..., ave_over_chains = TRUE)
       tmp_mat <- do.call(rbind, lapply(1:n.chains,
                                        function(j)
                                          as.matrix(object_mcmc[[j]])))
-      bridgesampling::bridge_sampler(samples=tmp_mat,
-                                     log_posterior=calc_lpd,
-                                     data=object$data,
-                                     lb=lower, ub=upper, ...)
+
+      do.call(bridgesampling::bridge_sampler,
+              c(list(samples=tmp_mat,
+                     log_posterior=calc_lpd,
+                     data=object$data,
+                     lb=lower, ub=upper),
+                ell))
     }
     else {
       all_bridge_samp <- vector("list", n.chains)
@@ -1249,10 +1259,12 @@ bridge_sampler.angmcmc <- function(samples, ..., ave_over_chains = TRUE)
         }
 
         all_bridge_samp[[j]] <-
-          bridgesampling::bridge_sampler(samples=tmp_mat,
-                                         log_posterior=calc_lpd,
-                                         data=object$data,
-                                         lb=lower, ub=upper, ...)
+          do.call(bridgesampling::bridge_sampler,
+                  c(list(samples=tmp_mat,
+                         log_posterior=calc_lpd,
+                         data=object$data,
+                         lb=lower, ub=upper),
+                    ell))
       }
 
       final_res <- all_bridge_samp[[1]]
@@ -1353,10 +1365,12 @@ bridge_sampler.angmcmc <- function(samples, ..., ave_over_chains = TRUE)
       tmp_mat <- do.call(rbind, lapply(1:n.chains,
                                        function(j)
                                          as.matrix(object_mcmc[[j]])))
-      bridgesampling::bridge_sampler(samples=tmp_mat,
-                                     log_posterior=calc_lpd,
-                                     data=object$data,
-                                     lb=lower, ub=upper, ...)
+      do.call(bridgesampling::bridge_sampler,
+              c(list(samples=tmp_mat,
+                     log_posterior=calc_lpd,
+                     data=object$data,
+                     lb=lower, ub=upper),
+                ell))
 
     }
     else {
@@ -1369,10 +1383,12 @@ bridge_sampler.angmcmc <- function(samples, ..., ave_over_chains = TRUE)
         }
 
         all_bridge_samp[[j]] <-
-          bridgesampling::bridge_sampler(samples=tmp_mat,
-                                         log_posterior=calc_lpd,
-                                         data=object$data,
-                                         lb=lower, ub=upper, ...)
+          do.call(bridgesampling::bridge_sampler,
+                  c(list(samples=tmp_mat,
+                         log_posterior=calc_lpd,
+                         data=object$data,
+                         lb=lower, ub=upper),
+                    ell))
       }
 
       final_res <- all_bridge_samp[[1]]
