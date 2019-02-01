@@ -33,10 +33,10 @@ print.angmcmc <- function(x, ...) {
     if(x$L.random){
       output[4] <- paste("L chosen randomly at each iteration with average L =",
                          paste(round(x$L, 2), collapse = ", "),
-                         "across the ", x$n.chains, ifelse(n.chains = 1, "chain.", "chains."))
+                         "across the ", x$n.chains, ifelse(n.chains == 1, "chain.", "chains."))
     } else {
       output[4] <- paste("L fixed at", paste(x$L, collapse = ", "),
-                         "across the", x$n.chains, ifelse(n.chains = 1, "chain.", "chains."))
+                         "across the", x$n.chains, ifelse(n.chains == 1, "chain.", "chains."))
     }
     output[5] <- paste("acceptance rate for model parameters = ",
                        round(100*mean(x$accpt.modelpar), 2), "%.")
