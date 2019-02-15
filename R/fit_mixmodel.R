@@ -550,8 +550,9 @@ fit_angmix <- function(model = "vmsin",
       par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       lpd_grad <- matrix(NA, 6, 1)
       if (n.clus > 0) {
-        lpd_grad <- grad_llik_vmsin_C(data[obs_group, , drop=FALSE],
-                                      par_vec)*
+        lpd_grad <- suppressWarnings(
+          grad_llik_vmsin_C(data[obs_group, , drop=FALSE],
+                            par_vec))*
           c(par_vec[1:2], rep(1, 4)) +
           c( # grad for lprior
             -par_vec_lscale[1:3]/norm.var, 0, 0,
@@ -686,8 +687,9 @@ fit_angmix <- function(model = "vmsin",
       par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       lpd_grad <- matrix(NA, 6, 1)
       if (n.clus > 0) {
-        lpd_grad[] <- grad_llik_vmcos_C(data[obs_group, , drop=FALSE],
-                                        par_vec[], qrnd_grid) *
+        lpd_grad[] <- suppressWarnings(
+          grad_llik_vmcos_C(data[obs_group, , drop=FALSE],
+                            par_vec[], qrnd_grid)) *
           c(par_vec[1:2], rep(1, 4)) +
           c( # grad for lprior
             -par_vec_lscale[1:3]/norm.var, 0, 0,
@@ -982,8 +984,9 @@ fit_angmix <- function(model = "vmsin",
       lpd_grad <- matrix(NA, 3, 1)
       par_vec <- c(exp(par_vec_lscale[1]), par_vec_lscale[2])
       if (n.clus > 0) {
-        lpd_grad[] <- grad_llik_univm_C(data[obs_group],
-                                        par_vec[]) * c(par_vec[1], 1, 1) +
+        lpd_grad[] <- suppressWarnings(
+          grad_llik_univm_C(data[obs_group],
+                            par_vec[])) * c(par_vec[1], 1, 1) +
 
           c( # grad for lprior
             -par_vec_lscale[1]/norm.var, 0,

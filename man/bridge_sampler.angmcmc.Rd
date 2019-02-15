@@ -9,7 +9,9 @@
 \arguments{
 \item{samples}{angmcmc object}
 
-\item{...}{additional argument passed to \link{bridge_sampler}}
+\item{...}{additional argument passed to \link{bridge_sampler}. Note that default for
+the argument \code{method} is \code{"warp3"}, (instead of \code{"normal"} as used in \code{bridgesampling} package)
+to account for multi-modality of the posterior density.}
 
 \item{ave_over_chains}{logical. Separately call \link{bridge_sampler} on
 each chain in the angmcmc object and then take the average? Defaults to \code{TRUE}.
