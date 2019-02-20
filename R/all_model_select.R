@@ -90,16 +90,17 @@
 #' @examples
 #' # illustration only - more iterations needed for convergence
 #' set.seed(1)
-#' fit.vm.step.15 <- fit_incremental_angmix("vmsin", tim8, "BIC", start_ncomp = 1,
+#' fit.vmsin.step.15 <- fit_incremental_angmix("vmsin", tim8, "BIC", start_ncomp = 1,
 #'                                           max_ncomp = 3, n.iter = 15,
 #'                                           n.chains = 1, save_fits=FALSE)
-#' (fit.vm.best.15 <- bestmodel(fit.vm.step.15))
-#' lattice::densityplot(fit.vm.best.15)
+#' (fit.vmsin.best.15 <- bestmodel(fit.vmsin.step.15))
+#' lattice::densityplot(fit.vmsin.best.15)
 #'
 #' @export
 
 
-fit_incremental_angmix <- function(model, data, crit = "LOOIC",
+fit_incremental_angmix <- function(model, data,
+                                   crit = "LOOIC",
                                    start_ncomp=1, max_ncomp=10,
                                    L = NULL,
                                    fn = mean,
@@ -149,8 +150,8 @@ fit_incremental_angmix <- function(model, data, crit = "LOOIC",
   if (is.null(save_file)) {
     save_file <- lapply(all_ncomp, function(j) paste0(save_dir, "/comp_", j, ".Rdata"))
   }
-   else if (!is.list(save_file) | length(save_file) != n_ncomp)
-     stop("\'save_file\' must be a list of length max_ncomp-start_ncomp+1")
+  else if (!is.list(save_file) | length(save_file) != n_ncomp)
+    stop("\'save_file\' must be a list of length max_ncomp-start_ncomp+1")
 
 
   crit_print <- crit
@@ -186,7 +187,7 @@ fit_incremental_angmix <- function(model, data, crit = "LOOIC",
   if (is.null(ell$perm_sampling))
     ell$perm_sampling <- formals(fit_angmix)$perm_sampling
 
-  if (is.null(fix_label)){
+  if (is.null(fix_label)) {
     if(any(form == 1 & crit == "DIC", ell$perm_sampling & prev_par,
            ell$perm_sampling & crit == "LOGML")) {
       fix_label <- TRUE
@@ -197,7 +198,7 @@ fit_incremental_angmix <- function(model, data, crit = "LOOIC",
   }
 
 
-   # all_fit <- vector("list", n_ncomp)
+  # all_fit <- vector("list", n_ncomp)
   all_input <- list("data" = data, "model" = model,
                     return_llik_contri = return_llik_contri,
                     ...)
@@ -239,7 +240,8 @@ fit_incremental_angmix <- function(model, data, crit = "LOOIC",
   all_par_est <- vector("list", length = max_ncomp-start_ncomp+1)
 
 
-  all_crit <- rep(0, n_ncomp)
+  # all_crit <- rep(0, n_ncomp)
+  all_crit <- vector("list", length = n_ncomp)
   all_maxllik <- rep(0, n_ncomp)
 
   if(!form %in% 1:2) form <- 1
@@ -359,53 +361,84 @@ fit_incremental_angmix <- function(model, data, crit = "LOOIC",
 
     if (crit == "WAIC") {
       curr_crit <- suppressWarnings(loo::waic(fit_angmcmc_adj))
-      all_crit[j] <- curr_crit$estimates["waic", 1]
+      all_crit[[j]] <- curr_crit
     }
 
     else if (crit == "LOOIC") {
       curr_crit <- suppressWarnings(loo::loo(fit_angmcmc_adj))
-      all_crit[j] <- curr_crit$estimates["looic", 1]
+      all_crit[[j]] <- curr_crit
     }
 
     else if (crit == "LOGML") {
-         curr_crit <- tryCatch(bridgesampling::bridge_sampler(fit_angmcmc_adj, silent = TRUE, maxiter = logml_maxiter),
-                              error = function(e) "error")
+      curr_crit <- tryCatch(bridgesampling::bridge_sampler(fit_angmcmc_adj, silent = TRUE, maxiter = logml_maxiter),
+                            error = function(e) "error")
 
       if (unlist(curr_crit)[1] == "error")
         stop(paste0("log posterior too unstable with ncomp = ",
                     all_ncomp[j], " to calculate log ML. Try a different criterion."))
-      all_crit[j] <- -curr_crit$logml
+      all_crit[[j]] <- -curr_crit$logml
     }
 
     else if (crit == "DIC") {
       curr_crit <- DIC(fit_angmcmc_adj, form=form)
-      all_crit[j] <- curr_crit["DIC"]
+      all_crit[[j]] <- curr_crit["DIC"]
     }
 
     else if (crit == "AIC") {
-      all_crit[j] <- AIC(fit_angmcmc_adj)
+      all_crit[[j]] <- AIC(fit_angmcmc_adj)
     }
 
     else {
-      all_crit[j] <- BIC(fit_angmcmc_adj)
+      all_crit[[j]] <- BIC(fit_angmcmc_adj)
     }
 
     # if(j > start_ncomp) cat("\n")
 
     if(!silent) {
-      cat(paste("\t", "ncomp = ", all_ncomp[j], ",\t", crit_print, "=", round(all_crit[j], 3), "\n"))
+      crit_val_print <- ""
+      if (!crit %in% c("LOOIC", "WAIC"))
+        crit_val_print <- round(all_crit[[j]], 3)
+
+      cat(paste("\t", "ncomp = ", all_ncomp[j], ",\t",
+                crit_print, ":", crit_val_print))
+
+      if (crit %in% c("LOOIC", "WAIC")) {
+        cat("\n")
+        cat(capture.output(all_crit[[j]]), sep = "\n")
+      }
+      cat("\n")
       cat("**************\n\n")
     }
 
-    if(j > 1 && all_crit[j] > all_crit[j-1]) {
-      check_min <- TRUE
-      j.best <- j-1
-      cat("\nFirst minimum attained. Stopping...\n")
-      fit_best <- fit_prev #previous fit is best
-      break
+    if (j > 1 ) {
+      if (crit %in% c("LOOIC", "WAIC")) {
+        compare_crit <- loo::compare(all_crit[[j-1]], all_crit[[j]])
+        if (unname(compare_crit["elpd_diff"]) <= 0) {
+          check_min <- TRUE
+          j.best <- j-1
+          cat("\nImprovement in predicitive accuracy not significant. Stopping...\n")
+          fit_best <- fit_prev #previous fit is best
+          break
+        }
+      } else if (all_crit[[j]] > all_crit[[j-1]]) {
+        check_min <- TRUE
+        j.best <- j-1
+        cat("\nFirst minimum attained. Stopping...\n")
+        fit_best <- fit_prev #previous fit is best
+        break
+      }
     }
 
-    if(all_ncomp[j] == max_ncomp) {
+
+    # if(j > 1 && all_crit[j] > all_crit[j-1]) {
+    #   check_min <- TRUE
+    #   j.best <- j-1
+    #   cat("\nFirst minimum attained. Stopping...\n")
+    #   fit_best <- fit_prev #previous fit is best
+    #   break
+    # }
+
+    if (all_ncomp[j] == max_ncomp) {
       cat("\n\'max_ncomp\' reached. Stopping...\n")
       j.best <- max_ncomp
       fit_best <- fit_angmcmc
