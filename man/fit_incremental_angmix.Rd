@@ -18,7 +18,7 @@ bivariate data, and \code{"vm"} and \code{"wnorm"} for univariate data.}
 \item{data}{data matrix (if bivarate, in which case it must have two columns) or vector. If outside, the values
 are transformed into the scale \eqn{[0, 2\pi)}.}
 
-\item{crit}{model selection criteria, one of \code{"AIC", "BIC", "DIC", "LOGML", "LOOIC"} or \code{"WAIC"}. Default is
+\item{crit}{model selection criteria, one of \code{"LOOIC", "WAIC", "AIC", "BIC", "DIC"} or \code{"LOGML"}. Default is
 \code{"LOOIC"}.}
 
 \item{start_ncomp}{starting component size. A single component model is fitted if \code{start_ncomp} is equal to one.}
@@ -92,7 +92,7 @@ Returns a named list (with class = \code{stepfit}) with the following seven elem
 
 \code{ncomp.best} - optimum component size (integer);
 
-\code{crit} - which model comparison criterion used (one of \code{"AIC", "BIC", "DIC"} or \code{"WAIC"});
+\code{crit} - which model comparison criterion used (one of \code{"LOOIC", "WAIC", "AIC", "BIC", "DIC"} or \code{"LOGML"});
 
 \code{crit.all} - all \code{crit} values calculated (for all component sizes);
 

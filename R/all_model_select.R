@@ -3,7 +3,7 @@
 #' @inheritParams fit_angmix
 #' @param start_ncomp starting component size. A single component model is fitted if \code{start_ncomp} is equal to one.
 #' @param max_ncomp maximum number of components allowed in the mixture model.
-#' @param crit model selection criteria, one of \code{"AIC", "BIC", "DIC", "LOGML", "LOOIC"} or \code{"WAIC"}. Default is
+#' @param crit model selection criteria, one of \code{"LOOIC", "WAIC", "AIC", "BIC", "DIC"} or \code{"LOGML"}. Default is
 #' \code{"LOOIC"}.
 #' @param L HMC tuning parameter (trajectory length) passed to \link{fit_angmix}. Can be a numeric vetor (or scalar), in which case
 #' the same \code{L} is passed to all \link{fit_angmix} calls, or can be a list of length \code{max_ncomp-start_ncomp+1},
@@ -75,7 +75,7 @@
 #'
 #' \code{ncomp.best} - optimum component size (integer);
 #'
-#' \code{crit} - which model comparison criterion used (one of \code{"AIC", "BIC", "DIC"} or \code{"WAIC"});
+#' \code{crit} - which model comparison criterion used (one of \code{"LOOIC", "WAIC", "AIC", "BIC", "DIC"} or \code{"LOGML"});
 #'
 #' \code{crit.all} - all \code{crit} values calculated (for all component sizes);
 #'
@@ -404,7 +404,7 @@ fit_incremental_angmix <- function(model, data,
 
       if (crit %in% c("LOOIC", "WAIC")) {
         cat("\n")
-        cat(capture.output(all_crit[[j]]), sep = "\n")
+        cat(suppressWarnings(capture.output(all_crit[[j]])), sep = "\n")
       }
       cat("\n")
       cat("**************\n\n")
@@ -412,8 +412,14 @@ fit_incremental_angmix <- function(model, data,
 
     if (j > 1 ) {
       if (crit %in% c("LOOIC", "WAIC")) {
-        compare_crit <- loo::compare(all_crit[[j-1]], all_crit[[j]])
-        if (unname(compare_crit["elpd_diff"]) <= 0) {
+        compare_crit <- suppressWarnings(loo::compare(all_crit[[j-1]],
+                                                      all_crit[[j]]))
+        # test for signif improvement in crit
+        # H0: curr crit - prev crit <= 0 vs Ha: >
+        zscore <- compare_crit["elpd_diff"]/compare_crit["se"]
+        if (zscore <= 1.645) {
+          # fail to reject null at alpha = 0.05 --
+          # so no signific improvement in curr crit compared to prev
           check_min <- TRUE
           j.best <- j-1
           cat("\nImprovement in predicitive accuracy not significant. Stopping...\n")
@@ -429,14 +435,6 @@ fit_incremental_angmix <- function(model, data,
       }
     }
 
-
-    # if(j > 1 && all_crit[j] > all_crit[j-1]) {
-    #   check_min <- TRUE
-    #   j.best <- j-1
-    #   cat("\nFirst minimum attained. Stopping...\n")
-    #   fit_best <- fit_prev #previous fit is best
-    #   break
-    # }
 
     if (all_ncomp[j] == max_ncomp) {
       cat("\n\'max_ncomp\' reached. Stopping...\n")
