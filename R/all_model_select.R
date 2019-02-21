@@ -414,12 +414,12 @@ fit_incremental_angmix <- function(model, data,
       if (crit %in% c("LOOIC", "WAIC")) {
         compare_crit <- suppressWarnings(loo::compare(all_crit[[j-1]],
                                                       all_crit[[j]]))
-        # test for signif improvement in crit
-        # H0: curr crit - prev crit <= 0 vs Ha: >
+        # test for signif improvement in elpd
+        # H0: curr elpd - prev elpd <= 0 vs Ha: >
         zscore <- compare_crit["elpd_diff"]/compare_crit["se"]
         if (zscore <= 1.645) {
           # fail to reject null at alpha = 0.05 --
-          # so no signific improvement in curr crit compared to prev
+          # so no signific improvement in curr elpd compared to prev
           check_min <- TRUE
           j.best <- j-1
           cat("\nImprovement in predicitive accuracy not significant. Stopping...\n")
