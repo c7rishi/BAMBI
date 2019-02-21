@@ -14,6 +14,10 @@
 #' Default to seq(0, 2*pi, length.out=100).
 #' @param ... additional model specific argment
 #' @param xlab,ylab,col,lty,main graphical parameters passed to \link{contour}.
+#' @examples
+#' contour_model('vmsin', 1, 1, 1.5, pi, pi)
+#' contour_model('vmcos', 1, 1, 1.5, pi, pi)
+#'
 #'
 #' @export
 
@@ -49,21 +53,27 @@ contour_model <- function(model = "vmsin", kappa1, kappa2, kappa3, mu1, mu2,
 
 
 
-#' Densitysurface for bivariate angular mixture model densities
+#' Surface for bivariate angular mixture model densities
 #' @inheritParams contour_model
 #' @param kappa1,kappa2,kappa3,mu1,mu2,pmix model parameters and mixing
 #' proportions. See the respective mixture model densities (\link{dvmsinmix}, \link{dvmcosmix},
 #' \link{dwnorm2mix}) for more details.
-#' @param xlab,ylab,zlab,main,theta,phi,shade,expand graphical parameters passed to \link{persp}
+#' @param log.density logical. Should log density be used for the plot?
+#' @param xlab,ylab,zlab,main graphical parameters passed to \code{lattice::wireframe}
+#' @param ... additional arguments passed to \code{lattice::wireframe}
+#' @examples
+#' surface_model('vmsin', 1, 1, 1.5, pi, pi)
+#' surface_model('vmcos', 1, 1, 1.5, pi, pi)
+#'
 #' @export
 
 surface_model <- function(model = "vmsin", kappa1, kappa2, kappa3, mu1, mu2,
                           pmix = rep(1/length(kappa1), length(kappa1)),
-                          xpoints = seq(0, 2*pi, length.out = 50),
-                          ypoints = seq(0, 2*pi, length.out = 50),
-                          xlab="x", ylab="y", zlab="Density", main,
-                          theta = 30, phi = 30, shade = 0.01,
-                          expand = 0.5,  ...)
+                          xpoints = seq(0, 2*pi, length.out = 30),
+                          ypoints = seq(0, 2*pi, length.out = 30),
+                          log.density = FALSE, xlab="x", ylab="y",
+                          zlab = ifelse(log.density, "Log Density", "Density"),
+                          main, ...)
 {
   if (!model %in% c("vmsin", "vmcos", "wnorm2"))
     stop("model must be one of \"vmsin\", \"vmcos\" or \"wnorm2\"")
@@ -80,29 +90,37 @@ surface_model <- function(model = "vmsin", kappa1, kappa2, kappa3, mu1, mu2,
 
   denmat <- matrix(dens, nrow = length(xpoints))
 
-  nrden <- nrow(denmat)
-  ncden <- ncol(denmat)
+  if(log.density) {
+    denmat <- log(denmat)
+  }
 
-  denfacet <- denmat[-1, -1] + denmat[-1, -ncden] +
-    denmat[-nrden, -1] + denmat[-nrden, -ncden]
+  print(basic_surfaceplot(xpoints = xpoints, ypoints = ypoints,
+                          denmat = denmat, xlab = xlab, ylab = ylab,
+                          main = main, zlab = zlab, ...))
 
-  # Create a function interpolating colors in the range of specified colors
-  jet.colors <- grDevices::colorRampPalette( c("blue", "green",
-                                               "yellow", "orange", "red") )
-  # Generate the desired number of colors from this palette
-  nbcol <- 500
-  color <- jet.colors(nbcol)
-
-  denfacet <- denmat[-1, -1] + denmat[-1, -ncden] +
-    denmat[-nrden, -1] + denmat[-nrden, -ncden]
-  # Recode facet z-values into color indices
-  facetcol <- cut(denfacet, nbcol)
-
-  persp(x=xpoints, y=ypoints, z=denmat, theta = theta, phi = phi,
-        expand = expand, col = color[facetcol],
-        ltheta = 120, shade = shade, ticktype = "detailed",
-        xlab = xlab, ylab = ylab, zlab = zlab,
-        main = main, ...) -> res
+  # nrden <- nrow(denmat)
+  # ncden <- ncol(denmat)
+  #
+  # denfacet <- denmat[-1, -1] + denmat[-1, -ncden] +
+  #   denmat[-nrden, -1] + denmat[-nrden, -ncden]
+  #
+  # # Create a function interpolating colors in the range of specified colors
+  # jet.colors <- grDevices::colorRampPalette( c("blue", "green",
+  #                                              "yellow", "orange", "red") )
+  # # Generate the desired number of colors from this palette
+  # nbcol <- 500
+  # color <- jet.colors(nbcol)
+  #
+  # denfacet <- denmat[-1, -1] + denmat[-1, -ncden] +
+  #   denmat[-nrden, -1] + denmat[-nrden, -ncden]
+  # # Recode facet z-values into color indices
+  # facetcol <- cut(denfacet, nbcol)
+  #
+  # persp(x=xpoints, y=ypoints, z=denmat, theta = theta, phi = phi,
+  #       expand = expand, col = color[facetcol],
+  #       ltheta = 120, shade = shade, ticktype = "detailed",
+  #       xlab = xlab, ylab = ylab, zlab = zlab,
+  #       main = main, ...) -> res
 
   # wireframe(x=denmat~x*y,
   #           data=data.frame(x=xpoints,

@@ -7,8 +7,8 @@
 \method{densityplot}{angmcmc}(x, fn = mean, log.density = FALSE,
   xpoints = seq(0, 2 * pi, length.out = 35), ypoints = seq(0, 2 * pi,
   length.out = 35), plot = TRUE, show.hist = ifelse(log.density, FALSE,
-  TRUE), theta = 30, phi = 30, shade = 0.01, expand = 0.5, xlab, ylab,
-  zlab = ifelse(log.density, "Log Density", "Density"), main, ...)
+  TRUE), xlab, ylab, zlab = ifelse(log.density, "Log Density", "Density"),
+  main, ...)
 }
 \arguments{
 \item{x}{angmcmc object.}
@@ -30,19 +30,18 @@ curve (if univariate) be plotted?}
 points be added to the plot, if the fitted data is univariate? Ignored if data is
 bivariate.}
 
-\item{theta, phi, shade, expand, xlab, ylab, zlab, main}{grahpical parameters passed to \link{persp} (if
-bivariate) or \link{plot} (if univariate). If the data is univariate,
-\code{theta, phi, shade, expand} are ignored, and \code{zlab} plays the role of
-\code{ylab}.}
+\item{xlab, ylab, zlab, main}{grahpical parameters passed to \code{lattice::wireframe} (if
+bivariate) or \link{plot} (if univariate). If the data is univariate, \code{zlab} and \code{ylab} can be
+used interchangeably (both correspond to the density).}
 
-\item{...}{additional arguments passed to \code{\link{persp}}, if
+\item{...}{additional arguments passed to \code{lattice::wireframe} if
 fitted data is bivariate, or to \link{hist} (if (\code{show.hist == TRUE})), if the fitted data is univariate}
 }
 \description{
 Plot fitted angular mixture model density surfaces or curves.
 }
 \details{
-When \code{plot==TRUE}, \code{densityplot.angmcmc} calls \link{persp} or
+When \code{plot==TRUE}, \code{densityplot.angmcmc} calls \code{lattice::wireframe} or
 \link{plot} from graphics to draw the surface or curve.
 
 To estimate the mixture density, first the parameter vector \eqn{\eta} is estimated
@@ -65,9 +64,14 @@ fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
 # now create density surface with the default first 1/3 as burn-in and thin = 1
 library(lattice)
 densityplot(fit.vmsin.20)
-# the viewing angles can be changed through the arguments theta and phi
-# (passed to persp from graphics)
-densityplot(fit.vmsin.20, theta = 45, phi = 45)
+# the viewing angles can be changed through the argument 'screen'
+# (passed to lattice::wireframe)
+densityplot(fit.vmsin.20, screen = list(z=-30, x=-60))
+densityplot(fit.vmsin.20, screen = list(z=30, x=-60))
+# the colors can be changed through 'col.regions'
+cols <- grDevices::colorRampPalette(c("blue", "green",
+                                      "yellow", "orange", "red"))(100)
+densityplot(fit.vmsin.20, col.regions = cols)
 
 # Now fit a vm mixture model
 # illustration only - more iterations needed for convergence

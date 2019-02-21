@@ -37,3 +37,9 @@ passed to the \link{contour} function in graphics.}
 \description{
 Contourplot for bivariate angular mixture model densities
 }
+\examples{
+contour_model('vmsin', 1, 1, 1.5, pi, pi)
+contour_model('vmcos', 1, 1, 1.5, pi, pi)
+
+
+}

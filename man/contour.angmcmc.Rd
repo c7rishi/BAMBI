@@ -4,10 +4,10 @@
 \alias{contour.angmcmc}
 \title{Contour plot for angmcmc objects with bivariate data}
 \usage{
-\method{contour}{angmcmc}(x, fn = mean, show.data = TRUE, xpoints = seq(0,
-  2 * pi, length.out = 100), ypoints = seq(0, 2 * pi, length.out = 100),
-  levels, nlevels = 20, cex = 1, col = "red", alpha = 0.4, pch = 19,
-  ...)
+\method{contour}{angmcmc}(x, fn = "MAP", show.data = TRUE,
+  xpoints = seq(0, 2 * pi, length.out = 100), ypoints = seq(0, 2 * pi,
+  length.out = 100), levels, nlevels = 20, cex = 1, col = "red",
+  alpha = 0.4, pch = 19, ...)
 }
 \arguments{
 \item{x}{angular MCMC object (with bivariate data).}

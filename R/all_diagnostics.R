@@ -27,7 +27,7 @@
 #'
 #' @export
 
-contour.angmcmc <-  function(x, fn = mean, show.data = TRUE,
+contour.angmcmc <-  function(x, fn = "MAP", show.data = TRUE,
                              xpoints = seq(0, 2*pi, length.out = 100),
                              ypoints = seq(0, 2*pi, length.out = 100),
                              levels, nlevels = 20,
@@ -62,7 +62,8 @@ contour.angmcmc <-  function(x, fn = mean, show.data = TRUE,
 
   coords <- as.matrix(expand.grid(xpoints, ypoints))
   dens <- d_fitted(coords, x, fn = fn)
-  contour(xpoints, ypoints, matrix(dens, nrow=length(xpoints)), levels=levels)
+  contour(xpoints, ypoints, matrix(dens, nrow=length(xpoints)),
+          levels=levels)
 
   if(show.data) points(x$data, col = scales::alpha(col, alpha),
                        cex = cex, pch = pch)
@@ -79,27 +80,25 @@ contour.angmcmc <-  function(x, fn = mean, show.data = TRUE,
 
 
 #' Density plots for angmcmc objects
-#'
 #' @description Plot fitted angular mixture model density surfaces or curves.
 #' @inheritParams pointest
 #' @param x angmcmc object.
 #' @param plot logical. Should the density surface (if the fitted data is bivariate) or the density
 #' curve (if univariate) be plotted?
 #' @param log.density logical. Should log density be used for the plot?
-#' @param ... additional arguments passed to \code{\link{persp}}, if
+#' @param ... additional arguments passed to \code{lattice::wireframe} if
 #' fitted data is bivariate, or to \link{hist} (if (\code{show.hist == TRUE})), if the fitted data is univariate
 #' @param show.hist logical. Should a histogram for the data
 #' points be added to the plot, if the fitted data is univariate? Ignored if data is
 #' bivariate.
-#' @param theta,phi,shade,expand,xlab,ylab,zlab,main grahpical parameters passed to \link{persp} (if
-#' bivariate) or \link{plot} (if univariate). If the data is univariate,
-#' \code{theta, phi, shade, expand} are ignored, and \code{zlab} plays the role of
-#' \code{ylab}.
+#' @param xlab,ylab,zlab,main grahpical parameters passed to \code{lattice::wireframe} (if
+#' bivariate) or \link{plot} (if univariate). If the data is univariate, \code{zlab} and \code{ylab} can be
+#' used interchangeably (both correspond to the density).
 #' @param xpoints,ypoints Points on the  x and y coordinates (if bivariate) or only x coordinate
 #' (if univariate) where the density is to be evaluated. Each defaults to seq(0, 2*pi, length.out=100).
 #'
 #' @details
-#' When \code{plot==TRUE}, \code{densityplot.angmcmc} calls \link{persp} or
+#' When \code{plot==TRUE}, \code{densityplot.angmcmc} calls \code{lattice::wireframe} or
 #' \link{plot} from graphics to draw the surface or curve.
 #'
 #' To estimate the mixture density, first the parameter vector \eqn{\eta} is estimated
@@ -122,9 +121,14 @@ contour.angmcmc <-  function(x, fn = mean, show.data = TRUE,
 #' # now create density surface with the default first 1/3 as burn-in and thin = 1
 #' library(lattice)
 #' densityplot(fit.vmsin.20)
-#' # the viewing angles can be changed through the arguments theta and phi
-#' # (passed to persp from graphics)
-#' densityplot(fit.vmsin.20, theta = 45, phi = 45)
+#' # the viewing angles can be changed through the argument 'screen'
+#' # (passed to lattice::wireframe)
+#' densityplot(fit.vmsin.20, screen = list(z=-30, x=-60))
+#' densityplot(fit.vmsin.20, screen = list(z=30, x=-60))
+#' # the colors can be changed through 'col.regions'
+#' cols <- grDevices::colorRampPalette(c("blue", "green",
+#'                                       "yellow", "orange", "red"))(100)
+#' densityplot(fit.vmsin.20, col.regions = cols)
 #'
 #' # Now fit a vm mixture model
 #' # illustration only - more iterations needed for convergence
@@ -132,7 +136,7 @@ contour.angmcmc <-  function(x, fn = mean, show.data = TRUE,
 #'                              n.chains = 1)
 #' densityplot(fit.vm.20)
 #'
-#' @importFrom lattice densityplot
+#' @importFrom lattice densityplot wireframe
 #'
 #' @export
 
@@ -141,8 +145,7 @@ densityplot.angmcmc <- function(x, fn = mean, log.density = FALSE,
                                 ypoints=seq(0, 2*pi, length.out=35),
                                 plot=TRUE,
                                 show.hist=ifelse(log.density, FALSE, TRUE),
-                                theta = 30, phi = 30, shade = 0.01,
-                                expand = 0.5, xlab, ylab,
+                                xlab, ylab,
                                 zlab = ifelse(log.density, "Log Density", "Density"),
                                 main,
                                 ...)
@@ -197,22 +200,28 @@ densityplot.angmcmc <- function(x, fn = mean, log.density = FALSE,
         main <- paste("Density surface for fitted (single component)", object$model)
       }
 
-      # Create a function interpolating colors in the range of specified colors
-      jet.colors <- grDevices::colorRampPalette( c("blue", "green",
-                                                   "yellow", "orange", "red") )
-      # Generate the desired number of colors from this palette
-      nbcol <- 500
-      color <- jet.colors(nbcol)
+      # # Create a function interpolating colors in the range of specified colors
+      # jet.colors <- grDevices::colorRampPalette( c("blue", "green",
+      #                                              "yellow", "orange", "red") )
+      # # Generate the desired number of colors from this palette
+      # nbcol <- 500
+      # color <- jet.colors(nbcol)
 
-      denfacet <- denmat[-1, -1] + denmat[-1, -ncden] +
-        denmat[-nrden, -1] + denmat[-nrden, -ncden]
+      # denfacet <- denmat[-1, -1] + denmat[-1, -ncden] +
+      #   denmat[-nrden, -1] + denmat[-nrden, -ncden]
       # Recode facet z-values into color indices
-      facetcol <- cut(denfacet, nbcol)
+      # facetcol <- cut(denfacet, nbcol)
 
-      persp(x=xpoints, y=ypoints, z=denmat, theta = theta, phi = phi, expand = expand, col = color[facetcol],
-            ltheta = 120, shade = shade, ticktype = "detailed",
-            xlab = xlab, ylab = ylab, zlab = zlab,
-            main = main, ...) -> res
+      print(basic_surfaceplot(xpoints = xpoints, ypoints = ypoints,
+                        denmat = denmat, xlab = xlab, ylab = ylab,
+                        main = main, zlab = zlab, ...))
+
+      # persp(x=xpoints, y=ypoints, z=denmat, theta = theta, phi = phi, expand = expand, col = color[facetcol],
+      #       ltheta = 120, shade = shade, ticktype = "detailed",
+      #       xlab = xlab, ylab = ylab, zlab = zlab,
+      #       main = main, ...) -> res
+
+
 
       # inargs <- list(...)
       # inargs$x <- denmat~x*y
@@ -275,9 +284,13 @@ densityplot.angmcmc <- function(x, fn = mean, log.density = FALSE,
       if (missing(xlab))
         xlab <- "Angles in radian"
 
+      if (missing(ylab)) {
+        ylab <- zlab
+      }
+
       y_max <- 1.1* max(den, histplot$density)
       plot(NULL, xlim=range(xpoints), ylim=c(0, y_max), xlab = xlab,
-           ylab=zlab, main=main)
+           ylab=ylab, main=main)
       points(xpoints, den, type = "l")
 
       if(show.hist) plot(histplot, freq = FALSE, add = TRUE, ...)

@@ -2,13 +2,13 @@
 % Please edit documentation in R/all_model_plots.R
 \name{surface_model}
 \alias{surface_model}
-\title{Densitysurface for bivariate angular mixture model densities}
+\title{Surface for bivariate angular mixture model densities}
 \usage{
 surface_model(model = "vmsin", kappa1, kappa2, kappa3, mu1, mu2,
   pmix = rep(1/length(kappa1), length(kappa1)), xpoints = seq(0, 2 * pi,
-  length.out = 50), ypoints = seq(0, 2 * pi, length.out = 50), xlab = "x",
-  ylab = "y", zlab = "Density", main, theta = 30, phi = 30,
-  shade = 0.01, expand = 0.5, ...)
+  length.out = 30), ypoints = seq(0, 2 * pi, length.out = 30),
+  log.density = FALSE, xlab = "x", ylab = "y",
+  zlab = ifelse(log.density, "Log Density", "Density"), main, ...)
 }
 \arguments{
 \item{model}{bivariate angular model whose mixture is of interest. Must be one of
@@ -24,10 +24,17 @@ Default to seq(0, 2*pi, length.out=100).}
 \item{ypoints}{Points on the first (x-) coordinate where the density is to be evaluated.
 Default to seq(0, 2*pi, length.out=100).}
 
-\item{xlab, ylab, zlab, main, theta, phi, shade, expand}{graphical parameters passed to \link{persp}}
+\item{log.density}{logical. Should log density be used for the plot?}
 
-\item{...}{additional model specific argment}
+\item{xlab, ylab, zlab, main}{graphical parameters passed to \code{lattice::wireframe}}
+
+\item{...}{additional arguments passed to \code{lattice::wireframe}}
 }
 \description{
-Densitysurface for bivariate angular mixture model densities
+Surface for bivariate angular mixture model densities
+}
+\examples{
+surface_model('vmsin', 1, 1, 1.5, pi, pi)
+surface_model('vmcos', 1, 1, 1.5, pi, pi)
+
 }
