@@ -31,7 +31,8 @@ Imports: stats,
 		 RColorBrewer,
 		 bridgesampling,
 		 scales
-Suggests:  future		 
+Suggests:  future,
+      gridExtra
 Depends: R (>= 3.2.0)
 URL: https://arxiv.org/abs/1708.07804
 BugReports: https://github.com/c7rishi/BAMBI/issues

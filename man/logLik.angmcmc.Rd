@@ -27,7 +27,7 @@ Extract Log-Likelihood from angmcmc objects
 \details{
 There are two ways to estimate the log likelihood from the model. If \code{method = 1},
 then log likelihood is estimated by applying \code{fn} (defaults to max, if method = 1)
-direclty on the iteration-wise log likelihood values from the MCMC.
+direclty on the log likelihood values from observed during the MCMC run.
 On the other hand, if \code{method == 2}, then  parameter estimates
 are first computed using \code{pointest} with \code{fn}
 (defaults to "MODE", if \code{method == 2}) applied on the MCMC samples,

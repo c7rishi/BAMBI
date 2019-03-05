@@ -446,7 +446,7 @@ fit_incremental_angmix <- function(model, data,
   result <- list("fit.all" = fit_all[1:j], "fit.best" = fit_best,
                  "ncomp.best" = all_ncomp[j.best], "crit" = crit,
                  "crit.all" = all_crit[1:j],
-                 "crit.best" = all_crit[j.best],
+                 "crit.best" = all_crit[[j.best]],
                  "maxllik.all" = all_maxllik[1:j],
                  "maxllik.best" = all_maxllik[j.best],
                  "check_min" = check_min)

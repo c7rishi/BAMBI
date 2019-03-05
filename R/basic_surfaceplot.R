@@ -26,10 +26,29 @@ basic_surfaceplot <- function(xpoints, ypoints, denmat,
     inargs$col.regions <- grDevices::colorRampPalette(c("steelblue", "green",
                                                         "yellow", "orange", "red"))(60)
   if (is.null(inargs$par.settings))
-    inargs$par.settings <- list(top.padding = 0,
-                                bottom.padding = 0,
-                                left.padding=0,
-                                right.padding=0,
-                                axis.line=list(col = 'transparent'))
+    inargs$par.settings <-
+    list(axis.line = list(col = 'transparent'
+    ),
+    layout.heights = list(
+      top.padding = 0,
+      main.key.padding = 0,
+      key.axis.padding = 0,
+      axis.xlab.padding = 0,
+      xlab.key.padding = 0,
+      key.sub.padding = 0,
+      bottom.padding = 0
+    ),
+    layout.widths = list(
+      left.padding = 0,
+      key.ylab.padding = 0,
+      ylab.axis.padding = 0,
+      axis.key.padding = 0,
+      right.padding = 0
+    ))
+
+  if (is.null(inargs$zoom))
+    inargs$zoom <- 0.85
+
+
   do.call(lattice::wireframe, inargs)
 }

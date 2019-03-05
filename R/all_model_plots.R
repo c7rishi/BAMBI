@@ -84,8 +84,9 @@ surface_model <- function(model = "vmsin", kappa1, kappa2, kappa3, mu1, mu2,
 
 
   coords <- as.matrix(expand.grid(xpoints, ypoints))
-  inargs <- list(x = coords, kappa1 = kappa1, kappa2 = kappa2, kappa3 = kappa3,
-                 mu1 = mu1, mu2 = mu2, pmix = pmix, ...)
+  inargs <- list(x = coords, kappa1 = kappa1, kappa2 = kappa2,
+                 kappa3 = kappa3,
+                 mu1 = mu1, mu2 = mu2, pmix = pmix)
   dens <- do.call(paste0("d", model, "mix"), inargs)
 
   denmat <- matrix(dens, nrow = length(xpoints))
