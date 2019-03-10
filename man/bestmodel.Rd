@@ -2,18 +2,36 @@
 % Please edit documentation in R/all_model_select.R
 \name{bestmodel}
 \alias{bestmodel}
-\title{Extracting angmcmc object corresponding to the best fitted model in stepwise fits}
+\alias{bestcriterion}
+\title{Convenience function for extracting angmcmc object, and the value of the model
+selection criterion corresponding to the best fitted model in stepwise fits}
 \usage{
 bestmodel(step_object)
+
+bestcriterion(step_object)
 }
 \arguments{
 \item{step_object}{stepwise fitted object obtained from \link{fit_incremental_angmix}.}
 }
 \value{
-Returns an angmcmc object corresponding to the the best fitted model in step_object.
+\code{bestmodel} returns an \code{angmcmc} object, and
+\code{bestcriterion} returns the  corresponding value of model selection criterion  for the best fitted model in \code{step_object}.
 }
 \description{
-Extracting angmcmc object corresponding to the best fitted model in stepwise fits
+Convenience function for extracting angmcmc object, and the value of the model
+selection criterion corresponding to the best fitted model in stepwise fits
+}
+\details{
+These are convenience functions; the best fitted model and the corresponding value of model selection criterion
+can also be directly obtained by
+extracting the elements \code{"fit.best"} and \code{"crit.best"} from \code{step_object} respectively.
+Note that \code{bestcriterion} returns:
+(a) a scalar number (class = \code{numeric}) if \code{crit}
+used in original \code{fit_incremental_angmix} call is \code{'AIC'}, \code{'BIC'} or \code{'DIC'},
+(b) an element of class \code{bridge} from package \code{bridgesampling} if \code{crit} is
+\code{LOGML}, (c) an element of class \code{c("waic", "loo")} if \code{crit = 'WAIC'}, and (d) an element of
+class \code{c("psis_loo", "loo")} if \code{crit = "LOOIC"}. See documentations of these model
+selection criteria for more details.
 }
 \examples{
 # illustration only - more iterations needed for convergence
@@ -24,4 +42,6 @@ fit.vmsin.step.15 <- fit_incremental_angmix("vmsin", tim8, start_ncomp = 1,
 fit.vmsin.best.15 <- bestmodel(fit.vmsin.step.15)
 fit.vmsin.best.15
 
+crit.best <- bestcriterion(fit.vmsin.step.15)
+crit.best
 }
