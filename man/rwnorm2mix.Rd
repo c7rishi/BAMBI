@@ -23,7 +23,8 @@ dwnorm2mix(x, kappa1, kappa2, kappa3, mu1, mu2, pmix, int.displ, log = FALSE)
 \item{x}{matrix of angles (in radians) where the density is to be evaluated, with each row being a
 single bivariate vector of angles.}
 
-\item{int.displ}{integer displacement. The allowed values are 1, 2, 3, 4 and 5. Default is 3.}
+\item{int.displ}{integer displacement. If \code{int.displ =} M, then each infinite sum in the
+density is approximated by a finite sum over 2*M + 1 elements. (See Details.) The allowed values are 1, 2, 3, 4 and 5. Default is 3.}
 
 \item{log}{logical. Should the log density be returned instead?}
 }

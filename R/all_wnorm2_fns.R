@@ -1,6 +1,8 @@
 #' The bivariate Wrapped Normal distribution
 #' @inheritParams rvmsin
 #' @inheritParams rwnorm
+#' @param int.displ integer displacement. If \code{int.displ =} M, then each infinite sum in the
+#' density is approximated by a finite sum over 2*M + 1 elements. (See Details.) The allowed values are 1, 2, 3, 4 and 5. Default is 3.
 #' @param mu1,mu2 vectors of mean parameters.
 #' @param kappa1,kappa2,kappa3 vectors of concentration parameters; \code{kappa1, kappa2 > 0},
 #' and \code{kappa3^2 < kappa1*kappa2}.

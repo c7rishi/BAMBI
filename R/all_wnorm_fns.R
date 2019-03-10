@@ -3,7 +3,8 @@
 
 #' The univariate Wrapped Normal distribution
 #' @inheritParams rvm
-#' @param int.displ integer displacement. The allowed values are 1, 2, 3, 4 and 5. Default is 3.
+#' @param int.displ integer displacement. If \code{int.displ =} M, then the infinite sum in the
+#' density is approximated by a sum over 2*M + 1 elements. (See Details.) The allowed values are 1, 2, 3, 4 and 5. Default is 3.
 #' @details If \code{mu} and \code{kappa} are not specified they assume the default values of \code{0} and \code{1} respectively.
 #' @details The univariate wrapped normal distribution has density
 #' \deqn{f(x) = \sqrt(\kappa/(2\pi)) \sum \exp(-\kappa/2 (x - \mu(2\pi\omega))^2)}

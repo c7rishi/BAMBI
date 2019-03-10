@@ -24,7 +24,8 @@ and \code{kappa3^2 < kappa1*kappa2}.}
 \item{x}{bivariate vector  or a two-column matrix with each row being a bivariate vector of angles
 (in radians)  where the densities are to be evaluated.}
 
-\item{int.displ}{integer displacement. The allowed values are 1, 2, 3, 4 and 5. Default is 3.}
+\item{int.displ}{integer displacement. If \code{int.displ =} M, then each infinite sum in the
+density is approximated by a finite sum over 2*M + 1 elements. (See Details.) The allowed values are 1, 2, 3, 4 and 5. Default is 3.}
 
 \item{log}{logical. Should the log density be returned instead?}
 }

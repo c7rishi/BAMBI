@@ -21,7 +21,8 @@ case, all the parameters are recycled to length k to produce k random variates.}
 
 \item{x}{vector of angles (in radians) where the densities are to be evaluated.}
 
-\item{int.displ}{integer displacement. The allowed values are 1, 2, 3, 4 and 5. Default is 3.}
+\item{int.displ}{integer displacement. If \code{int.displ =} M, then the infinite sum in the
+density is approximated by a sum over 2*M + 1 elements. (See Details.) The allowed values are 1, 2, 3, 4 and 5. Default is 3.}
 
 \item{log}{logical. Should the log density be returned instead?}
 }
