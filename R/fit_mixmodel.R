@@ -124,7 +124,7 @@ find_lscale_mat_uni <- function(x) {
 #' one for each chain. Ignored if \code{start_par} is supplied. See \code{start_par} for more details. Defaults to \code{FALSE}.
 #' @param tune_ave_size number previous iterations used to compute the acceptance rate while tuning in burn-in. Must be a positive
 #' integer. Defaults to 100.
-#' @param qrnd_grid,n_qrnd Used only if \code{method="vmcos"}. See \link{dvmcos} for details.
+#' @param qrnd,n_qrnd Used only if \code{method="vmcos"}. See \link{dvmcos} for details.
 #' @param kappa_upper,kappa_lower upper and lower bounds for the concentration and (absolute) association parameters. Must be a positive integers. Defaults to 150 and 1e-4,
 #' and parameter with value above or below these limits rarely make sense in practice.
 #' Warning: values much larger or smaller than the default are not recommended as they can cause numerical instability.
@@ -232,7 +232,7 @@ fit_angmix <- function(model = "vmsin",
                        kappa_upper = 150,
                        kappa_lower = 1e-4,
                        return_tune_param = FALSE,
-                       qrnd_grid = NULL,
+                       qrnd = NULL,
                        n_qrnd = NULL, ...)
 {
 
@@ -606,10 +606,10 @@ fit_angmix <- function(model = "vmsin",
 
   else if (model == "vmcos") {
 
-    ell <- list(qrnd_grid = qrnd_grid, n_qrnd = n_qrnd)
+    ell <- list(qrnd_grid = qrnd, n_qrnd = n_qrnd)
 
-    if (!is.null(ell$qrnd_grid)) {
-      qrnd_grid <- ell$qrnd_grid
+    if (!is.null(ell$qrnd)) {
+      qrnd_grid <- ell$qrnd
       dim_qrnd <- dim(qrnd_grid)
       if (!is.matrix(qrnd_grid) | is.null(dim_qrnd) |
           dim_qrnd[2] != 2)

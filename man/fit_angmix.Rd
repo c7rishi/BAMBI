@@ -14,7 +14,7 @@ fit_angmix(model = "vmsin", data, ncomp, cov.restrict = "NONE",
   show.progress = TRUE, accpt.prob.upper, accpt.prob.lower,
   epsilon.incr = 0.05, L.incr = 0.075, tune.incr = 0.05,
   tune_ave_size = 100, kappa_upper = 150, kappa_lower = 1e-04,
-  return_tune_param = FALSE, qrnd_grid = NULL, n_qrnd = NULL, ...)
+  return_tune_param = FALSE, qrnd = NULL, n_qrnd = NULL, ...)
 }
 \arguments{
 \item{model}{angular model whose mixtures are to be fitted. Available choices are \code{"vmsin", "vmcos"} and \code{"wnorm2"} for
@@ -141,7 +141,7 @@ Warning: values much larger or smaller than the default are not recommended as t
 
 \item{return_tune_param}{logical. Should the values of the tuning parameters used at each iteration in each chain be returned? Defaults to \code{FALSE}.}
 
-\item{qrnd_grid, n_qrnd}{Used only if \code{method="vmcos"}. See \link{dvmcos} for details.}
+\item{qrnd, n_qrnd}{Used only if \code{method="vmcos"}. See \link{dvmcos} for details.}
 
 \item{...}{Unused.}
 }
