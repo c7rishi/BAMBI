@@ -160,7 +160,7 @@ This is done by specifying \code{future.seed = TRUE} in \code{future.apply::futu
 call, for generating parallel chains.  Then at the begining of the i-th chain, i-many uniform(0, 1)
 random numbers are generated (using \code{runif(i)}) before drawing any parameters.
 This ensures that the RNG states across chains prior to random generation of the parameters
-are different, and hence that no two chains can become identical, even if they have the same starting and tuning parameters. This,
+are different, and hence, no two chains can become identical, even if they have the same starting and tuning parameters. This,
 however creates a difference between a  \code{fit_angmix} call with multiple
 chains, one run sequentially by setting \code{chains_parallel = FALSE}, and
 another run sequentially due to a sequential \code{plan()} (or no \code{plan()})

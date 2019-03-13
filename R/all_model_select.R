@@ -404,7 +404,7 @@ fit_incremental_angmix <- function(model, data,
 
       if (crit %in% c("LOOIC", "WAIC")) {
         cat("\n")
-        cat(suppressWarnings(capture.output(all_crit[[j]])), sep = "\n")
+        cat(suppressWarnings(utils::capture.output(all_crit[[j]])), sep = "\n")
       }
       cat("\n")
       cat("**************\n\n")
