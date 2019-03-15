@@ -416,7 +416,7 @@ fit_incremental_angmix <- function(model, data,
                                                       all_crit[[j]]))
         # test for signif improvement in elpd
         # H0: curr elpd - prev elpd <= 0 vs Ha: >
-        zscore <- compare_crit["elpd_diff"]/compare_crit["se"]
+        zscore <- compare_crit[1]/compare_crit[2]
         if (zscore <= 1.645) {
           # fail to reject null at alpha = 0.05 --
           # so no signific improvement in curr elpd compared to prev

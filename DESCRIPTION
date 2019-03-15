@@ -27,7 +27,7 @@ Imports: stats,
 		 methods,
 		 coda,
 		 future.apply,
-		 loo (>= 2.0.0),
+		 loo (>= 2.1.0),
 		 RColorBrewer,
 		 bridgesampling,
 		 scales
