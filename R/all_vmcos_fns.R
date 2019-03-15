@@ -14,7 +14,7 @@
 #' \deqn{T_1 = x_1 - \mu_1;  T_2 = x_2 - \mu_2}
 #' and \eqn{C_c (\kappa_1, \kappa_2, \kappa_3)} denotes the normalizing constant for the cosine model.
 #'
-#' #' Because \eqn{C_c} involves an infinite series with product of Bessel functions,
+#' Because \eqn{C_c} involves an infinite  alternating series with product of Bessel functions,
 #' if \code{kappa3 < -5} or \code{max(kappa1, kappa2, abs(kappa3)) > 50}, \eqn{C_c} is evaluated
 #' numerically via (quasi) Monte carlo method for
 #' numerical stability. These (quasi) random numbers can be provided through the
@@ -22,7 +22,10 @@
 #' a  (quasi) random number between 0 and 1. Alternatively, if \code{n_qrnd} is
 #' provided (and \code{qrnd} is missing), a two dimensional sobol sequence of size \code{n_qrnd} is
 #' generated via the function \link{sobol} from the R package \code{qrng}. If none of \code{qrnd}
-#' or \code{n_qrnd} is available, a two dimensional sobol sequence of size 1e4 is used.
+#' or \code{n_qrnd} is available, a two dimensional sobol sequence of size 1e4 is used. By default Monte
+#' Carlo approximation is used only if \code{kappa3 < -5} or \code{max(kappa1, kappa2, abs(kappa3)) > 50}.
+#' However, a forced Monte Carlo approximation can be made (irrespective of the choice of \code{kappa1, kappa2} and
+#' \code{kappa3}) by setting \code{force_approx_const = TRUE}.
 #'
 #' @return \code{dvmcos} gives the density  and \code{rvmcos} generates random deviates.
 #'
@@ -195,11 +198,23 @@ dvmcos <- function(x, kappa1=1, kappa2=1, kappa3=0, mu1=0,
   n_x <- nrow(x)
 
 
+
+  if (is.null(ell$force_approx_const)) {
+    force_approx_const <- FALSE
+  } else if (!is.logical(ell$force_approx_const)) {
+    stop("\'force_approx_const\' must be logical.")
+  } else {
+    force_approx_const <- ell$force_approx_const
+  }
+
+
   l_const_all <- rep(0, n_par)
+
   for(j in 1:n_par) {
-    if ((kappa3[j] >= -5 & max(kappa1[j], kappa2[j],
+    if (!force_approx_const |
+        ((kappa3[j] >= -5 & max(kappa1[j], kappa2[j],
                                abs(kappa3[j])) <= 50) |
-        abs(kappa3[j]) < 1e-4) {
+         abs(kappa3[j]) < 1e-4)) {
       l_const_all[j] <- log(const_vmcos_anltc(kappa1[j], kappa2[j],
                                               kappa3[j]))
     } else {
