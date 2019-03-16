@@ -41,8 +41,8 @@
 #' with largest (mean over iterations) log-posterior density. This can be helpful if one of the chains gets stuck at local optima. Defaults to TRUE.
 #' @param return_llik_contri passed to \link{fit_angmix}. By default, set to \code{TRUE} if \code{crit} is either \code{"LOOIC"}
 #' or \code{"WAIC"}, and to \code{FALSE} otherwise.
-#' @param alpha sigificance level used in the test H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
-#' with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}.
+#' @param alpha significance level used in the test H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
+#' with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}. See Details.
 #' Must be a scalar between 0 and 1. Defaults to 0.05. Ignored for any other \crit{crit}.
 #'
 #' @details
@@ -55,7 +55,7 @@
 #' with K + 1 components, is performed at every K >= 1. The test-statistic used for the test is an approximate z-score
 #' based on the normalized estimated elpd difference between the two models (obtained from \link[loo]{compare}, which provides
 #' estimated elpd difference along with its standard error estimate). The incremental fitting stops if  H_{0K} cannot be rejected
-#' (at level 0.05) for some K >= 1; this K is then regarded as the optimum number of components.
+#' (at level \code{alpha}) for some K >= 1; this K is then regarded as the optimum number of components.
 #' If \code{crit} is not \code{"LOOIC"} or \code{"WAIC"} then mixture model with the first minimum value of the model selection criterion \code{crit}
 #' is taken as the best model.
 #'
