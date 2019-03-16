@@ -324,26 +324,27 @@ densityplot.angmcmc <- function(x, fn = mean, log.density = FALSE,
 #' # trace plot for kappa1 in component 1
 #' paramtrace(fit.vmsin.20, "kappa1", 1)
 #' # for kappa1 in all components
-#' paramtrace(fit.vmsin.20, "kappa1", press.enter = FALSE)
+#' paramtrace(fit.vmsin.20, "kappa1")
 #' # for all parameters in component 1
-#' paramtrace(fit.vmsin.20, comp.label = 1, press.enter = FALSE)
+#' paramtrace(fit.vmsin.20, comp.label = 1)
 #'
 #' @importFrom RColorBrewer brewer.pal
 #'
 #' @export
 
 paramtrace <- function(object, par.name, comp.label, chain.no,
-                       # press.enter = TRUE,
                        ...)
 {
   if(!class(object) %in% "angmcmc") stop("\'object\' must be an angmcmc object")
 
   ell <- list(...)
 
+  if (!is.null(ell$press.enter))
+    warning("\'press.enter\' is deprecated. Instead use par(ask=TRUE) before calling paramtrace.")
   if (!is.null(ell$burnin))
-    warning("Use of burnin is depriciated in postprocessing. Use \'burnin.prop\' during original MCMC run instead.")
+    warning("Use of burnin is deprecated in postprocessing. Use \'burnin.prop\' during original MCMC run instead.")
   if (!is.null(ell$thin))
-    warning("Use of thin is depriciated in postprocessing. Use \'thin\' during original MCMC run instead.")
+    warning("Use of thin is deprecated in postprocessing. Use \'thin\' during original MCMC run instead.")
 
   if (missing(par.name)) {
     par.name <- object$par.name
@@ -456,10 +457,12 @@ lpdtrace <- function(object, chain.no, use.llik = FALSE,
 
   ell <- list(...)
 
+  if (!is.null(ell$press.enter))
+    warning("\'press.enter\' is deprecated. Instead use par(ask=TRUE) before calling lpdtrace.")
   if (!is.null(ell$burnin))
-    warning("Use of burnin is depriciated in postprocessing. Use \'burnin.prop\' during original MCMC run instead.")
+    warning("Use of burnin is deprecated in postprocessing. Use \'burnin.prop\' during original MCMC run instead.")
   if (!is.null(ell$thin))
-    warning("Use of thin is depriciated in postprocessing. Use \'thin\' during original MCMC run instead.")
+    warning("Use of thin is deprecated in postprocessing. Use \'thin\' during original MCMC run instead.")
 
 
   if (missing(chain.no)) {
@@ -617,11 +620,14 @@ lpdtrace <- function(object, chain.no, use.llik = FALSE,
 plot.angmcmc <- function(x, par.name, comp.label, chain.no,
                          do.paramtrace = TRUE,
                          do.lpdtrace = TRUE, use.llik = FALSE,
-                         # press.enter = TRUE,
                          ...)
 {
   if (!is.angmcmc(x))
     stop("\'x\' must be an angmcmc object")
+
+  ell <- list(...)
+  if (!is.null(ell$press.enter))
+    warning("\'press.enter\' is deprecated. Instead use par(ask=TRUE) before calling plot.angmcmc.")
 
   if (do.paramtrace)
     paramtrace(x, par.name, comp.label, chain.no, ...)

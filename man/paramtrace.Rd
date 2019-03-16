@@ -36,8 +36,8 @@ fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
 # trace plot for kappa1 in component 1
 paramtrace(fit.vmsin.20, "kappa1", 1)
 # for kappa1 in all components
-paramtrace(fit.vmsin.20, "kappa1", press.enter = FALSE)
+paramtrace(fit.vmsin.20, "kappa1")
 # for all parameters in component 1
-paramtrace(fit.vmsin.20, comp.label = 1, press.enter = FALSE)
+paramtrace(fit.vmsin.20, comp.label = 1)
 
 }
