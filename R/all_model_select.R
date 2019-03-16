@@ -41,6 +41,9 @@
 #' with largest (mean over iterations) log-posterior density. This can be helpful if one of the chains gets stuck at local optima. Defaults to TRUE.
 #' @param return_llik_contri passed to \link{fit_angmix}. By default, set to \code{TRUE} if \code{crit} is either \code{"LOOIC"}
 #' or \code{"WAIC"}, and to \code{FALSE} otherwise.
+#' @param alpha sigificance level used in the test H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
+#' with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}.
+#' Must be a scalar between 0 and 1. Defaults to 0.05. Ignored for any other \crit{crit}.
 #'
 #' @details
 #' The goal is to fit an angular mixture model with an optimally chosen component size K.
@@ -123,6 +126,7 @@ fit_incremental_angmix <- function(model, data,
                                    silent = FALSE,
                                    return_llik_contri = (crit %in% c("LOOIC", "WAIC")),
                                    use_best_chain = TRUE,
+                                   alpha = 0.05,
                                    ...)
 {
   if (length(model) > 1)
@@ -203,6 +207,16 @@ fit_incremental_angmix <- function(model, data,
     }
 
   }
+
+  if (any(length(alpha) != 1,
+          !is.numeric(alpha),
+          alpha < 0,
+          alpha > 1)) {
+
+    stop("\'alpha\' must be a scalar between 0 and 1")
+  }
+
+  q_norm <- qnorm(alpha, lower.tail = F)
 
 
   # all_fit <- vector("list", n_ncomp)
@@ -424,7 +438,7 @@ fit_incremental_angmix <- function(model, data,
         # test for signif improvement in elpd
         # H0: curr elpd - prev elpd <= 0 vs Ha: >
         zscore <- compare_crit[1]/compare_crit[2]
-        if (zscore <= 1.645) {
+        if (zscore <= q_norm) {
           # fail to reject null at alpha = 0.05 --
           # so no signific improvement in curr elpd compared to prev
           check_min <- TRUE

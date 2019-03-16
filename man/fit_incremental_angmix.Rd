@@ -9,7 +9,7 @@ fit_incremental_angmix(model, data, crit = "LOOIC", start_ncomp = 1,
   start_par = NULL, prev_par = TRUE, logml_maxiter = 10000,
   return_all = FALSE, save_fits = FALSE, save_file = NULL,
   save_dir = "", silent = FALSE, return_llik_contri = (crit \%in\%
-  c("LOOIC", "WAIC")), use_best_chain = TRUE, ...)
+  c("LOOIC", "WAIC")), use_best_chain = TRUE, alpha = 0.05, ...)
 }
 \arguments{
 \item{model}{angular model whose mixtures are to be fitted. Available choices are \code{"vmsin", "vmcos"} and \code{"wnorm2"} for
@@ -80,6 +80,10 @@ or \code{"WAIC"}, and to \code{FALSE} otherwise.}
 \item{use_best_chain}{logical. Should only the "best" chain obtained duing each intermediate fit be used during
 computation of model selection criterion? Here "best" means the chain
 with largest (mean over iterations) log-posterior density. This can be helpful if one of the chains gets stuck at local optima. Defaults to TRUE.}
+
+\item{alpha}{sigificance level used in the test H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
+with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}.
+Must be a scalar between 0 and 1. Defaults to 0.05. Ignored for any other \crit{crit}.}
 
 \item{...}{additional arguments passed to \link{fit_angmix}.}
 }
