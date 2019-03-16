@@ -83,7 +83,7 @@ with largest (mean over iterations) log-posterior density. This can be helpful i
 
 \item{alpha}{significance level used in the test H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
 with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}. See Details.
-Must be a scalar between 0 and 1. Defaults to 0.05. Ignored for any other \crit{crit}.}
+Must be a scalar between 0 and 1. Defaults to 0.05. Ignored for any other \code{crit}.}
 
 \item{...}{additional arguments passed to \link{fit_angmix}.}
 }
