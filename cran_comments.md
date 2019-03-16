@@ -1,6 +1,9 @@
 # BAMBI v2.1.0
 
-# Changelog:
+## Resubmission
+This is a resubmission. In this version we have made the following changes.
+
+### Changelog:
 * fixed bugs that were causing some examples to fail 
 (due to an update in package loo)
 * updated documentation of dwnorm, dwnorm2, fit_angmix and
@@ -13,6 +16,15 @@ fit_incremental_angmix
 * changed BESSI, BESSI0, BESSI0_C and BESSI1. They're now all wrappers for R::bessel_i.
 * changed "n"-cluster to "n"-component in print.angmcmc.
 * Deleted AIC.angmcmc, BIC.angmcmc -- they can be directly computed using stats::AIC and stats::BIC.
+
+
+
+## Test environments
+* local Windows 10 install, R 3.5.3
+* win-builder (devel)
+* Ubuntu release 18.04, R 3.5.3
+
+
 
 
 # BAMBI v2.0.1
