@@ -1,12 +1,18 @@
 # BAMBI v2.1.0
 
 # Changelog:
+* fixed bugs that were causing some examples to fail 
+(due to an update in package loo)
+* updated documentation of dwnorm, dwnorm2, fit_angmix and
+fit_incremental_angmix
+* added an optional argument 'force_approx_const' to dvmcos
+* added a function 'bestcriterion' to extract the value of best model selection criterion from stepwise fits.
+* densityplot now uses lattice::wireframe instead of persp
 * added alpha shading argument in contour.angmcmc.
 * removed press.enter argument from plot.angmcmc, paramtrace and lpdtrace.
 * changed BESSI, BESSI0, BESSI0_C and BESSI1. They're now all wrappers for R::bessel_i.
 * changed "n"-cluster to "n"-component in print.angmcmc.
-* Deleted AIC.angmcmc, BIC.angmcmc -- they can be directly computed using 
-stats::AIC and stats::BIC.
+* Deleted AIC.angmcmc, BIC.angmcmc -- they can be directly computed using stats::AIC and stats::BIC.
 
 
 # BAMBI v2.0.1

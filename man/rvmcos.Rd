@@ -98,8 +98,8 @@ rvmcos(n, kappa1, kappa2, kappa3, mu1, mu2)
 
 
 \dontrun{
-## Visualizing (quasi) Mont Carlo based approximation of
-## the normalizing constant through density evaluation.
+## Visualizing (quasi) Monte Carlo based approximations of
+## the normalizing constant through density evaluations.
 
 # "good" setup, where the analytic formula for C_c can be
 # calulated without numerical issues
@@ -163,7 +163,6 @@ plot(n_qrnd, bad.q, ylim = range(bad.q, bad.r),
      ylab = "",
      main = "dvmcos(c(3,3), 100, 100, -200, pi, pi, log = TRUE)")
 points(n_qrnd, bad.r, col = "skyblue", type = "l")
-abline(h = bad.a, lty = 2, col = "grey")
 legend("topright",
        legend = c("Sobol", "Random"),
        col = c("orange", "skyblue"), lty = 1)

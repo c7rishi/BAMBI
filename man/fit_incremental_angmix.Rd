@@ -110,16 +110,23 @@ Stepwise fitting of angular mixture models with incremental component sizes and 
 \details{
 The goal is to fit an angular mixture model with an optimally chosen component size K.
 To obtain an optimum K, mixture models with incremental component sizes
-between \code{start_ncomp} and \code{max_ncomp} are fitted stepwise using \link{fit_angmix}.
-The mixture model with the first minimum value of the model selection criterion \code{crit}
+between \code{start_ncomp} and \code{max_ncomp} are fitted incrementally using \link{fit_angmix},
+starting from K = 1.
+If the model selection criterion \code{crit} is \code{"LOOIC"} or \code{"WAIC"}, then a test of hypothesis
+H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
+with K + 1 components, is performed at every K >= 1. The test-statistic used for the test is an approximate z-score
+based on the normalized estimated elpd difference between the two models (obtained from \link[loo]{compare}, which provides
+estimated elpd difference along with its standard error estimate). The incremental fitting stops if  H_{0K} cannot be rejected
+(at level 0.05) for some K >= 1; this K is then regarded as the optimum number of components.
+If \code{crit} is not \code{"LOOIC"} or \code{"WAIC"} then mixture model with the first minimum value of the model selection criterion \code{crit}
 is taken as the best model.
 
 Note that in each intermediate fitted model, the total number of components (instead of the number of
 "non-empty components") in the model is used to estimate of the true component
-size, and then the fitted model is penalized for model complexity (via the model selection criterion).
+size, and then the fitted model is penalized for model complexity (via the model selection criterion used).
 This approach of selecting an optimal K follows the perspective "let two component specific parameters
 be identical" for overfitting mixtures, and as such the  Dirichlet prior hyper-parameters \code{pmix.alpha}
-(passed to \link{fit_angmix}) should be large. See  Fruhwirth-Schnatter (2011) and Mengerson for more deltails.
+(passed to \link{fit_angmix}) should be large. See  Fruhwirth-Schnatter (2011) for more deltails.
 
 Note that the stability of \link{bridge_sampler} used in marginal likelihood estimation heavily depends on stationarity of the
 chains. As such, while using this criterion, we recommending running the chain long engouh, and setting \code{fix_label = TRUE}
