@@ -182,7 +182,7 @@ circ_varcor_model <- function(model = "vmsin", kappa1 = 1, kappa2 = 1, kappa3 = 
       dim_qrnd <- dim(qrnd_grid)
       if (!is.matrix(qrnd_grid) | is.null(dim_qrnd) |
           dim_qrnd[2] != 2)
-        stop("qrnd_grid must be a two column matrix")
+        stop("\'qrnd\' must be a two column matrix")
       n_qrnd <- dim_qrnd[1]
     } else if (!is.null(ell$n_qrnd)){
       n_qrnd <- round(ell$n_qrnd)
