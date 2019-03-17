@@ -1689,6 +1689,8 @@ fit_angmix <- function(model = "vmsin",
   }
 
 
+  seed <- floor(runif(1, 1,  100))
+
   # browser()
   # generate three chains in parallel, if possible
   if (chains_parallel) {
@@ -1696,7 +1698,7 @@ fit_angmix <- function(model = "vmsin",
     res_list <- future_lapply(1:n.chains,
                               function(ii) run_MC(starting[[ii]],
                                                   L[ii], ii),
-                              future.seed = TRUE)
+                              future.seed = seed)
   } else {
     res_list <- lapply(1:n.chains,
                        function(ii) run_MC(starting[[ii]], L[ii], ii))
