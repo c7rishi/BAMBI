@@ -39,7 +39,8 @@ find_lscale_mat_uni <- function(x) {
 #' @param model angular model whose mixtures are to be fitted. Available choices are \code{"vmsin", "vmcos"} and \code{"wnorm2"} for
 #' bivariate data, and \code{"vm"} and \code{"wnorm"} for univariate data.
 #' @param data data matrix (if bivarate, in which case it must have two columns) or vector. If outside, the values
-#' are transformed into the scale \eqn{[0, 2\pi)}.
+#' are transformed into the scale \eqn{[0, 2\pi)}. *Note:* BAMBI cannot handle missing data. Missing values must
+#' either be removed or properly imputed.
 #' @param ncomp number of components in the mixture model. Must be a positive integer. vector values are not allowed.
 #' If \code{comp == 1}, a single component model is fitted.
 #' @param start_par list with elements \code{pmix} (ignored if \code{comp == 1}), together with \code{kappa1, kappa2, mu1} and \code{mu2},
@@ -273,7 +274,10 @@ fit_angmix <- function(model = "vmsin",
         !cov.restrict %in% c("NONE", "POSITIVE", "NEGATIVE", "ZERO"))
       stop("cov.restrict must be one of \"NONE\", \"POSITIVE\", \"NEGATIVE\" and  \"ZERO\"")
 
-
+    if (any(is.na(data))) {
+      stop(paste("\'data\' contains missing value(s). BAMBI cannot handle missing data.\n",
+                 "Either remove them or properly impute them."))
+    }
     data.rad <- rm_NA_rad(data)
     n.data <- nrow(data.rad)
 

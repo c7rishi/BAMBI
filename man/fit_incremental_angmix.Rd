@@ -16,7 +16,8 @@ fit_incremental_angmix(model, data, crit = "LOOIC", start_ncomp = 1,
 bivariate data, and \code{"vm"} and \code{"wnorm"} for univariate data.}
 
 \item{data}{data matrix (if bivarate, in which case it must have two columns) or vector. If outside, the values
-are transformed into the scale \eqn{[0, 2\pi)}.}
+are transformed into the scale \eqn{[0, 2\pi)}. *Note:* BAMBI cannot handle missing data. Missing values must
+either be removed or properly imputed.}
 
 \item{crit}{model selection criteria, one of \code{"LOOIC", "WAIC", "AIC", "BIC", "DIC"} or \code{"LOGML"}. Default is
 \code{"LOOIC"}.}

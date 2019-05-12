@@ -21,7 +21,8 @@ fit_angmix(model = "vmsin", data, ncomp, cov.restrict = "NONE",
 bivariate data, and \code{"vm"} and \code{"wnorm"} for univariate data.}
 
 \item{data}{data matrix (if bivarate, in which case it must have two columns) or vector. If outside, the values
-are transformed into the scale \eqn{[0, 2\pi)}.}
+are transformed into the scale \eqn{[0, 2\pi)}. *Note:* BAMBI cannot handle missing data. Missing values must
+either be removed or properly imputed.}
 
 \item{ncomp}{number of components in the mixture model. Must be a positive integer. vector values are not allowed.
 If \code{comp == 1}, a single component model is fitted.}
