@@ -1,3 +1,30 @@
+# BAMBI v2.1.1
+
+## Resubmission
+This is a resubmission. In this version we have made the following changes.
+
+### Changelog:
+* fixed bugs that were creating some platform differences in fit_angmix
+* added a check for NA values in data inside fit_angmix 
+
+
+
+## Test environments
+* local Windows 10 install, R 3.5.3
+* win-builder (devel)
+* Ubuntu release 18.04, R 3.5.3
+
+## R CMD check results
+There were no ERRORs or WARNINGs. 
+
+There was 1 NOTE on Ubuntu 18.04, but not in local Windows 10 nor in win-builder. The NOTE was on the size of installed package:
+
+* checking installed package size ... NOTE
+  installed size is  5.3Mb
+  sub-directories of 1Mb or more:
+    libs   4.8Mb
+
+
 # BAMBI v2.1.0
 
 ## Resubmission
