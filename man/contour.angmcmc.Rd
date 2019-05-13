@@ -4,10 +4,10 @@
 \alias{contour.angmcmc}
 \title{Contour plot for angmcmc objects with bivariate data}
 \usage{
-\method{contour}{angmcmc}(x, fn = "MAP", show.data = TRUE,
-  xpoints = seq(0, 2 * pi, length.out = 100), ypoints = seq(0, 2 * pi,
-  length.out = 100), levels, nlevels = 20, cex = 1, col = "red",
-  alpha = 0.4, pch = 19, ...)
+\method{contour}{angmcmc}(x, fn = "MAP", type = "point-est",
+  show.data = TRUE, xpoints = seq(0, 2 * pi, length.out = 100),
+  ypoints = seq(0, 2 * pi, length.out = 100), levels, nlevels = 20,
+  cex = 1, col = "red", alpha = 0.4, pch = 19, ...)
 }
 \arguments{
 \item{x}{angular MCMC object (with bivariate data).}
@@ -16,6 +16,8 @@
 parameters.  Defaults to \code{mean}, which computes the estimated posterior mean.
 Note that if \code{fn = "MODE"} (warning: not \code{"mode"}) or \code{fn = "MAP"}, then the maximum aposteriori estimate (MAP) is
 calculated.}
+
+\item{type}{Passed to \link{d_fitted}. Possible choices are "point-est" and "post-pred".}
 
 \item{show.data}{logical. Should the data points be added to the contour plot? Ignored if \code{object} is NOT supplied.}
 

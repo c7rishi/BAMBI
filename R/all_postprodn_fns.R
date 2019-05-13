@@ -40,7 +40,8 @@ add_burnin_thin <- function(object, burnin.prop=0, thin=1)
 
 #' Select chains from angmcmc objects
 #' @inheritParams pointest
-#' @param chain.no labels of chains to be retained in the final sample
+#' @param chain.no labels of chains to be retained in the final sample. If missing,
+#' all chains are used.
 #' @param ... unused
 #'
 #' @examples
@@ -938,6 +939,8 @@ loo.angmcmc <- function(x, ...)
 #' Density and random deviates from an angmcmc object
 #' @inheritParams pointest
 #' @inheritParams dvmsin
+#' @param type Method of estimating density/generating random deviates. Possible choices are
+#' \code{"post-pred"} and \code{"point-est"}. See details. Defaults to \code{"point-est"}.
 #' @param object angular MCMC object. The dimension of the model must match with \code{x}.
 #' @param x vector, if univariate or a two column matrix, if bivariate, with each row a 2-D vector, (can
 #' also be a data frame of similar dimensions) of points where the
@@ -947,25 +950,36 @@ loo.angmcmc <- function(x, ...)
 #' creates a vector (if univariate) or a matrix (if bivariate) with each row being a 2-D point, of random deviates.
 #'
 #' @details
-#' To estimate the mixture density, first the parameter vector \eqn{\eta} is estimated
-#' by applying \code{fn} on the MCMC samples (using the function \link{pointest}), yielding the (consistent) Bayes estimate \eqn{\hat{\eta}}. Then the mixture density
-#' \eqn{f(x|\eta)} at any point \eqn{x} is (consistently) estimated by \eqn{f(x|\hat{\eta})}.
 #'
-#' The random deviates are generated from the estimated mixture density \eqn{f(x|\hat{\eta})}.
+#' If \code{type = 'point-est'}, density is evaluated/random samples are generated at a point estimate of
+#' the parameter values.  To estimate the mixture density, first the parameter vector \eqn{\eta} is estimated
+#' by applying \code{fn} on the MCMC samples (using the function \link{pointest}), yielding the (consistent) Bayes estimate \eqn{\hat{\eta}}.
+#' Then the mixture density \eqn{f(x|\eta)} at any point \eqn{x} is (consistently) estimated by
+#' \eqn{f(x|\hat{\eta})}. The random deviates are generated from the estimated mixture density \eqn{f(x|\hat{\eta})}.
 #'
-#'
+#' If \code{type == 'post-pred'}, posterior predictive samples and densities are returned. That
+#' is, the average density \eqn{S^{-1} \sum_{s = 1}^S f(x | \eta_s)} is returned in \code{d_fitted},
+#' where \eqn{\eta_1, \dots, \eta_S} is the set posterior MCMC samples obtained from \code{object}. In
+#' \code{r_fitted}, first a random sub-sample \eqn{\eta_{(1)}, \dots, \eta_{(n)}} of size \code{n} from the
+#' set of posterior samples \eqn{\eta_1, \dots, \eta_S} is drawn (with replacement if \code{n} > S). Then
+#' the i-th posterior predictive data point is generated from the mixture density
+#' \eqn{f(x|\eta_{(i)})} for i = 1,..., n.
 #'
 #' @examples
 #' set.seed(1)
 #' # illustration only - more iterations needed for convergence
 #' fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
 #'                              n.chains = 1)
-#' d_fitted(c(0,0), fit.vmsin.20)
-#' r_fitted(10, fit.vmsin.20)
+#' d_fitted(c(0,0), fit.vmsin.20, type = "post-pred")
+#' d_fitted(c(0,0), fit.vmsin.20, type = "point-est")
+#'
+#' r_fitted(10, fit.vmsin.20, type = "post-pred")
+#' r_fitted(10, fit.vmsin.20, type = "point-est")
 #' @export
 
 
-d_fitted <- function(x, object, fn = mean, log=FALSE, ...)
+d_fitted <- function(x, object, type = "point-est", fn = mean, log=FALSE,
+                     chain.no, ...)
 {
   if (!is.angmcmc(object))
     stop("\'object\' must be an angmcmc object")
@@ -983,24 +997,50 @@ d_fitted <- function(x, object, fn = mean, log=FALSE, ...)
        || (length(dim(x)) > 2)) stop("x must either be a bivariate vector or a two-column matrix")
   }
 
+  if (!type %in% c("post-pred", "point-est")) {
+    stop ("\'type\' must either be \'post-pred\' or \'point-est\'")
+  }
 
-  est <- pointest(object, fn = fn)
-  inargs <- list_by_row(est)
-  inargs$log <- log
+  inargs <- list(x = x)
   if (object$model %in% c("wnorm", "wnorm2"))
     inargs$int.displ <- object$int.displ
   else if (object$model == "vmcos")
     inargs$qrnd_grid <- object$qrnd_grid
-  inargs$x <- x
-  suppressWarnings(do.call(paste0("d", object$model, "mix"), inargs))
 
+  if (type == "point-est") {
+    est <- pointest(object, fn = fn)
+    inargs <- c(list_by_row(est), inargs)
+    inargs$log <- log
+    out <- suppressWarnings(do.call(paste0("d", object$model, "mix"), inargs))
+  } else {
+    samp <- extractsamples(object, chain.no = chain.no, drop = FALSE)
+    dim_samp <- dim(samp)
+    nsamp <- dim_samp[3]*dim_samp[4]
+    samp_coll <- samp
+    dim(samp_coll) <- c(dim_samp[1:2], nsamp)
+    dimnames(samp_coll)[1:2] <- dimnames(samp)[1:2]
+    inargs$log <- FALSE
+    out_list <- lapply(seq_len(nsamp),
+                       function(j) {
+                         inargs1 <- c(list_by_row(samp_coll[, , j]), inargs)
+                         c(suppressWarnings(do.call(paste0("d",
+                                                           object$model,
+                                                           "mix"), inargs1)))
+                       })
+    out <- Reduce('+', out_list)/nsamp
+
+    if (log) out <- log(out)
+  }
+
+  out
 }
 
 
 
 #' @rdname d_fitted
 #' @export
-r_fitted <- function(n=1, object, fn = mean, ...)
+r_fitted <- function(n=1, object, type =  "point-est", fn = mean,
+                     chain.no,  ...)
 {
   if (!is.angmcmc(object))
     stop("\'object\' must be an angmcmc object")
@@ -1009,15 +1049,54 @@ r_fitted <- function(n=1, object, fn = mean, ...)
   if (any(!is.null(ell$burnin),  !is.null(ell$thin)))
     warning("Use of burnin and thin are obsolete. Specify \'burnin.prop\' and \'thin\' during original MCMC run, or use \'add_burnin_thin\'.")
 
-  est <- pointest(object, fn = fn)
-  inargs <- list_by_row(est)
-  if (object$model %in% c("wnorm", "wnorm2"))
-    inargs$int.displ <- object$int.displ
-  else if (object$model == "vmcos")
-    inargs$qrnd_grid <- object$qrnd_grid
+  if (!type %in% c("post-pred", "point-est")) {
+    stop ("\'type\' must either be \'post-pred\' or \'point-est\'")
+  }
 
-  inargs$n <- n
-  suppressWarnings(do.call(paste0("r", object$model, "mix"), inargs))
+
+  inargs <- list()
+
+  if (object$model == "vmcos") {
+    inargs$qrnd_grid <- object$qrnd_grid
+  }
+
+
+  if (type == "point-est") {
+    est <- pointest(object, fn = fn, chain.no = chain.no)
+    inargs <- c(list_by_row(est), inargs)
+    inargs$n <- n
+    out <- suppressWarnings(do.call(paste0("r", object$model, "mix"), inargs))
+  } else {
+
+    samp <- extractsamples(object, chain.no = chain.no, drop = FALSE)
+    dim_samp <- dim(samp)
+    nsamp <- dim_samp[3]*dim_samp[4]
+    samp_coll <- samp
+    dim(samp_coll) <- c(dim_samp[1:2], nsamp)
+    dimnames(samp_coll)[1:2] <- dimnames(samp)[1:2]
+    ids <- sample(seq_len(dim_samp[3]*dim_samp[4]), size = n,
+                  replace = n > nsamp)
+
+    if (object$type == "bi") {
+      out_row <- numeric(2)
+    } else {
+      out_row <- numeric(1)
+    }
+
+    out <- vapply(ids,
+                  function(j) {
+                    inargs1 <- c(list_by_row(samp_coll[, , j]), inargs)
+                    inargs1$n <- 1
+                    c(suppressWarnings(do.call(paste0("r",
+                                                      object$model,
+                                                      "mix"), inargs1)))
+                  },
+                  out_row)
+
+    if (object$type == "bi") out <- t(out)
+  }
+
+  out
 }
 
 

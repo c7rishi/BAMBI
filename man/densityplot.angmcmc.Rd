@@ -4,11 +4,11 @@
 \alias{densityplot.angmcmc}
 \title{Density plots for angmcmc objects}
 \usage{
-\method{densityplot}{angmcmc}(x, fn = mean, log.density = FALSE,
-  xpoints = seq(0, 2 * pi, length.out = 35), ypoints = seq(0, 2 * pi,
-  length.out = 35), plot = TRUE, show.hist = ifelse(log.density, FALSE,
-  TRUE), xlab, ylab, zlab = ifelse(log.density, "Log Density", "Density"),
-  main, ...)
+\method{densityplot}{angmcmc}(x, fn = mean, type = "point-est",
+  log.density = FALSE, xpoints = seq(0, 2 * pi, length.out = 35),
+  ypoints = seq(0, 2 * pi, length.out = 35), plot = TRUE,
+  show.hist = ifelse(log.density, FALSE, TRUE), xlab, ylab,
+  zlab = ifelse(log.density, "Log Density", "Density"), main, ...)
 }
 \arguments{
 \item{x}{angmcmc object.}
@@ -17,6 +17,8 @@
 parameters.  Defaults to \code{mean}, which computes the estimated posterior mean.
 Note that if \code{fn = "MODE"} (warning: not \code{"mode"}) or \code{fn = "MAP"}, then the maximum aposteriori estimate (MAP) is
 calculated.}
+
+\item{type}{Passed to \link{d_fitted}. Possible choices are "point-est" and "post-pred".}
 
 \item{log.density}{logical. Should log density be used for the plot?}
 

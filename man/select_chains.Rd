@@ -9,7 +9,8 @@ select_chains(object, chain.no, ...)
 \arguments{
 \item{object}{angular MCMC object.}
 
-\item{chain.no}{labels of chains to be retained in the final sample}
+\item{chain.no}{labels of chains to be retained in the final sample. If missing,
+all chains are used.}
 
 \item{...}{unused}
 }

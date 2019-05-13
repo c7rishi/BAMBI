@@ -1,6 +1,7 @@
 #' Contour plot for angmcmc objects with bivariate data
 #'
 #' @inheritParams pointest
+#' @param type Passed to \link{d_fitted}. Possible choices are "point-est" and "post-pred".
 #' @param x angular MCMC object (with bivariate data).
 #' @param show.data logical. Should the data points be added to the contour plot? Ignored if \code{object} is NOT supplied.
 #' @param cex,col,pch graphical parameters passed to \code{\link{points}} from graphics for plotting the data points.
@@ -27,7 +28,7 @@
 #'
 #' @export
 
-contour.angmcmc <-  function(x, fn = "MAP", show.data = TRUE,
+contour.angmcmc <-  function(x, fn = "MAP", type = "point-est", show.data = TRUE,
                              xpoints = seq(0, 2*pi, length.out = 100),
                              ypoints = seq(0, 2*pi, length.out = 100),
                              levels, nlevels = 20,
@@ -61,7 +62,7 @@ contour.angmcmc <-  function(x, fn = "MAP", show.data = TRUE,
   }
 
   coords <- as.matrix(expand.grid(xpoints, ypoints))
-  dens <- d_fitted(coords, x, fn = fn)
+  dens <- d_fitted(coords, x, fn = fn, type = type)
   contour(xpoints, ypoints, matrix(dens, nrow=length(xpoints)),
           levels=levels)
 
@@ -80,6 +81,7 @@ contour.angmcmc <-  function(x, fn = "MAP", show.data = TRUE,
 
 
 #' Density plots for angmcmc objects
+#' @inheritParams contour.angmcmc
 #' @description Plot fitted angular mixture model density surfaces or curves.
 #' @inheritParams pointest
 #' @param x angmcmc object.
@@ -140,7 +142,7 @@ contour.angmcmc <-  function(x, fn = "MAP", show.data = TRUE,
 #'
 #' @export
 
-densityplot.angmcmc <- function(x, fn = mean, log.density = FALSE,
+densityplot.angmcmc <- function(x, fn = mean, type = "point-est", log.density = FALSE,
                                 xpoints=seq(0, 2*pi, length.out=35),
                                 ypoints=seq(0, 2*pi, length.out=35),
                                 plot=TRUE,
@@ -177,7 +179,7 @@ densityplot.angmcmc <- function(x, fn = mean, log.density = FALSE,
     }
 
     coords <- as.matrix(expand.grid(xpoints, ypoints))
-    den <- d_fitted(coords, object, fn = fn)
+    den <- d_fitted(coords, object, fn = fn, type = type)
 
 
     denmat <- matrix(den, nrow=length(xpoints))
@@ -260,7 +262,7 @@ densityplot.angmcmc <- function(x, fn = mean, log.density = FALSE,
   }
   else {
 
-    den <- d_fitted(xpoints, object, fn = fn)
+    den <- d_fitted(xpoints, object, fn = fn, type = type)
 
     if (log.density) den <- log(den)
 

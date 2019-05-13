@@ -5,9 +5,10 @@
 \alias{r_fitted}
 \title{Density and random deviates from an angmcmc object}
 \usage{
-d_fitted(x, object, fn = mean, log = FALSE, ...)
+d_fitted(x, object, type = "point-est", fn = mean, log = FALSE, chain.no,
+  ...)
 
-r_fitted(n = 1, object, fn = mean, ...)
+r_fitted(n = 1, object, type = "point-est", fn = mean, chain.no, ...)
 }
 \arguments{
 \item{x}{vector, if univariate or a two column matrix, if bivariate, with each row a 2-D vector, (can
@@ -16,12 +17,18 @@ densities are to be computed.}
 
 \item{object}{angular MCMC object. The dimension of the model must match with \code{x}.}
 
+\item{type}{Method of estimating density/generating random deviates. Possible choices are
+\code{"post-pred"} and \code{"point-est"}. See details. Defaults to \code{"point-est"}.}
+
 \item{fn}{function, or a single character string specifying its name, to evaluate on MCMC samples to estimate
 parameters.  Defaults to \code{mean}, which computes the estimated posterior mean.
 Note that if \code{fn = "MODE"} (warning: not \code{"mode"}) or \code{fn = "MAP"}, then the maximum aposteriori estimate (MAP) is
 calculated.}
 
 \item{log}{logical. Should the log density be returned instead?}
+
+\item{chain.no}{vector of chain numbers whose samples are to be be used.
+in the estimation. By default all chains are used.}
 
 \item{...}{additional arguments to be passed to the function.}
 
@@ -35,17 +42,28 @@ creates a vector (if univariate) or a matrix (if bivariate) with each row being 
 Density and random deviates from an angmcmc object
 }
 \details{
-To estimate the mixture density, first the parameter vector \eqn{\eta} is estimated
-by applying \code{fn} on the MCMC samples (using the function \link{pointest}), yielding the (consistent) Bayes estimate \eqn{\hat{\eta}}. Then the mixture density
-\eqn{f(x|\eta)} at any point \eqn{x} is (consistently) estimated by \eqn{f(x|\hat{\eta})}.
+If \code{type = 'point-est'}, density is evaluated/random samples are generated at a point estimate of
+the parameter values.  To estimate the mixture density, first the parameter vector \eqn{\eta} is estimated
+by applying \code{fn} on the MCMC samples (using the function \link{pointest}), yielding the (consistent) Bayes estimate \eqn{\hat{\eta}}.
+Then the mixture density \eqn{f(x|\eta)} at any point \eqn{x} is (consistently) estimated by
+\eqn{f(x|\hat{\eta})}. The random deviates are generated from the estimated mixture density \eqn{f(x|\hat{\eta})}.
 
-The random deviates are generated from the estimated mixture density \eqn{f(x|\hat{\eta})}.
+If \code{type == 'post-pred'}, posterior predictive samples and densities are returned. That
+is, the average density \eqn{S^{-1} \sum_{s = 1}^S f(x | \eta_s)} is returned in \code{d_fitted},
+where \eqn{\eta_1, \dots, \eta_S} is the set posterior MCMC samples obtained from \code{object}. In
+\code{r_fitted}, first a random sub-sample \eqn{\eta_{(1)}, \dots, \eta_{(n)}} of size \code{n} from the
+set of posterior samples \eqn{\eta_1, \dots, \eta_S} is drawn (with replacement if \code{n} > S). Then
+the i-th posterior predictive data point is generated from the mixture density
+\eqn{f(x|\eta_{(i)})} for i = 1,..., n.
 }
 \examples{
 set.seed(1)
 # illustration only - more iterations needed for convergence
 fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
                              n.chains = 1)
-d_fitted(c(0,0), fit.vmsin.20)
-r_fitted(10, fit.vmsin.20)
+d_fitted(c(0,0), fit.vmsin.20, type = "post-pred")
+d_fitted(c(0,0), fit.vmsin.20, type = "point-est")
+
+r_fitted(10, fit.vmsin.20, type = "post-pred")
+r_fitted(10, fit.vmsin.20, type = "point-est")
 }
