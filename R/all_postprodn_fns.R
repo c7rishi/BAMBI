@@ -1022,7 +1022,7 @@ d_fitted <- function(x, object, type = "point-est", fn = mean, log=FALSE,
     inargs$log <- FALSE
     out_list <- lapply(seq_len(nsamp),
                        function(j) {
-                         inargs1 <- c(list_by_row(samp_coll[, , j]), inargs)
+                         inargs1 <- c(list_by_row(as.matrix(samp_coll[, , j])), inargs)
                          c(suppressWarnings(do.call(paste0("d",
                                                            object$model,
                                                            "mix"), inargs1)))
@@ -1085,7 +1085,7 @@ r_fitted <- function(n=1, object, type =  "point-est", fn = mean,
 
     out <- vapply(ids,
                   function(j) {
-                    inargs1 <- c(list_by_row(samp_coll[, , j]), inargs)
+                    inargs1 <- c(list_by_row(as.matrix(samp_coll[, , j])), inargs)
                     inargs1$n <- 1
                     c(suppressWarnings(do.call(paste0("r",
                                                       object$model,
