@@ -186,7 +186,7 @@ rvmmix <- function(n, kappa, mu, pmix)
 
   out <- rep(0, n)
   ncomp <- allpar_len[1] # number of components
-  comp_ind <- cID(t(replicate(n, pmix)), ncomp, runif(n))
+  comp_ind <- cID(tcrossprod(rep(1, n), allpar$pmix), ncomp, runif(n))
   # n samples from multinom(ncomp, pmix)
   for(j in seq_len(ncomp)) {
     obs_ind_j <- which(comp_ind == j)

@@ -1296,7 +1296,8 @@ fit_angmix <- function(model = "vmsin",
     tcltk_fail <- FALSE
 
     if (show.progress & !exists("pb")) {
-      pb <- tryCatch(tcltk::tkProgressBar(paste("Chain", chain_no),
+      pb <- tryCatch(tcltk::tkProgressBar(title = paste("Chain", chain_no),
+                                          label = "Initializing...",
                                           min = 1, max = n.iter),
                      error = function(e) "error")
       if (unlist(pb)[1] == "error") {
@@ -1637,10 +1638,15 @@ fit_angmix <- function(model = "vmsin",
       # }
 
 
+      message <- paste0("Progress: ", round(iter/n.iter*100), "% ",
+                        ifelse(iter <= n.burnin,
+                               "(Burn-in)",
+                               "(Sampling)"))
 
       if (show.progress)
-        if ((round(iter /  n.iter, 2) * 100) %% 5 == 0 || iter == n.iter + 1)
-          tcltk::setTkProgressBar(pb, iter)
+        if (iter %% 2)
+        # if ((round(iter /  n.iter, 2) * 100) %% 5 == 0 || iter == n.iter + 1)
+          tcltk::setTkProgressBar(pb, iter, label = message)
 
     }
 

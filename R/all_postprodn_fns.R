@@ -1063,7 +1063,7 @@ r_fitted <- function(n=1, object, type =  "point-est", fn = mean,
 
   if (type == "point-est") {
     est <- pointest(object, fn = fn, chain.no = chain.no)
-    inargs <- c(list_by_row(est), inargs)
+    inargs <- c(list_by_row(as.matrix(est)), inargs)
     inargs$n <- n
     out <- suppressWarnings(do.call(paste0("r", object$model, "mix"), inargs))
   } else {

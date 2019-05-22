@@ -279,7 +279,7 @@ rwnorm2mix <- function(n, kappa1, kappa2, kappa3,
 
   out <- matrix(0, n, 2)
   ncomp <- allpar_len[1] # number of components
-  comp_ind <- cID(t(replicate(n, pmix)), ncomp, runif(n))
+  comp_ind <- cID(tcrossprod(rep(1, n), allpar$pmix), ncomp, runif(n))
   # n samples from multinom(ncomp, pmix)
   for(j in seq_len(ncomp)) {
     obs_ind_j <- which(comp_ind == j)

@@ -197,7 +197,7 @@ rwnormmix <- function(n=1, kappa, mu, pmix)
   if(any(allpar$kappa <= 0)) stop("kappa must be positive in wnorm")
   if(any(allpar$mu < 0 | allpar$mu >= 2*pi)) allpar$mu <- prncp_reg(allpar$mu)
 
-  clus_label <- cID(t(replicate(allpar$pmix, n = n)), length(allpar$pmix), runif(n))
+  clus_label <- cID(tcrossprod(rep(1, n), allpar$pmix), length(allpar$pmix), runif(n))
   samp <- rnorm(length(clus_label), mean = allpar$mu[clus_label], sd = 1/sqrt(allpar$kappa[clus_label]))
 
   prncp_reg(samp)
