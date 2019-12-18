@@ -4,8 +4,14 @@
 \alias{lpdtrace}
 \title{Trace and autocorrelation plots of log posterior density or log likelihood from an angmcmc object}
 \usage{
-lpdtrace(object, chain.no, use.llik = FALSE, plot.autocor = FALSE,
-  lag.max = NULL, ...)
+lpdtrace(
+  object,
+  chain.no,
+  use.llik = FALSE,
+  plot.autocor = FALSE,
+  lag.max = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{angular MCMC object.}

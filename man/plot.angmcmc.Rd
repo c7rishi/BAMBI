@@ -4,8 +4,16 @@
 \alias{plot.angmcmc}
 \title{Summary plots for angmcmc objects}
 \usage{
-\method{plot}{angmcmc}(x, par.name, comp.label, chain.no,
-  do.paramtrace = TRUE, do.lpdtrace = TRUE, use.llik = FALSE, ...)
+\method{plot}{angmcmc}(
+  x,
+  par.name,
+  comp.label,
+  chain.no,
+  do.paramtrace = TRUE,
+  do.lpdtrace = TRUE,
+  use.llik = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{angmcmc object}

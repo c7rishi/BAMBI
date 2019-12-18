@@ -7,8 +7,16 @@
 \usage{
 rwnorm2(n, kappa1 = 1, kappa2 = 1, kappa3 = 0, mu1 = 0, mu2 = 0, ...)
 
-dwnorm2(x, kappa1 = 1, kappa2 = 1, kappa3 = 0, mu1 = 0, mu2 = 0,
-  int.displ, log = FALSE)
+dwnorm2(
+  x,
+  kappa1 = 1,
+  kappa2 = 1,
+  kappa3 = 0,
+  mu1 = 0,
+  mu2 = 0,
+  int.displ,
+  log = FALSE
+)
 }
 \arguments{
 \item{n}{number of observations. Ignored if at least one of the other parameters have length k > 1, in which

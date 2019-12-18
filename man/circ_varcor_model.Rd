@@ -4,8 +4,16 @@
 \alias{circ_varcor_model}
 \title{Analytic circular variances and correlations for bivariate angular models}
 \usage{
-circ_varcor_model(model = "vmsin", kappa1 = 1, kappa2 = 1, kappa3 = 0,
-  mu1 = 0, mu2 = 0, nsim = 10000, ...)
+circ_varcor_model(
+  model = "vmsin",
+  kappa1 = 1,
+  kappa2 = 1,
+  kappa3 = 0,
+  mu1 = 0,
+  mu2 = 0,
+  nsim = 10000,
+  ...
+)
 }
 \arguments{
 \item{model}{bivariate angular model. Must be one of \code{"vmsin"},

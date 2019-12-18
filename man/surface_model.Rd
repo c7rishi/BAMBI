@@ -4,11 +4,23 @@
 \alias{surface_model}
 \title{Surface for bivariate angular mixture model densities}
 \usage{
-surface_model(model = "vmsin", kappa1, kappa2, kappa3, mu1, mu2,
-  pmix = rep(1/length(kappa1), length(kappa1)), xpoints = seq(0, 2 * pi,
-  length.out = 30), ypoints = seq(0, 2 * pi, length.out = 30),
-  log.density = FALSE, xlab = "x", ylab = "y",
-  zlab = ifelse(log.density, "Log Density", "Density"), main, ...)
+surface_model(
+  model = "vmsin",
+  kappa1,
+  kappa2,
+  kappa3,
+  mu1,
+  mu2,
+  pmix = rep(1/length(kappa1), length(kappa1)),
+  xpoints = seq(0, 2 * pi, length.out = 30),
+  ypoints = seq(0, 2 * pi, length.out = 30),
+  log.density = FALSE,
+  xlab = "x",
+  ylab = "y",
+  zlab = ifelse(log.density, "Log Density", "Density"),
+  main,
+  ...
+)
 }
 \arguments{
 \item{model}{bivariate angular model whose mixture is of interest. Must be one of

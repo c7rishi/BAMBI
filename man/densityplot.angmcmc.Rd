@@ -4,11 +4,21 @@
 \alias{densityplot.angmcmc}
 \title{Density plots for angmcmc objects}
 \usage{
-\method{densityplot}{angmcmc}(x, fn = mean, type = "point-est",
-  log.density = FALSE, xpoints = seq(0, 2 * pi, length.out = 35),
-  ypoints = seq(0, 2 * pi, length.out = 35), plot = TRUE,
-  show.hist = ifelse(log.density, FALSE, TRUE), xlab, ylab,
-  zlab = ifelse(log.density, "Log Density", "Density"), main, ...)
+\method{densityplot}{angmcmc}(
+  x,
+  fn = mean,
+  type = "point-est",
+  log.density = FALSE,
+  xpoints = seq(0, 2 * pi, length.out = 35),
+  ypoints = seq(0, 2 * pi, length.out = 35),
+  plot = TRUE,
+  show.hist = ifelse(log.density, FALSE, TRUE),
+  xlab,
+  ylab,
+  zlab = ifelse(log.density, "Log Density", "Density"),
+  main,
+  ...
+)
 }
 \arguments{
 \item{x}{angmcmc object.}

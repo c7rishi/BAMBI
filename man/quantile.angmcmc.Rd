@@ -4,8 +4,7 @@
 \alias{quantile.angmcmc}
 \title{Quantile estimates for parameters from an angmcmc object}
 \usage{
-\method{quantile}{angmcmc}(x, par.name, comp.label, chain.no, probs = seq(0,
-  1, 0.25), ...)
+\method{quantile}{angmcmc}(x, par.name, comp.label, chain.no, probs = seq(0, 1, 0.25), ...)
 }
 \arguments{
 \item{x}{angmcmc object}

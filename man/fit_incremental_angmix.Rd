@@ -4,12 +4,29 @@
 \alias{fit_incremental_angmix}
 \title{Stepwise fitting of angular mixture models with incremental component sizes and optimum model selection}
 \usage{
-fit_incremental_angmix(model, data, crit = "LOOIC", start_ncomp = 1,
-  max_ncomp = 10, L = NULL, fn = mean, fix_label = NULL, form = 2,
-  start_par = NULL, prev_par = TRUE, logml_maxiter = 10000,
-  return_all = FALSE, save_fits = FALSE, save_file = NULL,
-  save_dir = "", silent = FALSE, return_llik_contri = (crit \%in\%
-  c("LOOIC", "WAIC")), use_best_chain = TRUE, alpha = 0.05, ...)
+fit_incremental_angmix(
+  model,
+  data,
+  crit = "LOOIC",
+  start_ncomp = 1,
+  max_ncomp = 10,
+  L = NULL,
+  fn = mean,
+  fix_label = NULL,
+  form = 2,
+  start_par = NULL,
+  prev_par = TRUE,
+  logml_maxiter = 10000,
+  return_all = FALSE,
+  save_fits = FALSE,
+  save_file = NULL,
+  save_dir = "",
+  silent = FALSE,
+  return_llik_contri = (crit \%in\% c("LOOIC", "WAIC")),
+  use_best_chain = TRUE,
+  alpha = 0.05,
+  ...
+)
 }
 \arguments{
 \item{model}{angular model whose mixtures are to be fitted. Available choices are \code{"vmsin", "vmcos"} and \code{"wnorm2"} for

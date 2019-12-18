@@ -4,17 +4,46 @@
 \alias{fit_angmix}
 \title{Fitting Bivariate and univariate angular mixture models}
 \usage{
-fit_angmix(model = "vmsin", data, ncomp, cov.restrict = "NONE",
-  unimodal.component = FALSE, start_par = NULL, rand_start = rep(FALSE,
-  n.chains), method = "hmc", perm_sampling = FALSE, n.chains = 3,
-  chains_parallel = TRUE, return_llik_contri = FALSE, int.displ = 3,
-  epsilon = 0.1, L = 10, epsilon.random = TRUE, L.random = FALSE,
-  burnin.prop = 0.5, tune.prop = 1, thin = 1, propscale = 0.05,
-  n.iter = 500, pmix.alpha = NULL, norm.var = 1000, autotune = TRUE,
-  show.progress = TRUE, accpt.prob.upper, accpt.prob.lower,
-  epsilon.incr = 0.05, L.incr = 0.075, tune.incr = 0.05,
-  tune_ave_size = 100, kappa_upper = 150, kappa_lower = 1e-04,
-  return_tune_param = FALSE, qrnd = NULL, n_qrnd = NULL, ...)
+fit_angmix(
+  model = "vmsin",
+  data,
+  ncomp,
+  cov.restrict = "NONE",
+  unimodal.component = FALSE,
+  start_par = NULL,
+  rand_start = rep(FALSE, n.chains),
+  method = "hmc",
+  perm_sampling = FALSE,
+  n.chains = 3,
+  chains_parallel = TRUE,
+  return_llik_contri = FALSE,
+  int.displ = 3,
+  epsilon = 0.1,
+  L = 10,
+  epsilon.random = TRUE,
+  L.random = FALSE,
+  burnin.prop = 0.5,
+  tune.prop = 1,
+  thin = 1,
+  propscale = 0.05,
+  n.iter = 500,
+  pmix.alpha = NULL,
+  norm.var = 1000,
+  autotune = TRUE,
+  show.progress = TRUE,
+  accpt.prob.upper,
+  accpt.prob.lower,
+  epsilon.incr = 0.05,
+  L.incr = 0.075,
+  tune.incr = 0.05,
+  tune_ave_size = 100,
+  kappa_upper = 150,
+  kappa_lower = 1e-04,
+  return_tune_param = FALSE,
+  qrnd = NULL,
+  n_qrnd = NULL,
+  ...
+)
 }
 \arguments{
 \item{model}{angular model whose mixtures are to be fitted. Available choices are \code{"vmsin", "vmcos"} and \code{"wnorm2"} for

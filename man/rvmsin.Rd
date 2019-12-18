@@ -5,11 +5,9 @@
 \alias{dvmsin}
 \title{The bivariate von Mises sine model}
 \usage{
-rvmsin(n, kappa1 = 1, kappa2 = 1, kappa3 = 0, mu1 = 0, mu2 = 0,
-  method = NULL)
+rvmsin(n, kappa1 = 1, kappa2 = 1, kappa3 = 0, mu1 = 0, mu2 = 0, method = NULL)
 
-dvmsin(x, kappa1 = 1, kappa2 = 1, kappa3 = 0, mu1 = 0, mu2 = 0,
-  log = FALSE)
+dvmsin(x, kappa1 = 1, kappa2 = 1, kappa3 = 0, mu1 = 0, mu2 = 0, log = FALSE)
 }
 \arguments{
 \item{n}{number of observations. Ignored if at least one of the other parameters have length k > 1, in which

@@ -4,11 +4,25 @@
 \alias{contour_model}
 \title{Contourplot for bivariate angular mixture model densities}
 \usage{
-contour_model(model = "vmsin", kappa1, kappa2, kappa3, mu1, mu2,
-  pmix = rep(1/length(kappa1), length(kappa1)), xpoints = seq(0, 2 * pi,
-  length.out = 100), ypoints = seq(0, 2 * pi, length.out = 100), levels,
-  nlevels = 20, xlab = "x", ylab = "y", col = "black", lty = 1, main,
-  ...)
+contour_model(
+  model = "vmsin",
+  kappa1,
+  kappa2,
+  kappa3,
+  mu1,
+  mu2,
+  pmix = rep(1/length(kappa1), length(kappa1)),
+  xpoints = seq(0, 2 * pi, length.out = 100),
+  ypoints = seq(0, 2 * pi, length.out = 100),
+  levels,
+  nlevels = 20,
+  xlab = "x",
+  ylab = "y",
+  col = "black",
+  lty = 1,
+  main,
+  ...
+)
 }
 \arguments{
 \item{model}{bivariate angular model whose mixture is of interest. Must be one of

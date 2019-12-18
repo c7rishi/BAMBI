@@ -5,8 +5,7 @@
 \alias{r_fitted}
 \title{Density and random deviates from an angmcmc object}
 \usage{
-d_fitted(x, object, type = "point-est", fn = mean, log = FALSE, chain.no,
-  ...)
+d_fitted(x, object, type = "point-est", fn = mean, log = FALSE, chain.no, ...)
 
 r_fitted(n = 1, object, type = "point-est", fn = mean, chain.no, ...)
 }
