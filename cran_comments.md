@@ -1,13 +1,17 @@
-# BAMBI v2.1.1
+# BAMBI v2.2.0
 
 ## Resubmission
 This is a resubmission. In this version we have made the following changes.
 
 ### Changelog:
+* added posterior predictive density evaluation in d_fitted and posterior predictive sampling in r_fitted
 * fixed bugs that were creating some platform differences in fit_angmix
 * added a check for NA values in data inside fit_angmix 
 
-
+## Test environments
+* local Windows 10 install, R 3.6.1
+* win-builder (devel)
+* Ubuntu release 19.04, R 3.6.0
 
 ## Test environments
 * local Windows 10 install, R 3.5.3
@@ -15,14 +19,8 @@ This is a resubmission. In this version we have made the following changes.
 * Ubuntu release 18.04, R 3.5.3
 
 ## R CMD check results
-There were no ERRORs or WARNINGs. 
+There were no ERRORs or WARNINGs or NOTEs. 
 
-There was 1 NOTE on Ubuntu 18.04, but not in local Windows 10 nor in win-builder. The NOTE was on the size of installed package:
-
-* checking installed package size ... NOTE
-  installed size is  5.3Mb
-  sub-directories of 1Mb or more:
-    libs   4.8Mb
 
 
 # BAMBI v2.1.0
