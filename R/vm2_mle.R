@@ -89,7 +89,8 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos", "indep"), ...) {
     },
     lower = c(rep(-Inf, 3), 0, 0),
     upper = c(rep(Inf, 3), 2*pi, 2*pi),
-    method = "L-BFGS-B"
+    method = "L-BFGS-B",
+    hessian = TRUE
   )
 
   opt_adj <- opt
