@@ -17,7 +17,7 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos", "indep"), ...) {
 
 
     # in log scale
-    lpd_grad_model_indep_1comp <-  function(data, par_vec_lscale) {
+    lpd_grad_model_indep_1comp <-  function(par_vec_lscale) {
       par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       lpd_grad <- matrix(NA, 6, 1)
 
@@ -30,6 +30,15 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos", "indep"), ...) {
     }
 
     start_par_gen <- start_par_vmsin
+
+    hessian_fn <- function(par_vec) {
+      numDeriv::hessian(
+        func = function(par_vec) {
+          -grad_llik_vmsin_C(data, par_vec)[6]
+        },
+        x = par_vec
+      )
+    }
 
   }
 
@@ -55,7 +64,7 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos", "indep"), ...) {
     }
 
     # in log scale
-    lpd_grad_model_indep_1comp <- function(data, par_vec_lscale) {
+    lpd_grad_model_indep_1comp <- function(par_vec_lscale) {
       par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       lpd_grad <- matrix(NA, 6, 1)
       lpd_grad[] <- signif(
@@ -68,6 +77,15 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos", "indep"), ...) {
     }
 
     start_par_gen <- start_par_vmcos
+
+    hessian_fn <- function(par_vec) {
+      numDeriv::hessian(
+        func = function(par_vec) {
+          -grad_llik_vmsin_C(data, par_vec, qrnd_grid)[6]
+        },
+        x = par_vec
+      )
+    }
 
   }
   # browser()
@@ -82,19 +100,23 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos", "indep"), ...) {
   opt <- optim(
     par = start_lscale,
     fn = function(par_lscale) {
-      -lpd_grad_model_indep_1comp(data, par_lscale)$lpr
+      -lpd_grad_model_indep_1comp(par_lscale)$lpr
     },
     gr = function(par_lscale) {
-      -lpd_grad_model_indep_1comp(data, par_lscale)$grad
+      -lpd_grad_model_indep_1comp(par_lscale)$grad
     },
     lower = c(rep(-Inf, 3), 0, 0),
     upper = c(rep(Inf, 3), 2*pi, 2*pi),
-    method = "L-BFGS-B",
-    hessian = TRUE
+    method = "L-BFGS-B"
+    # hessian = TRUE
   )
 
   opt_adj <- opt
   opt_adj$par[c("kappa1", "kapp2")] <- exp(opt$par[c("kappa1", "kapp2")])
+
+  hess <- hessian_fn(par_vec = opt_adj$par)
+  dimnames(hess) <- list(names(opt_adj$par), names(opt_adj$par))
+  opt_adj$hessian <- hess
 
   opt_adj
 }
