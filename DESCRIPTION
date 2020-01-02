@@ -30,7 +30,8 @@ Imports: stats,
 		 loo (>= 2.1.0),
 		 RColorBrewer,
 		 bridgesampling,
-		 scales
+		 scales,
+		 numDeriv
 Suggests: future,
       gridExtra
 Depends: R (>= 3.2.0)
