@@ -81,7 +81,7 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos", "indep"), ...) {
     hessian_fn <- function(par_vec) {
       numDeriv::hessian(
         func = function(par_vec) {
-          -grad_llik_vmsin_C(data, par_vec, qrnd_grid)[6]
+          -grad_llik_vmcos_C(data, par_vec, qrnd_grid)[6]
         },
         x = par_vec
       )
