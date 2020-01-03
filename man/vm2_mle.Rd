@@ -25,7 +25,7 @@ Maximum likelihood estimation of bivariate von Mises parameters
 The parameters \code{kappa1} and \code{kappa2} are optimized
 in log scales. The method of optimization used (passed to \link{optim})
 can be specified through \code{method} in \code{...}
-(defaults to \code{L-BFGS-B"}). Note, however, that
+(defaults to \code{"L-BFGS-B"}). Note, however, that
 lower (0)  and upper (2*pi) bounds for \code{mu1} and \code{mu2}
 are specified; so not all methods implemented in \link{optim} will work.
 }
