@@ -13,6 +13,7 @@ RoxygenNote: 7.0.1
 LinkingTo: Rcpp,
            RcppArmadillo
 Imports: stats,
+     stats4,
 		 graphics,
 		 lattice,
 		 grDevices,

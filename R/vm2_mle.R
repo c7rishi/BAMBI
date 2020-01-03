@@ -1,10 +1,16 @@
 
 #' @export
 vm2_mle <- function(data, model = c("vmsin", "vmcos", "indep"), ...) {
-  model <- model[1]
 
+  model <- model[1]
   dots <- list(...)
   data <- data.matrix(data)
+  call <- match.call()
+
+  if (is.null(dots$method)) {
+    method <- dots$method <- "L-BFGS-B"
+  }
+
   if (model == "vmsin") {
 
     # if (unimodal.component) {
@@ -92,10 +98,11 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos", "indep"), ...) {
 
 
   start <- start_par_gen(data)
-  names(start) <- c("kappa1", "kapp2", "kappa3", "mu1", "mu2")
+  names(start) <- c("log_kappa1", "log_kappa2", "kappa3", "mu1", "mu2")
 
   start_lscale <- start
-  start_lscale[c("kappa1", "kapp2")] <- log(start[c("kappa1", "kapp2")])
+  start_lscale[c("log_kappa1", "log_kappa2")] <-
+    log(start[c("log_kappa1", "log_kappa2")])
 
   opt <- optim(
     par = start_lscale,
@@ -107,16 +114,32 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos", "indep"), ...) {
     },
     lower = c(rep(-Inf, 3), 0, 0),
     upper = c(rep(Inf, 3), 2*pi, 2*pi),
-    method = "L-BFGS-B"
+    method = method
     # hessian = TRUE
   )
 
-  opt_adj <- opt
-  opt_adj$par[c("kappa1", "kapp2")] <- exp(opt$par[c("kappa1", "kapp2")])
+  est_par <- opt$par
+  names(est_par)[1:2] <- c("kappa1", "kappa2")
+  est_par[c("kappa1", "kappa2")] <- exp(est_par[c("kappa1", "kappa2")])
 
-  hess <- hessian_fn(par_vec = opt_adj$par)
-  dimnames(hess) <- list(names(opt_adj$par), names(opt_adj$par))
-  opt_adj$hessian <- hess
+  hess <- hessian_fn(par_vec = est_par)
+  dimnames(hess) <- list(names(est_par), names(est_par))
 
-  opt_adj
+  res <- new(
+    "mle",
+    call = call,
+    coef = est_par,
+    fullcoef = unlist(est_par),
+    vcov = solve(hess),
+    min = opt$value,
+    details = opt,
+    minuslogl = function(kappa1, kappa2, kappa3, mu1, mu2) {
+      par_lscale <- c(log(kappa1), log(kappa2), kappa3, mu1, mu2)
+      -lpd_grad_model_indep_1comp(par_lscale)$lpr
+    },
+    nobs = nrow(data),
+    method = method
+  )
+
+ res
 }
