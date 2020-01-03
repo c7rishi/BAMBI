@@ -154,7 +154,7 @@ rvmcos <- function(n, kappa1=1, kappa2=1,
 
 
   if (is.null(method)) {
-    if (n > 100) method <- "vmprop"
+    if (n > 1e5) method <- "vmprop"
     else method <- "naive"
   }
 

@@ -1,3 +1,11 @@
+# BAMBI v2.3.0
+## Resubmission
+This is a resubmission. In this version we have made the following changes.
+
+### Changelog:
+* added a function for maximum likelihood estimation of (single component) bivariate von Mises distribution
+* the default sampling algorithm from vmsin and vmcos are "naive" if n < 1e5
+
 # BAMBI v2.2.0
 
 ## Resubmission

@@ -1,6 +1,21 @@
-
+#' Maximum likelihood estimation of bivariate von Mises parameters
+#' @inheritParams fit_angmix
+#' @param model Bivariate von Mises model. Must either be "vmsin" or "vmcos"
+#' @details The parameters \code{kappa1} and \code{kappa2} are optimized in their log scales.
+#' @return An object of class \link{mle-class}.
+#' @examples
+#' pars <- list(kappa1 = 3, kappa2 = 2, kappa3 = 1.5, mu1 = 0.5, mu2 = 1.5)
+#' nsamp <- 2000
+#' model <- "vmsin"
+#' set.seed(100)
+#' dat_gen <- do.call(paste0("r", model), c(list(n = nsamp), pars))
+#'
+#' est <- vm2_mle(dat_gen, model = model)
+#' library(stats4)
+#' coef(est)
+#' vcov(est)
 #' @export
-vm2_mle <- function(data, model = c("vmsin", "vmcos", "indep"), ...) {
+vm2_mle <- function(data, model = c("vmsin", "vmcos"), ...) {
 
   model <- model[1]
   dots <- list(...)

@@ -45,7 +45,7 @@ von Mises (if bimodal), with optimally chosen concentration. This the method sug
 
 Note that although method = \code{"vmprop"} is expected to provide better efficiency, especially when the density is highly concentrated, it does have
 an (often substantial) overhead due to the optimziation step required to find a reasonable proposal concentration parameter.
-This can compensate the efficiency gains of this method, especially when \code{n} is not large (<= 100) or \code{max(kappa1, kappa2, abs(kappa3))} is small (< 0.1).
+This can compensate the efficiency gains of this method, especially when \code{n} is not large (<= 1e5) or \code{max(kappa1, kappa2, abs(kappa3))} is small (< 0.1).
 As such, \code{method = "naive"} by default in such cases. Otherwise, \code{method} defaults to \code{"vmprop"}.
 }
 \examples{
