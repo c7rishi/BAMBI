@@ -1,7 +1,13 @@
 #' Maximum likelihood estimation of bivariate von Mises parameters
 #' @inheritParams fit_angmix
 #' @param model Bivariate von Mises model. Must either be "vmsin" or "vmcos"
-#' @details The parameters \code{kappa1} and \code{kappa2} are optimized in their log scales.
+#' @param ... Additional arguments. See details.
+#' @details The parameters \code{kappa1} and \code{kappa2} are optimized
+#' in log scales. The method of optimization used (passed to \link{optim})
+#' can be specified through \code{method} in \code{...}
+#' (defaults to \code{L-BFGS-B"}). Note, however, that
+#' lower (0)  and upper (2*pi) bounds for \code{mu1} and \code{mu2}
+#' are specified; so not all methods implemented in \link{optim} will work.
 #' @return An object of class \link{mle-class}.
 #' @examples
 #' pars <- list(kappa1 = 3, kappa2 = 2, kappa3 = 1.5, mu1 = 0.5, mu2 = 1.5)
@@ -23,8 +29,9 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos"), ...) {
   call <- match.call()
 
   if (is.null(dots$method)) {
-    method <- dots$method <- "L-BFGS-B"
+    dots$method <- "L-BFGS-B"
   }
+  method <- dots$method
 
   if (model == "vmsin") {
 

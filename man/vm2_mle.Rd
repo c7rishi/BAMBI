@@ -13,7 +13,7 @@ either be removed or properly imputed.}
 
 \item{model}{Bivariate von Mises model. Must either be "vmsin" or "vmcos"}
 
-\item{...}{Unused.}
+\item{...}{Additional arguments. See details.}
 }
 \value{
 An object of class \link{mle-class}.
@@ -22,7 +22,12 @@ An object of class \link{mle-class}.
 Maximum likelihood estimation of bivariate von Mises parameters
 }
 \details{
-The parameters \code{kappa1} and \code{kappa2} are optimized in their log scales.
+The parameters \code{kappa1} and \code{kappa2} are optimized
+in log scales. The method of optimization used (passed to \link{optim})
+can be specified through \code{method} in \code{...}
+(defaults to \code{L-BFGS-B"}). Note, however, that
+lower (0)  and upper (2*pi) bounds for \code{mu1} and \code{mu2}
+are specified; so not all methods implemented in \link{optim} will work.
 }
 \examples{
 pars <- list(kappa1 = 3, kappa2 = 2, kappa3 = 1.5, mu1 = 0.5, mu2 = 1.5)
