@@ -43,7 +43,7 @@
 #' @export
 
 
-circ_cor <- function(x, type="js") {
+circ_cor <- function(x, type="js", alternative = "two.sided") {
 
   if (any(is.na(x)))
     stop("NA values in \'x\'")
@@ -60,19 +60,84 @@ circ_cor <- function(x, type="js") {
     stop("\'type\' must be one of \'js\', \'fl\', \'tau1\' or \'tau2\'")
 
   x <- prncp_reg(x)
+  n <- nrow(x)
 
   if (type == "fl") {
-    calc_corr_fl(x)
+    rho_fl <- calc_corr_fl(x)
+    A_over_mu2 <- function(margin) {
+      alpha <- sapply(1:2, function(p) sum(cos(p*margin))/n)
+      beta <- sapply(1:2, function(p) sum(sin(p*margin))/n)
+      A <- alpha[1]^2 + beta[1]^2 + alpha[2]*beta[1]^2 -
+        alpha[1]^2*alpha[2] - 2*alpha[1]*beta[1]*beta[2]
+      mu2 <- 0.5 * (1 - alpha[2]^2 - beta[2]^2)
+      A/mu2
+    }
+    avar <- prod(apply(x, 2, A_over_mu2))
+
+    se <- sqrt(avar)/sqrt(n)
+    z <- rho_fl/se
+
+    if (alternative == "two.sided") {
+      pval <- 2 * pnorm(abs(z), lower.tail = FALSE)
+    } else if (alternative == "less") {
+      pval <- pnorm(z, lower.tail = TRUE)
+    } else if (alternative == "greater") {
+      pval <- pnorm(z, lower.tail = FALSE)
+    }
+
+    attr(rho_fl, "se") <- se
+    attr(rho_fl, "p.value") <- pval
+    rho_fl
   } else if (type == "js") {
     sin_x_1_cent <- sin(x[, 1] - atan2(sum(sin(x[, 1])), sum(cos(x[, 1]))))
     sin_x_2_cent <- sin(x[, 2] - atan2(sum(sin(x[, 2])), sum(cos(x[, 2]))))
     num <- sum(sin_x_1_cent*sin_x_2_cent)
     den <- sqrt(sum(sin_x_1_cent^2)*sum(sin_x_2_cent^2))
-    num/den
-    # x[, 1] <- x[, 1] - x_1_bar
-    # x[, 2] <- x[, 2] - x_2_bar
-    # calc_corr_js(x)
-    # unname(circ.cor1(x[,1], x[, 2], TRUE)[1])
+    rho_js <- num/den
+
+    # asymptotic variance
+    # idx <- data.matrix(expand.grid(0:4, 0:4))
+    idx <- rbind(
+      c(2, 2),
+      c(2, 0), c(0, 2),
+      c(1, 3), c(3, 1),
+      c(4, 0), c(0, 4)
+    )
+    rownames(idx) <- paste0(idx[, 1], idx[, 2])
+    lambda <- apply(
+      idx,
+      1,
+      function(ii) {
+        sum(sin_x_1_cent^(ii[1]) * sin_x_2_cent^(ii[2]))/n
+      }
+    )
+    avar <- unname(
+      lambda["22"]/(lambda["20"]*lambda["02"]) -
+        rho_js * (
+          lambda["13"]/(lambda["20"]*sqrt(lambda["20"]*lambda["02"])) +
+            lambda["31"]/(lambda["02"]*sqrt(lambda["20"]*lambda["02"]))
+        ) +
+        rho_js^2/4 * (
+          1 + lambda["40"]/lambda["20"]^2 +
+            lambda["04"]/lambda["02"]^2 +
+            lambda["22"]/(lambda["20"]*lambda["02"])
+        )
+    )
+
+    se <- sqrt(avar)/sqrt(n)
+    z <- rho_js/se
+
+    if (alternative == "two.sided") {
+      pval <- 2 * pnorm(abs(z), lower.tail = FALSE)
+    } else if (alternative == "less") {
+      pval <- pnorm(z, lower.tail = TRUE)
+    } else if (alternative == "greater") {
+      pval <- pnorm(z, lower.tail = FALSE)
+    }
+
+    attr(rho_js, "se") <- se
+    attr(rho_js, "p.value") <- pval
+    rho_js
   } else if (type == "tau1") {
     calc_corr_tau_1(x)
   } else {
