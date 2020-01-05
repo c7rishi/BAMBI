@@ -372,8 +372,7 @@ fit_wnorm2mix <- function(...)
 }
 
 
-# N plays no role - just for similarity with vmsin/cos models
-wnorm2_var_cor_singlepar <- function(kappa1, kappa2, kappa3, N) {
+wnorm2_var_cor_singlepar <- function(kappa1, kappa2, kappa3) {
   den <- kappa1*kappa2 - kappa3^2
   sig1_sq <- kappa2/den
   sig2_sq <- kappa1/den

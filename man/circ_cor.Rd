@@ -4,7 +4,7 @@
 \alias{circ_cor}
 \title{Sample circular correlation coefficients}
 \usage{
-circ_cor(x, type = "js")
+circ_cor(x, type = "js", alternative = "two.sided")
 }
 \arguments{
 \item{x}{two column matrix. NA values are not allowed.}

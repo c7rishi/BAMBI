@@ -19,12 +19,11 @@
 #' is drawn from the associated marginal density, and then x is generated from the conditional distributio of x given y. The marginal generation of
 #' y is implemented in a rejection sampling scheme with proposal being either von Mises (if the target marginal density is unimodal), or a mixture of
 #' von Mises (if bimodal), with optimally chosen concentration. This the method suggested in Mardia et al. (2007). On the other hand, when
-#' \code{method = "naive"} a (naive) bivariate rejection sampling scheme with (bivariate) uniform propsoal is used.
+#' \code{method = "naive"} (default) a (naive) bivariate rejection sampling scheme with (bivariate) uniform propsoal is used.
 #'
-#' Note that although method = \code{"vmprop"} is expected to provide better efficiency, especially when the density is highly concentrated, it does have
+#' Note that although method = \code{"vmprop"} may provide better efficiency when the density is highly concentrated, it does have
 #' an (often substantial) overhead due to the optimziation step required to find a reasonable proposal concentration parameter.
-#' This can compensate the efficiency gains of this method, especially when \code{n} is not large (<= 1e5) or \code{max(kappa1, kappa2, abs(kappa3))} is small (< 0.1).
-#' As such, \code{method = "naive"} by default in such cases. Otherwise, \code{method} defaults to \code{"vmprop"}.
+#' This can compensate the efficiency gains of this method, especially when \code{n} is not large.
 #'
 #'
 #'
@@ -77,7 +76,7 @@
 
 
 rvmsin <- function(n, kappa1=1, kappa2=1,
-                   kappa3=0, mu1=0, mu2=0, method=NULL)
+                   kappa3=0, mu1=0, mu2=0, method="naive")
 {
   if(any(c(kappa1, kappa2) < 0)) stop("kappa1 and kappa2 must be nonnegative")
   if(any(mu1 < 0 | mu1 >= 2*pi)) mu1 <- prncp_reg(mu1)
@@ -85,10 +84,10 @@ rvmsin <- function(n, kappa1=1, kappa2=1,
   if(n < 0) stop("invalid n")
 
 
-  if (is.null(method)) {
-    if (n > 1e5) method <- "vmprop"
-    else method <- "naive"
-  }
+  # if (is.null(method)) {
+  #   if (n > 1e5) method <- "vmprop"
+  #   else method <- "naive"
+  # }
 
   if (!method %in% c("naive", "vmprop"))
     stop("method must be either \'naive\' or \'vmprop\'")
@@ -103,8 +102,8 @@ rvmsin <- function(n, kappa1=1, kappa2=1,
              function(j) rvmsin_1par(1, k1[j], k2[j], k3[j],
                                             mu1[j], mu2[j], "naive"), c(0, 0)))
   } else {
-    if (is.null(method) & max(kappa1, kappa2, abs(kappa3)) < 0.1)
-      method <- "vmprop"
+    # if (is.null(method) & max(kappa1, kappa2, abs(kappa3)) < 0.1)
+    #   method <- "vmprop"
 
     rvmsin_1par(n, kappa1, kappa2, kappa3, mu1, mu2, method)
   }
@@ -379,44 +378,92 @@ fit_vmsinmix <- function(...)
   fit_angmix(model = "vmsin", ...)
 }
 
-vmsin_var_cor_singlepar_large <- function(kappa1, kappa2, kappa3, N) {
-  # N <- 1e4
-  dat <- rvmsin(N, kappa1, kappa2, kappa3, 0, 0)
+vmsin_var_cor_singlepar_numeric <- function(kappa1, kappa2, kappa3) {
+  fn_vmsin_const <- function(pars) {
+    const_vmsin(pars[1], pars[2], pars[3])
+  }
 
-  ave_sin1sin2 <- sum(sin(dat[, 1]) * sin(dat[, 2]))/N
-  ave_cos1cos2 <- sum(cos(dat[, 1]) * cos(dat[, 2]))/N
+  const <- fn_vmsin_const(c(kappa1, kappa2, kappa3))
+  grad <- numDeriv::grad(fn_vmsin_const, c(kappa1, kappa2, kappa3))
+  names(grad) <- c("k1", "k2", "k3")
+  hess <- numDeriv::hessian(fn_vmsin_const, c(kappa1, kappa2, kappa3))
+  dimnames(hess) <- list(c("k1", "k2", "k3"), c("k1", "k2", "k3"))
 
-  ave_sin1sq <- sum(sin(dat[, 1])^2)/N
-  ave_cos1sq <- 1-ave_sin1sq
-  ave_cos1 <- sum(cos(dat[, 1]))/N
+  rho_fl <- unname(
+    (grad["k3"] * hess["k1", "k2"]) /
+    sqrt(
+      hess["k1", "k1"] * (const - hess["k1", "k1"])
+      * hess["k2", "k2"] * (const - hess["k2", "k2"])
+    )
+  )
 
-  ave_sin2sq <- sum(sin(dat[, 2])^2)/N
-  ave_cos2sq <- 1-ave_sin2sq
-  ave_cos2 <- sum(cos(dat[, 2]))/N
+  rho_js <- unname(
+    grad["k3"] /
+    sqrt((const - hess["k1", "k1"]) * (const - hess["k2", "k2"]))
+  )
 
-  rho_js <- ave_sin1sin2/sqrt(ave_sin1sq * ave_sin2sq)
-  # ifelse(ave_sin1sin2 >= 0, 1, -1) *
-  # min(abs(ave_sin1sin2)/sqrt(ave_sin1sq * ave_sin2sq), 1)
+  var1 <- unname(1 - grad["k1"]/const)
+  var2 <- unname(1 - grad["k2"]/const)
 
-  rho_fl <- rho_js *
-    ave_cos1cos2/sqrt(ave_cos1sq * ave_cos2sq)
-  # ifelse(ave_cos1cos2 >= 0, 1, -1) *
-  # min(abs(ave_cos1cos2)/sqrt(ave_cos1sq * ave_cos2sq), 1)
-
-  var1 <- min(1 - ave_cos1, 1)
-  var2 <- min(1 - ave_cos2, 1)
+  # if (rho_js <= -1) {
+  #   rho_js <- -1
+  # } else if (rho_js >= 1) {
+  #   rho_js <- 1
+  # }
+  #
+  # dat <- rvmsin(N, kappa1, kappa2, kappa3, 0, 0)
+  #
+  # ave_sin1sin2 <- sum(sin(dat[, 1]) * sin(dat[, 2]))/N
+  # ave_cos1cos2 <- sum(cos(dat[, 1]) * cos(dat[, 2]))/N
+  #
+  # ave_sin1sq <- sum(sin(dat[, 1])^2)/N
+  # ave_cos1sq <- 1-ave_sin1sq
+  # ave_cos1 <- sum(cos(dat[, 1]))/N
+  #
+  # ave_sin2sq <- sum(sin(dat[, 2])^2)/N
+  # ave_cos2sq <- 1-ave_sin2sq
+  # ave_cos2 <- sum(cos(dat[, 2]))/N
+  #
+  # rho_js <- ave_sin1sin2/sqrt(ave_sin1sq * ave_sin2sq)
+  # # ifelse(ave_sin1sin2 >= 0, 1, -1) *
+  # # min(abs(ave_sin1sin2)/sqrt(ave_sin1sq * ave_sin2sq), 1)
+  #
+  # rho_fl <- rho_js *
+  #   ave_cos1cos2/sqrt(ave_cos1sq * ave_cos2sq)
+  # # ifelse(ave_cos1cos2 >= 0, 1, -1) *
+  # # min(abs(ave_cos1cos2)/sqrt(ave_cos1sq * ave_cos2sq), 1)
+  #
+  # var1 <- min(1 - ave_cos1, 1)
+  # var2 <- min(1 - ave_cos2, 1)
 
   list(var1 = var1, var2 = var2, rho_fl = rho_fl, rho_js = rho_js)
 }
 
 
-vmsin_var_cor_singlepar <- function(kappa1, kappa2, kappa3, N) {
+vmsin_var_cor_singlepar <- function(kappa1, kappa2, kappa3, ...) {
   if (max(kappa1, kappa2, abs(kappa3) > 150)) {
-    vmsin_var_cor_singlepar_large(kappa1, kappa2, kappa3, N)
+    out <- vmsin_var_cor_singlepar_numeric(kappa1, kappa2, kappa3)
   } else {
-    vmsin_var_corr_anltc(kappa1, kappa2, kappa3)
+    out <- vmsin_var_corr_anltc(kappa1, kappa2, kappa3)
   }
 
+  for (rho in c("rho_js", "rho_fl")) {
+    if (out[[rho]] <= -1) {
+      out[[rho]] <- -1
+    } else if (out[[rho]] >= 1) {
+      out[[rho]] <- 1
+    }
+  }
+
+  for (var in c("var1", "var2")) {
+    if (out[[var]] <= 0) {
+      out[[var]] <- 0
+    } else if (out[[var]] >= 1) {
+      out[[var]] <- 1
+    }
+  }
+
+  out
 }
 
 

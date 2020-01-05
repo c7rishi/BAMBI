@@ -137,12 +137,12 @@ const_vmcos_anltc <- function(k1, k2, k3) {
     .Call(`_BAMBI_const_vmcos_anltc`, k1, k2, k3)
 }
 
-const_vmcos_mc <- function(k1, k2, k3, uni_rand) {
-    .Call(`_BAMBI_const_vmcos_mc`, k1, k2, k3, uni_rand)
+const_vmcos_mc <- function(k1, k2, k3, uni_rand, return_log = FALSE) {
+    .Call(`_BAMBI_const_vmcos_mc`, k1, k2, k3, uni_rand, return_log)
 }
 
-const_vmcos <- function(k1, k2, k3, uni_rand) {
-    .Call(`_BAMBI_const_vmcos`, k1, k2, k3, uni_rand)
+const_vmcos <- function(k1, k2, k3, uni_rand, return_log = FALSE) {
+    .Call(`_BAMBI_const_vmcos`, k1, k2, k3, uni_rand, return_log)
 }
 
 d_const_vmcos_anltc <- function(k1, k2, k3) {

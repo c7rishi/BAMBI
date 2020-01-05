@@ -236,10 +236,10 @@ circ_varcor_model <- function(model = "vmsin", kappa1 = 1, kappa2 = 1, kappa3 = 
   if (nsim <= 0)
     stop("\'nsim\' must be a positive integer")
 
+  ell <- list(...)
   nsim <- round(nsim)
 
   if (model == "vmcos") {
-    ell <- list(...)
 
 
     if (!is.null(ell$qrnd)) {
@@ -271,7 +271,7 @@ circ_varcor_model <- function(model = "vmsin", kappa1 = 1, kappa2 = 1, kappa3 = 
     lapply(1:length(kappa1),
            function(j) {
              inargs <- list(kappa1 = kappa1[j], kappa2 = kappa2[j],
-                            kappa3 = kappa3[j], N = nsim)
+                            kappa3 = kappa3[j])
              if (model == "vmcos") {
                inargs$qrnd_grid <- qrnd_grid
                # inargs$force_approx_const <- ell$force_approx_const
@@ -286,7 +286,7 @@ circ_varcor_model <- function(model = "vmsin", kappa1 = 1, kappa2 = 1, kappa3 = 
       stop("abs(kappa3) must be less than sqrt(kappa1*kappa2) in wnorm2")
 
     inargs <- list(kappa1 = kappa1, kappa2 = kappa2,
-                   kappa3 = kappa3, N = nsim)
+                   kappa3 = kappa3)
     if (model == "vmcos") inargs$qrnd_grid <- qrnd_grid
     do.call(paste0(model, "_var_cor_singlepar"),
             inargs)

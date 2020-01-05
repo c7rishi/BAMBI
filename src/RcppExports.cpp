@@ -436,8 +436,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // const_vmcos_mc
-double const_vmcos_mc(double k1, double k2, double k3, arma::mat uni_rand);
-RcppExport SEXP _BAMBI_const_vmcos_mc(SEXP k1SEXP, SEXP k2SEXP, SEXP k3SEXP, SEXP uni_randSEXP) {
+double const_vmcos_mc(double k1, double k2, double k3, arma::mat uni_rand, bool return_log);
+RcppExport SEXP _BAMBI_const_vmcos_mc(SEXP k1SEXP, SEXP k2SEXP, SEXP k3SEXP, SEXP uni_randSEXP, SEXP return_logSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -445,13 +445,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type k2(k2SEXP);
     Rcpp::traits::input_parameter< double >::type k3(k3SEXP);
     Rcpp::traits::input_parameter< arma::mat >::type uni_rand(uni_randSEXP);
-    rcpp_result_gen = Rcpp::wrap(const_vmcos_mc(k1, k2, k3, uni_rand));
+    Rcpp::traits::input_parameter< bool >::type return_log(return_logSEXP);
+    rcpp_result_gen = Rcpp::wrap(const_vmcos_mc(k1, k2, k3, uni_rand, return_log));
     return rcpp_result_gen;
 END_RCPP
 }
 // const_vmcos
-double const_vmcos(double k1, double k2, double k3, arma::mat uni_rand);
-RcppExport SEXP _BAMBI_const_vmcos(SEXP k1SEXP, SEXP k2SEXP, SEXP k3SEXP, SEXP uni_randSEXP) {
+double const_vmcos(double k1, double k2, double k3, arma::mat uni_rand, bool return_log);
+RcppExport SEXP _BAMBI_const_vmcos(SEXP k1SEXP, SEXP k2SEXP, SEXP k3SEXP, SEXP uni_randSEXP, SEXP return_logSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -459,7 +460,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type k2(k2SEXP);
     Rcpp::traits::input_parameter< double >::type k3(k3SEXP);
     Rcpp::traits::input_parameter< arma::mat >::type uni_rand(uni_randSEXP);
-    rcpp_result_gen = Rcpp::wrap(const_vmcos(k1, k2, k3, uni_rand));
+    Rcpp::traits::input_parameter< bool >::type return_log(return_logSEXP);
+    rcpp_result_gen = Rcpp::wrap(const_vmcos(k1, k2, k3, uni_rand, return_log));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1298,8 +1300,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BAMBI_grad_llik_uniwnorm_C", (DL_FUNC) &_BAMBI_grad_llik_uniwnorm_C, 3},
     {"_BAMBI_BESSI0_C", (DL_FUNC) &_BAMBI_BESSI0_C, 1},
     {"_BAMBI_const_vmcos_anltc", (DL_FUNC) &_BAMBI_const_vmcos_anltc, 3},
-    {"_BAMBI_const_vmcos_mc", (DL_FUNC) &_BAMBI_const_vmcos_mc, 4},
-    {"_BAMBI_const_vmcos", (DL_FUNC) &_BAMBI_const_vmcos, 4},
+    {"_BAMBI_const_vmcos_mc", (DL_FUNC) &_BAMBI_const_vmcos_mc, 5},
+    {"_BAMBI_const_vmcos", (DL_FUNC) &_BAMBI_const_vmcos, 5},
     {"_BAMBI_d_const_vmcos_anltc", (DL_FUNC) &_BAMBI_d_const_vmcos_anltc, 3},
     {"_BAMBI_d_const_vmcos_mc", (DL_FUNC) &_BAMBI_d_const_vmcos_mc, 5},
     {"_BAMBI_d_const_vmcos", (DL_FUNC) &_BAMBI_d_const_vmcos, 3},

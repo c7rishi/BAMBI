@@ -6,9 +6,6 @@
 \usage{
 fit_vmcosmix(...)
 }
-\arguments{
-\item{...}{arguments (other than \code{model}) passed to \link{fit_angmix}}
-}
 \description{
 Fitting bivariate von Mises cosine model mixtures using MCMC
 }

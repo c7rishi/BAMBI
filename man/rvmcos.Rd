@@ -19,19 +19,9 @@ dvmcos(
 )
 }
 \arguments{
-\item{n}{number of observations. Ignored if at least one of the other parameters have length k > 1, in which
-case, all the parameters are recycled to length k to produce k random variates.}
-
 \item{kappa1, kappa2, kappa3}{vectors of concentration parameters; \code{kappa1, kappa2 > 0}.}
 
 \item{mu1, mu2}{vectors of mean parameters.}
-
-\item{method}{Rejection sampling method to be used. Available choices are \code{"naive"} or \code{"vmprop"}. See details.}
-
-\item{x}{bivariate vector  or a two-column matrix with each row being a bivariate vector of angles
-(in radians)  where the densities are to be evaluated.}
-
-\item{log}{logical. Should the log density be returned instead?}
 
 \item{...}{additional arguments to be passed to dvmcos. See details.}
 }

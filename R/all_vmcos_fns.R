@@ -2,7 +2,7 @@
 
 
 #' The bivariate von Mises cosine model
-#' @inheritParams rvmsin
+#' @inheritParams rvmcos
 #' @param mu1,mu2 vectors of mean parameters.
 #' @param kappa1,kappa2,kappa3 vectors of concentration parameters; \code{kappa1, kappa2 > 0}.
 #' @param ... additional arguments to be passed to dvmcos. See details.
@@ -362,7 +362,7 @@ dvmcos <- function(x, kappa1=1, kappa2=1, kappa3=0, mu1=0,
 # }
 
 #' The bivariate von Mises cosine model mixtures
-#' @inheritParams rvmsinmix
+#' @inheritParams rvmcosmix
 #' @inheritParams rvmcos
 #' @param mu1,mu2 vectors of mean parameters.
 #' @param kappa1,kappa2,kappa3 vectors of concentration parameters; \code{kappa1, kappa2 > 0} for each component.
@@ -496,7 +496,7 @@ dvmcosmix <- function(x, kappa1, kappa2, kappa3,
 
 
 #' Fitting bivariate von Mises cosine model mixtures using MCMC
-#' @inheritParams fit_vmsinmix
+#' @inheritParams fit_vmcosmix
 #'
 #' @details
 #' Wrapper for \link{fit_angmix} with \code{model = "vmcos"}.
@@ -518,48 +518,97 @@ fit_vmcosmix <- function(...)
 
 
 
-vmcos_var_cor_singlepar_large <- function(kappa1, kappa2, kappa3, N) {
+vmcos_var_cor_singlepar_numeric <- function(kappa1, kappa2, kappa3, qrnd_grid) {
   # N <- 1e4
-  dat <- rvmcos(N, kappa1, kappa2, kappa3, 0, 0)
 
-  ave_sin1sin2 <- sum(sin(dat[, 1]) * sin(dat[, 2]))/N
-  ave_cos1cos2 <- sum(cos(dat[, 1]) * cos(dat[, 2]))/N
+  # browser()
 
-  ave_sin1sq <- sum(sin(dat[, 1])^2)/N
-  ave_cos1sq <- 1-ave_sin1sq
-  ave_cos1 <- sum(cos(dat[, 1]))/N
+  fn_log_vmcos_const <- function(pars) {
+    const_vmcos(pars[1], pars[2], pars[3], uni_rand = qrnd_grid, return_log = TRUE)
+  }
 
-  ave_sin2sq <- sum(sin(dat[, 2])^2)/N
-  ave_cos2sq <- 1-ave_sin2sq
-  ave_cos2 <- sum(cos(dat[, 2]))/N
+  # const <- fn_log_vmcos_const(c(kappa1, kappa2, kappa3))
+  grad_over_const <- numDeriv::grad(fn_log_vmcos_const, c(kappa1, kappa2, kappa3))
+  names(grad_over_const) <- c("k1", "k2", "k3")
+  hess_over_const <- numDeriv::hessian(fn_log_vmcos_const, c(kappa1, kappa2, kappa3)) +
+    tcrossprod(grad_over_const)
+  dimnames(hess_over_const) <- list(c("k1", "k2", "k3"), c("k1", "k2", "k3"))
 
-  rho_js <- ave_sin1sin2/sqrt(ave_sin1sq * ave_sin2sq)
-  # ifelse(ave_sin1sin2 >= 0, 1, -1) *
-  # min(abs(ave_sin1sin2)/sqrt(ave_sin1sq * ave_sin2sq), 1)
+  rho_fl <- unname(
+    ((grad_over_const["k3"] - hess_over_const["k1", "k2"]) *
+       hess_over_const["k1", "k2"]) /
+      sqrt(
+        hess_over_const["k1", "k1"] * (1 - hess_over_const["k1", "k1"])
+        * hess_over_const["k2", "k2"] * (1 - hess_over_const["k2", "k2"])
+      )
+  )
 
-  rho_fl <- rho_js *
-    ave_cos1cos2/sqrt(ave_cos1sq * ave_cos2sq)
-  # ifelse(ave_cos1cos2 >= 0, 1, -1) *
-  # min(abs(ave_cos1cos2)/sqrt(ave_cos1sq * ave_cos2sq), 1)
+  rho_js <- unname(
+    (grad_over_const["k3"] - hess_over_const["k1", "k2"]) /
+      sqrt((1 - hess_over_const["k1", "k1"]) *
+             (1 - hess_over_const["k2", "k2"]))
+  )
 
-  var1 <- min(1 - ave_cos1, 1)
-  var2 <- min(1 - ave_cos2, 1)
+  var1 <- unname(1 - grad_over_const["k1"])
+  var2 <- unname(1 - grad_over_const["k2"])
+  # dat <- rvmcos(N, kappa1, kappa2, kappa3, 0, 0)
+  #
+  # ave_sin1sin2 <- sum(sin(dat[, 1]) * sin(dat[, 2]))/N
+  # ave_cos1cos2 <- sum(cos(dat[, 1]) * cos(dat[, 2]))/N
+  #
+  # ave_sin1sq <- sum(sin(dat[, 1])^2)/N
+  # ave_cos1sq <- 1-ave_sin1sq
+  # ave_cos1 <- sum(cos(dat[, 1]))/N
+  #
+  # ave_sin2sq <- sum(sin(dat[, 2])^2)/N
+  # ave_cos2sq <- 1-ave_sin2sq
+  # ave_cos2 <- sum(cos(dat[, 2]))/N
+  #
+  # rho_js <- ave_sin1sin2/sqrt(ave_sin1sq * ave_sin2sq)
+  # # ifelse(ave_sin1sin2 >= 0, 1, -1) *
+  # # min(abs(ave_sin1sin2)/sqrt(ave_sin1sq * ave_sin2sq), 1)
+  #
+  # rho_fl <- rho_js *
+  #   ave_cos1cos2/sqrt(ave_cos1sq * ave_cos2sq)
+  # # ifelse(ave_cos1cos2 >= 0, 1, -1) *
+  # # min(abs(ave_cos1cos2)/sqrt(ave_cos1sq * ave_cos2sq), 1)
+  #
+  # var1 <- min(1 - ave_cos1, 1)
+  # var2 <- min(1 - ave_cos2, 1)
 
   list(var1 = var1, var2 = var2, rho_fl = rho_fl, rho_js = rho_js)
 }
 
 
 vmcos_var_cor_singlepar <- function(kappa1, kappa2, kappa3,
-                                    N, qrnd_grid) {
-  if (max(kappa1 > 150, kappa2 > 150, abs(kappa3)) > 150) {
-    vmcos_var_cor_singlepar_large(kappa1, kappa2,
-                                  kappa3, N)
-  } else if(kappa3 < -1 | max(kappa1, kappa2, abs(kappa3)) > 50) {
-    vmcos_var_corr_mc(kappa1, kappa2, kappa3, qrnd_grid)
+                                    qrnd_grid) {
+  if (max(kappa1, kappa2, abs(kappa3)) > 50 |
+      kappa3 < - 1) {
+    out <- vmcos_var_cor_singlepar_numeric(kappa1, kappa2,
+                                         kappa3, qrnd_grid)
+    # } else if(kappa3 < -1 | max(kappa1, kappa2, abs(kappa3)) > 50) {
+    #   vmcos_var_corr_mc(kappa1, kappa2, kappa3, qrnd_grid)
   } else {
-    vmcos_var_corr_anltc(kappa1, kappa2, kappa3)
+    out <- vmcos_var_corr_anltc(kappa1, kappa2, kappa3)
   }
 
+  for (rho in c("rho_js", "rho_fl")) {
+    if (out[[rho]] <= -1) {
+      out[[rho]] <- -1
+    } else if (out[[rho]] >= 1) {
+      out[[rho]] <- 1
+    }
+  }
+
+  for (var in c("var1", "var2")) {
+    if (out[[var]] <= 0) {
+      out[[var]] <- 0
+    } else if (out[[var]] >= 1) {
+      out[[var]] <- 1
+    }
+  }
+
+  out
 }
 
 

@@ -62,7 +62,8 @@ double const_vmcos_anltc(double k1, double k2, double k3)
 
 
 // [[Rcpp::export]]
-double const_vmcos_mc(double k1, double k2, double k3, arma::mat uni_rand)
+double const_vmcos_mc(double k1, double k2, double k3, arma::mat uni_rand,
+                      bool return_log = false)
 {
   double x = uni_rand(0, 0) * 2 * M_PI,
     y = uni_rand(0, 1) * 2 * M_PI,
@@ -76,20 +77,34 @@ double const_vmcos_mc(double k1, double k2, double k3, arma::mat uni_rand)
     expon = k1 * cos(x) + k2 * cos(y) + k3 * cos(x - y);
     sum_exp += exp(expon - temp);
   }
-  return 4 * M_PI * M_PI * exp(temp) * sum_exp / nsim;
+
+  double out;
+  if (return_log) {
+    out = temp + log(4 * M_PI * M_PI * sum_exp / nsim);
+  } else {
+    out = 4 * M_PI * M_PI * exp(temp) * sum_exp / nsim;
+  }
+
+  return out;
 }
 
 
 // [[Rcpp::export]]
-double const_vmcos(double k1, double k2, double k3, arma::mat  uni_rand)
+double const_vmcos(double k1, double k2, double k3, arma::mat  uni_rand,
+                   bool return_log = false)
 {
   if((k3 >= -5 && fmin(k1, k2) >= 0.01 &&
      fmax(fmax(k1, k2), fabs(k3)) <= 25) ||
      fabs(k3) < 1e-4) {
     // if(k3 >= 0) {
-    return const_vmcos_anltc(k1, k2, k3);
+    double out = const_vmcos_anltc(k1, k2, k3);
+    if (return_log) {
+      return log(out);
+    } else {
+      return out;
+    }
   } else {
-    return const_vmcos_mc(k1, k2, k3, uni_rand);
+    return const_vmcos_mc(k1, k2, k3, uni_rand, return_log);
   }
 }
 
@@ -221,7 +236,7 @@ arma::vec log_const_vmcos_all(arma::mat par_mat, arma::mat uni_rand) {
   int K = par_mat.n_cols;
   arma::vec all_lconsts(K);
   for(int j = 0; j < K; j++)
-    all_lconsts[j] = log(const_vmcos(par_mat(0,j), par_mat(1,j), par_mat(2,j), uni_rand));
+    all_lconsts[j] = const_vmcos(par_mat(0,j), par_mat(1,j), par_mat(2,j), uni_rand, true);
   return all_lconsts;
 }
 

@@ -10,20 +10,9 @@ rvmcosmix(n, kappa1, kappa2, kappa3, mu1, mu2, pmix, method = NULL)
 dvmcosmix(x, kappa1, kappa2, kappa3, mu1, mu2, pmix, log = FALSE, ...)
 }
 \arguments{
-\item{n}{number of observations.}
-
 \item{kappa1, kappa2, kappa3}{vectors of concentration parameters; \code{kappa1, kappa2 > 0} for each component.}
 
 \item{mu1, mu2}{vectors of mean parameters.}
-
-\item{pmix}{vector of mixture proportions.}
-
-\item{method}{Rejection sampling method to be used. Available choices are \code{"naive"} or \code{"vmprop"}. See details.}
-
-\item{x}{matrix of angles (in radians) where the density is to be evaluated, with each row being a
-single bivariate vector of angles.}
-
-\item{log}{logical. Should the log density be returned instead?}
 
 \item{...}{additional arguments to be passed to dvmcos. See details.}
 }
