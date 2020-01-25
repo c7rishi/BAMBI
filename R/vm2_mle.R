@@ -1,6 +1,6 @@
 #' Maximum likelihood estimation of bivariate von Mises parameters
 #' @inheritParams fit_angmix
-#' @param model Bivariate von Mises model. Must either be "vmsin" or "vmcos"
+#' @param model Bivariate von Mises model. One of "vmsin", "vmcos" or "indep".
 #' @param ... Additional arguments. See details.
 #' @details The parameters \code{kappa1} and \code{kappa2} are optimized
 #' in log scales. The method of optimization used (passed to \link{optim})
@@ -34,15 +34,6 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos"), ...) {
   method <- dots$method
 
   if (model == "vmsin") {
-
-    # if (unimodal.component) {
-    #   dep_cov <- TRUE
-    #   dep_cov_type <- "vmsin_unimodal"
-    # } else {
-    #   dep_cov <- FALSE
-    #   dep_cov_type <- NULL
-    # }
-
 
     # in log scale
     lpd_grad_model_indep_1comp <-  function(par_vec_lscale) {
@@ -116,8 +107,55 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos"), ...) {
     }
 
   }
-  # browser()
 
+
+  else if (model == "indep") {
+    # in log scale
+    lpd_grad_model_indep_1comp <-  function(par_vec_lscale) {
+      par_vec <- c(exp(par_vec_lscale[1:2]), 0, par_vec_lscale[4:5])
+
+      lpd_grad_parts <- lapply(
+        1:2,
+        function(j) {
+          signif(
+            suppressWarnings(grad_llik_univm_C(data[, j], par_vec[c(j, 3+j)]))*
+              c(par_vec[j], 1, 1),
+            8
+          )
+        }
+      )
+
+      lpr <- sum(sapply(lpd_grad_parts, "[", 3))
+      grad <- rep(0, 5)
+      for (j in 1:2) {
+        grad[c(j, 3+j)] <- lpd_grad_parts[[j]][1:2]
+      }
+      list(lpr = lpr, grad = grad)
+    }
+
+    start_par_gen <- function(dat) {
+      pars_by_dim <- lapply(1:2, function(j) start_par_vm(dat[, j]))
+      pars <- numeric(5)
+      for (j in 1:2) {
+        pars[c(j, 3+j)] <- pars_by_dim[[j]][1:2]
+      }
+      pars
+    }
+
+    hessian_fn <- function(par_vec) {
+      numDeriv::hessian(
+        func = function(par_vec) {
+          -sum(
+            sapply(
+              1:2,
+              function(j) grad_llik_univm_C(data[, j], par_vec[c(j, 3+j)])[3]
+            )
+          )
+        },
+        x = par_vec
+      )
+    }
+  }
 
   start <- start_par_gen(data)
   names(start) <- c("log_kappa1", "log_kappa2", "kappa3", "mu1", "mu2")
@@ -147,12 +185,20 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos"), ...) {
   hess <- hessian_fn(par_vec = est_par)
   dimnames(hess) <- list(names(est_par), names(est_par))
 
+  if (model == "indep") {
+    vcov <- matrix(0, 5, 5)
+    dimnames(vcov) <- dimnames(hess)
+    vcov[-3, -3] <- solve(hess[-3, -3])
+  } else {
+    vcov <- solve(hess)
+  }
+
   res <- new(
     "mle",
     call = call,
     coef = est_par,
     fullcoef = unlist(est_par),
-    vcov = solve(hess),
+    vcov = vcov,
     min = opt$value,
     details = opt,
     minuslogl = function(kappa1, kappa2, kappa3, mu1, mu2) {
@@ -163,5 +209,5 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos"), ...) {
     method = method
   )
 
- res
+  res
 }

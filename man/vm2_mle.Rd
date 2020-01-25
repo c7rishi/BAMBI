@@ -11,7 +11,7 @@ vm2_mle(data, model = c("vmsin", "vmcos"), ...)
 are transformed into the scale \eqn{[0, 2\pi)}. *Note:* BAMBI cannot handle missing data. Missing values must
 either be removed or properly imputed.}
 
-\item{model}{Bivariate von Mises model. Must either be "vmsin" or "vmcos"}
+\item{model}{Bivariate von Mises model. One of "vmsin", "vmcos" or "indep".}
 
 \item{...}{Additional arguments. See details.}
 }

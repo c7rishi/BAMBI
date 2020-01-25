@@ -18,7 +18,7 @@ dvmsinmix(x, kappa1, kappa2, kappa3, mu1, mu2, pmix, log = FALSE)
 
 \item{pmix}{vector of mixture proportions.}
 
-\item{method}{Rejection sampling method to be used. Available choices are \code{"naive"} or \code{"vmprop"}. See details.}
+\item{method}{Rejection sampling method to be used. Available choices are \code{"naive"} (default) or \code{"vmprop"}. See details.}
 
 \item{x}{matrix of angles (in radians) where the density is to be evaluated, with each row being a
 single bivariate vector of angles.}

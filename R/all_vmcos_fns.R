@@ -145,7 +145,7 @@
 #'
 #' @export
 rvmcos <- function(n, kappa1=1, kappa2=1,
-                   kappa3=0, mu1=0, mu2=0, method=NULL)
+                   kappa3=0, mu1=0, mu2=0, method="naive")
 {
   if(any(c(kappa1, kappa2) < 0)) stop("kappa1 and kappa2 must be nonnegative")
   if(any(mu1 < 0 | mu1 >= 2*pi)) mu1 <- prncp_reg(mu1)
@@ -153,10 +153,10 @@ rvmcos <- function(n, kappa1=1, kappa2=1,
   if(n < 0) stop("invalid n")
 
 
-  if (is.null(method)) {
-    if (n > 1e5) method <- "vmprop"
-    else method <- "naive"
-  }
+  # if (is.null(method)) {
+  #   if (n > 1e5) method <- "vmprop"
+  #   else method <- "naive"
+  # }
 
   if (!method %in% c("naive", "vmprop"))
     stop("method must be either \'naive\' or \'vmprop\'")
@@ -171,8 +171,8 @@ rvmcos <- function(n, kappa1=1, kappa2=1,
              function(j) rvmcos_1par(1, k1[j], k2[j], k3[j],
                                      mu1[j], mu2[j], "naive"), c(0, 0)))
   } else {
-    if (is.null(method) & max(kappa1, kappa2, abs(kappa3)) < 0.1)
-      method <- "vmprop"
+    # if (is.null(method) & max(kappa1, kappa2, abs(kappa3)) < 0.1)
+    #   method <- "vmprop"
 
     rvmcos_1par(n, kappa1, kappa2, kappa3, mu1, mu2, method)
   }
@@ -583,9 +583,9 @@ vmcos_var_cor_singlepar_numeric <- function(kappa1, kappa2, kappa3, qrnd_grid) {
 vmcos_var_cor_singlepar <- function(kappa1, kappa2, kappa3,
                                     qrnd_grid) {
   if (max(kappa1, kappa2, abs(kappa3)) > 50 |
-      kappa3 < - 1) {
+      kappa3 < 0) {
     out <- vmcos_var_cor_singlepar_numeric(kappa1, kappa2,
-                                         kappa3, qrnd_grid)
+                                           kappa3, qrnd_grid)
     # } else if(kappa3 < -1 | max(kappa1, kappa2, abs(kappa3)) > 50) {
     #   vmcos_var_corr_mc(kappa1, kappa2, kappa3, qrnd_grid)
   } else {

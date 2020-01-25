@@ -4,13 +4,33 @@
 \alias{circ_cor}
 \title{Sample circular correlation coefficients}
 \usage{
-circ_cor(x, type = "js", alternative = "two.sided")
+circ_cor(
+  x,
+  type = "js",
+  alternative = "two.sided",
+  jackknife = FALSE,
+  bootse = FALSE,
+  n.boot = 100
+)
 }
 \arguments{
 \item{x}{two column matrix. NA values are not allowed.}
 
 \item{type}{type of the circular correlation.
 Must be one of "fl", "js", "tau1" and "tau2". See details.}
+
+\item{alternative}{one of \code{"two.sided"}, \code{"less"} or \code{"greater"}
+(defaults to \code{"two.sided"}).
+Hypothesis test is performed only when \code{type} is either \code{"fl"} or \code{"js"},
+in which case asymptotic standard error of the estimator is used to construct the test
+statistic.}
+
+\item{jackknife}{logical. Compute jackknifed estimate and standard error? Defaults to FALSE.}
+
+\item{bootse}{logical. Compute bootstrap standard error? Defaults to FALSE.}
+
+\item{n.boot}{number of bootstrapped samples to compute bootstrap standard error. Defaults to
+100. Ignored if \code{bootse} if FALSE.}
 }
 \description{
 Sample circular correlation coefficients

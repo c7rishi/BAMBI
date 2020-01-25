@@ -25,7 +25,7 @@ case, all the parameters are recycled to length k to produce k random variates.}
 
 \item{mu1, mu2}{vectors of mean parameters.}
 
-\item{method}{Rejection sampling method to be used. Available choices are \code{"naive"} or \code{"vmprop"}. See details.}
+\item{method}{Rejection sampling method to be used. Available choices are \code{"naive"} (default) or \code{"vmprop"}. See details.}
 
 \item{x}{bivariate vector  or a two-column matrix with each row being a bivariate vector of angles
 (in radians)  where the densities are to be evaluated.}

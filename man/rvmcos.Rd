@@ -5,7 +5,15 @@
 \alias{dvmcos}
 \title{The bivariate von Mises cosine model}
 \usage{
-rvmcos(n, kappa1 = 1, kappa2 = 1, kappa3 = 0, mu1 = 0, mu2 = 0, method = NULL)
+rvmcos(
+  n,
+  kappa1 = 1,
+  kappa2 = 1,
+  kappa3 = 0,
+  mu1 = 0,
+  mu2 = 0,
+  method = "naive"
+)
 
 dvmcos(
   x,

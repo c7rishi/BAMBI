@@ -7,7 +7,7 @@
 #' @param mu1,mu2 vectors of mean parameters.
 #' @param kappa1,kappa2,kappa3 vectors of concentration parameters; \code{kappa1, kappa2 > 0}.
 #' @param log logical. Should the log density be returned instead?
-#' @param method Rejection sampling method to be used. Available choices are \code{"naive"} or \code{"vmprop"}. See details.
+#' @param method Rejection sampling method to be used. Available choices are \code{"naive"} (default) or \code{"vmprop"}. See details.
 #' @details
 #' The bivariate von Mises sine model density at the point \eqn{x = (x_1, x_2)} is given by
 #' \deqn{f(x) = C_s (\kappa_1, \kappa_2, \kappa_3) \exp(\kappa_1 \cos(T_1) + \kappa_2 \cos(T_2) + \kappa_3 \sin(T_1) \sin(T_2))}
