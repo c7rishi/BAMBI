@@ -5,7 +5,7 @@
 \alias{dvmsinmix}
 \title{The bivariate von Mises sine model mixtures}
 \usage{
-rvmsinmix(n, kappa1, kappa2, kappa3, mu1, mu2, pmix, method = NULL)
+rvmsinmix(n, kappa1, kappa2, kappa3, mu1, mu2, pmix, method = "naive")
 
 dvmsinmix(x, kappa1, kappa2, kappa3, mu1, mu2, pmix, log = FALSE)
 }

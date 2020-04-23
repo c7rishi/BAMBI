@@ -2,7 +2,7 @@
 
 
 #' The bivariate von Mises cosine model
-#' @inheritParams rvmcos
+#' @inheritParams rvmsin
 #' @param mu1,mu2 vectors of mean parameters.
 #' @param kappa1,kappa2,kappa3 vectors of concentration parameters; \code{kappa1, kappa2 > 0}.
 #' @param ... additional arguments to be passed to dvmcos. See details.
@@ -145,7 +145,8 @@
 #'
 #' @export
 rvmcos <- function(n, kappa1=1, kappa2=1,
-                   kappa3=0, mu1=0, mu2=0, method="naive")
+                   kappa3=0, mu1=0, mu2=0,
+                   method="naive")
 {
   if(any(c(kappa1, kappa2) < 0)) stop("kappa1 and kappa2 must be nonnegative")
   if(any(mu1 < 0 | mu1 >= 2*pi)) mu1 <- prncp_reg(mu1)
@@ -362,7 +363,7 @@ dvmcos <- function(x, kappa1=1, kappa2=1, kappa3=0, mu1=0,
 # }
 
 #' The bivariate von Mises cosine model mixtures
-#' @inheritParams rvmcosmix
+#' @inheritParams rvmsinmix
 #' @inheritParams rvmcos
 #' @param mu1,mu2 vectors of mean parameters.
 #' @param kappa1,kappa2,kappa3 vectors of concentration parameters; \code{kappa1, kappa2 > 0} for each component.
@@ -398,7 +399,7 @@ dvmcos <- function(x, kappa1=1, kappa2=1, kappa3=0, mu1=0,
 #' @export
 
 rvmcosmix <- function(n, kappa1, kappa2, kappa3,
-                      mu1, mu2, pmix, method = NULL)
+                      mu1, mu2, pmix, method = "naive", ...)
 {
   allpar <- list(kappa1=kappa1, kappa2=kappa2, kappa3=kappa3,
                  mu1=mu1, mu2=mu2, pmix=pmix)
@@ -496,7 +497,7 @@ dvmcosmix <- function(x, kappa1, kappa2, kappa3,
 
 
 #' Fitting bivariate von Mises cosine model mixtures using MCMC
-#' @inheritParams fit_vmcosmix
+#' @inheritParams fit_vmsinmix
 #'
 #' @details
 #' Wrapper for \link{fit_angmix} with \code{model = "vmcos"}.
@@ -641,7 +642,7 @@ rvmcos_1par <- function(n=1, kappa1, kappa2, kappa3, mu1, mu2, method)
           kappa13 <- sqrt(kappa1^2 + kappa3^2 + 2*kappa1*kappa3*cos(phi))
           -kappa1*kappa3*A_bessel(kappa13)/kappa13 - kappa2
         }
-        find_root <- rootSolve::uniroot.all(phistar_eqn, c(0, 2*pi))
+        find_root <- uniroot.all(phistar_eqn, c(0, 2*pi))
         # if no root found, use the naive two dimensional rejection sampler
         if (is.null(find_root)) {
           method <- "naive"

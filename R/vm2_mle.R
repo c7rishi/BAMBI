@@ -193,7 +193,7 @@ vm2_mle <- function(data, model = c("vmsin", "vmcos"), ...) {
     vcov <- solve(hess)
   }
 
-  res <- new(
+  res <- methods::new(
     "mle",
     call = call,
     coef = est_par,

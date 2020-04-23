@@ -276,7 +276,7 @@ dvmsin <- function(x, kappa1=1, kappa2=1, kappa3=0, mu1=0, mu2=0, log = FALSE)
 #'
 #' @export
 
-rvmsinmix <- function(n, kappa1, kappa2, kappa3, mu1, mu2, pmix, method=NULL)
+rvmsinmix <- function(n, kappa1, kappa2, kappa3, mu1, mu2, pmix, method="naive")
 {
   allpar <- list(kappa1=kappa1, kappa2=kappa2, kappa3=kappa3,
                  mu1=mu1, mu2=mu2, pmix=pmix)
@@ -495,7 +495,7 @@ rvmsin_1par <- function(n=1, kappa1=1, kappa2=1, kappa3=1,
           cos(phi)*A_bessel(a_phi)/a_phi - kappa1/kappa3^2
         }
         # find the modes in (-pi, pi)
-        find_root <- rootSolve::uniroot.all(phistar_eqn, c(-pi, pi))
+        find_root <- uniroot.all(phistar_eqn, c(-pi, pi))
         # if no root found, use the naive two dimensional rejection sampler
         if (is.null(find_root)) {
           method <- "naive"

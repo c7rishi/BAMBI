@@ -1061,6 +1061,11 @@ r_fitted <- function(n=1, object, type =  "point-est", fn = mean,
   }
 
 
+  if (object$model %in% c("vmcos", "vmsin")) {
+    inargs$method <- "naive"
+  }
+
+
   if (type == "point-est") {
     est <- pointest(object, fn = fn, chain.no = chain.no)
     inargs <- c(list_by_row(as.matrix(est)), inargs)
