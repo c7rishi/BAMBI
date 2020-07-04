@@ -4,9 +4,11 @@
 \name{wind}
 \alias{wind}
 \title{Saturna Island wind directions}
-\format{A data frame with 239 rows and 2 columns; the column "angle" provides the angular direction (in radian)
+\format{
+A data frame with 239 rows and 2 columns; the column "angle" provides the angular direction (in radian)
 and the column day provides the days on which the data points were collected (ranges between 1-10, corresponding to
-October 1-10, 2016).}
+October 1-10, 2016).
+}
 \source{
 Environment Canada: \url{http://climate.weather.gc.ca/climate_data/data_quality_e.html}.
 

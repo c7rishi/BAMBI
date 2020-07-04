@@ -2,10 +2,19 @@
 ## Resubmission
 This is a resubmission. In this version we have made the following changes.
 
-### Changelog:
+## Changelog:
 * added a function for maximum likelihood estimation of (single component) bivariate von Mises distribution
+* fixed bug on computation of JS correlation coefficient 
 * the default sampling algorithm from vmsin and vmcos are "naive" if n < 1e5
 * removed dependency from rootSolve
+
+## Test environments
+* local Windows 10 install, R 4.0.0
+* win-builder (devel and release)
+* Ubuntu release 19.04, R 3.6.0
+
+## R CMD check results
+There were no ERRORs or WARNINGs or NOTEs. 
 
 
 

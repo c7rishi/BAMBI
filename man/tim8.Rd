@@ -4,7 +4,9 @@
 \name{tim8}
 \alias{tim8}
 \title{Backbone Dihedral Angles of Triose Phosphate Isomerase (8TIM)}
-\format{A data frame with 490 rows and 2 variables (backbone dihedral angles) phi and psi.}
+\format{
+A data frame with 490 rows and 2 variables (backbone dihedral angles) phi and psi.
+}
 \source{
 8TIM PDB file: \url{http://www.rcsb.org/pdb/explore.do?structureId=8tim}.
 
