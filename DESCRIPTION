@@ -9,7 +9,7 @@ Maintainer: Saptarshi Chakraborty <chakra.saptarshi@gmail.com>
 Description: Fit (using Bayesian methods) and simulate mixtures of univariate and bivariate angular distributions. Chakraborty and Wong (2017) <arXiv:1708.07804>.
 License: GPL-3
 LazyData: TRUE
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 LinkingTo: Rcpp,
            RcppArmadillo
 Imports: stats,
@@ -37,3 +37,4 @@ Suggests: future,
 Depends: R (>= 3.2.0)
 URL: https://arxiv.org/abs/1708.07804
 BugReports: https://github.com/c7rishi/BAMBI/issues
+Encoding: UTF-8

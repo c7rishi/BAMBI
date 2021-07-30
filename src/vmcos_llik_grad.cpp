@@ -282,8 +282,11 @@ arma::vec dcos_manyx_onepar(arma::mat x, double k1, double k2, double k3,
 {
   int n = x.n_rows;
 
-  arma::vec par(5);
-  par[0] = k1; par[1] = k2; par[2] = k3; par[3] = mu1; par[4] = mu2;
+  // arma::vec par(5);
+  // par[0] = k1; par[1] = k2; par[2] = k3; par[3] = mu1; par[4] = mu2;
+  arma::vec par = { k1, k2, k3, mu1, mu2 };
+
+
 
   arma::vec ld_num(n);
   for(int i = 0; i < n; i++) {
@@ -1010,15 +1013,15 @@ arma::vec ldcos_manyx_onepar(arma::mat x, double k1, double k2, double k3,
 {
   int n = x.n_rows;
 
-  arma::vec par(5);
-  par[0] = k1; par[1] = k2; par[2] = k3; par[3] = mu1; par[4] = mu2;
+  arma::vec par = { k1, k2, k3, mu1, mu2 };
+  // par[0] = k1; par[1] = k2; par[2] = k3; par[3] = mu1; par[4] = mu2;
 
-  arma::vec ld_num(n);
+  arma::vec out(n);
   for(int i = 0; i < n; i++) {
-    ld_num[i] = ldcosnum(x(i,0), x(i,1), par);
+    out[i] = ldcosnum(x(i,0), x(i,1), par) - l_const;
   }
 
-  return (ld_num - l_const);
+  return (out);
 }
 
 

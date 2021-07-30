@@ -31,6 +31,8 @@ find_lscale_mat_uni <- function(x) {
 
 
 
+
+
 #' Fitting Bivariate and univariate angular mixture models
 #'
 #' @importFrom gtools rdirichlet
@@ -240,6 +242,21 @@ fit_angmix <- function(model = "vmsin",
 {
 
   # if(is.null(dim(data)) | !(mode(data) %in% c("list", "numeric", "data.frame") && ncol(data) == 2)) stop("non-compatible data")
+
+
+  dots <- list(...)
+
+  backward_compatible <- FALSE
+  backward_compatible <- dots$backward_compatible
+  if (is.null(backward_compatible)) {
+    backward_compatible <- FALSE
+  }
+
+  stopifnot(is.logical(backward_compatible))
+
+  signif_ <- if (backward_compatible) function(x, ...) x else signif
+
+
 
   if (length(model) > 1) stop("\'model\' must be a scalar")
 
@@ -499,9 +516,6 @@ fit_angmix <- function(model = "vmsin",
     }
 
 
-
-
-
     # # in log scale
     # lpd_grad_model_indep_1comp <-  function(data, par_vec_lscale,
     #                                         obs_group, n.clus) {
@@ -559,18 +573,18 @@ fit_angmix <- function(model = "vmsin",
       par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       lpd_grad <- matrix(NA, 6, 1)
       if (n.clus > 0) {
-        lpd_grad <- signif(suppressWarnings(
+        lpd_grad <- signif_(suppressWarnings(
           grad_llik_vmsin_C(data[obs_group, , drop=FALSE],
                             par_vec))*
-          c(par_vec[1:2], rep(1, 4)) +
-          c( # grad for lprior
-            -par_vec_lscale[1:3]/norm.var, 0, 0,
-            # lprior
-            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
-          ), 8)
+            c(par_vec[1:2], rep(1, 4)) +
+            c( # grad for lprior
+              -par_vec_lscale[1:3]/norm.var, 0, 0,
+              # lprior
+              - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
+            ), 8)
       } else {
         lpd_grad[] <-
-          signif(c( # grad for lprior
+          signif_(c( # grad for lprior
             -par_vec_lscale[1:3]/norm.var, 0, 0,
             # lprior
             - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
@@ -585,14 +599,14 @@ fit_angmix <- function(model = "vmsin",
       if (n.clus > 0) {
         # llik + prior
         res <-
-          signif(llik_vmsin_one_comp(data[obs_group, , drop=FALSE], par_vec,
-                              log(const_vmsin(par_vec[1],
-                                              par_vec[2], par_vec[3]))) +
-          0.5*sum(-par_vec_lscale[1:3]^2/norm.var), 8)
+          signif_(llik_vmsin_one_comp(data[obs_group, , drop=FALSE], par_vec,
+                                      log(const_vmsin(par_vec[1],
+                                                      par_vec[2], par_vec[3]))) +
+                    0.5*sum(-par_vec_lscale[1:3]^2/norm.var), 8)
       } else{
         # only prior
         res <-
-          signif(0.5*sum(-par_vec_lscale[1:3]^2/norm.var), 8)
+          signif_(0.5*sum(-par_vec_lscale[1:3]^2/norm.var), 8)
       }
       res
     }
@@ -601,14 +615,14 @@ fit_angmix <- function(model = "vmsin",
 
 
     llik_model_contri <- function(data, par_mat, pi_mix) {
-      signif(llik_vmsin_contri_C(data, par_mat, pi_mix,
-                          log_const_vmsin_all(par_mat)),
-             8)
+      signif_(llik_vmsin_contri_C(data, par_mat, pi_mix,
+                                  log_const_vmsin_all(par_mat)),
+              8)
     }
 
     mem_p_model <- function(data, par_mat, pi_mix) {
-      signif(mem_p_sin(data, par_mat, pi_mix,
-                       log_const_vmsin_all(par_mat), 1), 8)
+      signif_(mem_p_sin(data, par_mat, pi_mix,
+                        log_const_vmsin_all(par_mat), 1), 8)
     }
   }
 
@@ -698,18 +712,18 @@ fit_angmix <- function(model = "vmsin",
       par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       lpd_grad <- matrix(NA, 6, 1)
       if (n.clus > 0) {
-        lpd_grad[] <- signif(suppressWarnings(
+        lpd_grad[] <- signif_(suppressWarnings(
           grad_llik_vmcos_C(data[obs_group, , drop=FALSE],
                             par_vec[], qrnd_grid)) *
-          c(par_vec[1:2], rep(1, 4)) +
-          c( # grad for lprior
-            -par_vec_lscale[1:3]/norm.var, 0, 0,
-            # lprior
-            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
-          ), 8)
+            c(par_vec[1:2], rep(1, 4)) +
+            c( # grad for lprior
+              -par_vec_lscale[1:3]/norm.var, 0, 0,
+              # lprior
+              - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
+            ), 8)
       } else {
         lpd_grad[] <-
-          signif(c( # grad for lprior
+          signif_(c( # grad for lprior
             -par_vec_lscale[1:3]/norm.var, 0, 0,
             # lprior
             - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
@@ -724,16 +738,16 @@ fit_angmix <- function(model = "vmsin",
       if (n.clus > 0) {
         # llik + prior
         res <-
-          signif(llik_vmcos_one_comp(data[obs_group, , drop=FALSE], par_vec[],
-                              log(const_vmcos(par_vec[1],
-                                              par_vec[2],
-                                              par_vec[3],
-                                              qrnd_grid))) -
-          0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
+          signif_(llik_vmcos_one_comp(data[obs_group, , drop=FALSE], par_vec[],
+                                      log(const_vmcos(par_vec[1],
+                                                      par_vec[2],
+                                                      par_vec[3],
+                                                      qrnd_grid))) -
+                    0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
       } else{
         # only prior
         res <-
-          signif(- 0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
+          signif_(- 0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
       }
       res
     }
@@ -741,13 +755,13 @@ fit_angmix <- function(model = "vmsin",
 
 
     llik_model_contri <- function(data, par_mat, pi_mix) {
-      signif(llik_vmcos_contri_C(data, par_mat, pi_mix,
-                          log_const_vmcos_all(par_mat, qrnd_grid)), 8)
+      signif_(llik_vmcos_contri_C(data, par_mat, pi_mix,
+                                  log_const_vmcos_all(par_mat, qrnd_grid)), 8)
     }
 
     mem_p_model <- function(data, par_mat, pi_mix) {
-      signif(mem_p_cos(data, par_mat, pi_mix,
-                log_const_vmcos_all(par_mat, qrnd_grid)), 8)
+      signif_(mem_p_cos(data, par_mat, pi_mix,
+                        log_const_vmcos_all(par_mat, qrnd_grid)), 8)
     }
   }
 
@@ -865,17 +879,17 @@ fit_angmix <- function(model = "vmsin",
       par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       lpd_grad <- matrix(NA, 6, 1)
       if (n.clus > 0) {
-        lpd_grad[] <- signif(grad_llik_wnorm2_C(data[obs_group, , drop=FALSE],
-                                         par_vec[], omega.2pi) *
-          c(par_vec[1:2], rep(1, 4)) +
-          c( # grad for lprior
-            -par_vec_lscale[1:3]/norm.var, 0, 0,
-            # lprior
-            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
-          ), 8)
+        lpd_grad[] <- signif_(grad_llik_wnorm2_C(data[obs_group, , drop=FALSE],
+                                                 par_vec[], omega.2pi) *
+                                c(par_vec[1:2], rep(1, 4)) +
+                                c( # grad for lprior
+                                  -par_vec_lscale[1:3]/norm.var, 0, 0,
+                                  # lprior
+                                  - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
+                                ), 8)
       } else {
         lpd_grad[] <-
-          signif(c( # grad for lprior
+          signif_(c( # grad for lprior
             -par_vec_lscale[1:3]/norm.var, 0, 0,
             # lprior
             - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
@@ -890,27 +904,27 @@ fit_angmix <- function(model = "vmsin",
       if (n.clus > 0) {
         # llik + prior
         res <-
-          signif(llik_wnorm2_one_comp(data[obs_group, , drop=FALSE], par_vec[],
-                               l_const_wnorm2(par_vec[]),
-                               omega.2pi)-
-          0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
+          signif_(llik_wnorm2_one_comp(data[obs_group, , drop=FALSE], par_vec[],
+                                       l_const_wnorm2(par_vec[]),
+                                       omega.2pi)-
+                    0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
       } else{
         # only prior
         res <-
-          signif(- 0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
+          signif_(- 0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
       }
       res
     }
 
 
     llik_model_contri <- function(data, par_mat, pi_mix) {
-      signif(llik_wnorm2_contri_C(data, par_mat, pi_mix,
-                           log_const_wnorm2_all(par_mat), omega.2pi), 8)
+      signif_(llik_wnorm2_contri_C(data, par_mat, pi_mix,
+                                   log_const_wnorm2_all(par_mat), omega.2pi), 8)
     }
 
     mem_p_model <- function(data, par_mat, pi_mix) {
-      signif(mem_p_wnorm2(data, par_mat, pi_mix, log_const_wnorm2_all(par_mat),
-                   omega.2pi), 8)
+      signif_(mem_p_wnorm2(data, par_mat, pi_mix, log_const_wnorm2_all(par_mat),
+                           omega.2pi), 8)
     }
 
 
@@ -995,19 +1009,19 @@ fit_angmix <- function(model = "vmsin",
       lpd_grad <- matrix(NA, 3, 1)
       par_vec <- c(exp(par_vec_lscale[1]), par_vec_lscale[2])
       if (n.clus > 0) {
-        lpd_grad[] <- signif(suppressWarnings(
+        lpd_grad[] <- signif_(suppressWarnings(
           grad_llik_univm_C(data[obs_group],
                             par_vec[])) * c(par_vec[1], 1, 1) +
 
-          c( # grad for lprior
-            -par_vec_lscale[1]/norm.var, 0,
-            # lprior
-            - 0.5*sum(par_vec_lscale[1]^2/norm.var)
-          ), 8)
+            c( # grad for lprior
+              -par_vec_lscale[1]/norm.var, 0,
+              # lprior
+              - 0.5*sum(par_vec_lscale[1]^2/norm.var)
+            ), 8)
 
       } else {
         lpd_grad[] <-
-          signif(c( # grad for lprior
+          signif_(c( # grad for lprior
             -par_vec_lscale[1]/norm.var, 0,
             # lprior
             - 0.5*sum(par_vec_lscale[1]^2/norm.var)
@@ -1021,14 +1035,14 @@ fit_angmix <- function(model = "vmsin",
       if (n.clus > 0) {
         # llik + prior
         res <-
-          signif(llik_univm_one_comp(data[obs_group], par_vec[],
-                              log(const_univm(par_vec[1]))) -
-          0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
+          signif_(llik_univm_one_comp(data[obs_group], par_vec[],
+                                      log(const_univm(par_vec[1]))) -
+                    0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
 
       } else{
         # only prior
         res <-
-          signif(- 0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
+          signif_(- 0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
       }
       unname(res)
     }
@@ -1036,13 +1050,13 @@ fit_angmix <- function(model = "vmsin",
 
 
     llik_model_contri <- function(data, par_mat, pi_mix) {
-      signif(llik_univm_contri_C(data, par_mat, pi_mix,
-                          log_const_univm_all(par_mat)), 8)
+      signif_(llik_univm_contri_C(data, par_mat, pi_mix,
+                                  log_const_univm_all(par_mat)), 8)
     }
 
     mem_p_model <- function(data, par_mat, pi_mix) {
-      signif(mem_p_univm(data, par_mat, pi_mix,
-                         log_const_univm_all(par_mat)), 8)
+      signif_(mem_p_univm(data, par_mat, pi_mix,
+                          log_const_univm_all(par_mat)), 8)
     }
 
 
@@ -1112,18 +1126,18 @@ fit_angmix <- function(model = "vmsin",
       lpd_grad <- matrix(NA, 3, 1)
       par_vec <- c(exp(par_vec_lscale[1]), par_vec_lscale[2])
       if (n.clus > 0) {
-        lpd_grad[] <- signif(grad_llik_uniwnorm_C(data[obs_group],
-                                           par_vec[], omega.2pi) * c(par_vec[1], 1, 1) +
+        lpd_grad[] <- signif_(grad_llik_uniwnorm_C(data[obs_group],
+                                                   par_vec[], omega.2pi) * c(par_vec[1], 1, 1) +
 
-          c( # grad for lprior
-            -par_vec_lscale[1]/norm.var, 0,
-            # lprior
-            - 0.5*sum(par_vec_lscale[1]^2/norm.var)
-          ), 8)
+                                c( # grad for lprior
+                                  -par_vec_lscale[1]/norm.var, 0,
+                                  # lprior
+                                  - 0.5*sum(par_vec_lscale[1]^2/norm.var)
+                                ), 8)
 
       } else {
         lpd_grad[] <-
-          signif(c( # grad for lprior
+          signif_(c( # grad for lprior
             -par_vec_lscale[1]/norm.var, 0,
             # lprior
             - 0.5*sum(par_vec_lscale[1]^2/norm.var)
@@ -1138,15 +1152,15 @@ fit_angmix <- function(model = "vmsin",
       if (n.clus > 0) {
         # llik + prior
         res <-
-          signif(llik_uniwnorm_one_comp(data[obs_group], par_vec[],
-                                 l_const_uniwnorm(par_vec[1]),
-                                 omega.2pi)  -
-          0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
+          signif_(llik_uniwnorm_one_comp(data[obs_group], par_vec[],
+                                         l_const_uniwnorm(par_vec[1]),
+                                         omega.2pi)  -
+                    0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
 
       } else{
         # only prior
         res <-
-          signif(- 0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
+          signif_(- 0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
       }
       unname(res)
     }
@@ -1155,12 +1169,12 @@ fit_angmix <- function(model = "vmsin",
 
 
     llik_model_contri <- function(data, par_mat, pi_mix) {
-      signif(llik_uniwnorm_contri_C(data, par_mat, pi_mix,
-                             log_const_uniwnorm_all(par_mat), omega.2pi), 8)
+      signif_(llik_uniwnorm_contri_C(data, par_mat, pi_mix,
+                                     log_const_uniwnorm_all(par_mat), omega.2pi), 8)
     }
 
     mem_p_model <- function(data, par_mat, pi_mix) {
-      signif(mem_p_uniwnorm(data, par_mat, pi_mix, log_const_uniwnorm_all(par_mat), omega.2pi), 8)
+      signif_(mem_p_uniwnorm(data, par_mat, pi_mix, log_const_uniwnorm_all(par_mat), omega.2pi), 8)
     }
 
 
@@ -1320,6 +1334,8 @@ fit_angmix <- function(model = "vmsin",
 
     #  Run the Markov chain
     for(iter in  1:n.iter) {
+      # browser()
+
       if (method == "hmc") {
         if (epsilon.random) {
           tune_param_final <- tune_param*runif(1, 1-epsilon.incr, 1+epsilon.incr)
@@ -1338,6 +1354,7 @@ fit_angmix <- function(model = "vmsin",
       if(ncomp > 1) {
         post.wt <- mem_p_model(data.rad, par.mat, pi.mix)
         clus.ind <-  cID(post.wt, ncomp, runif(n.data))
+        # clus.ind <- apply(post.wt, 1, function(x) which.max(rmultinom(n = 1, size = 1, prob = x)))
         # n.clus <- tabulate(clus.ind_curr, nbins = ncomp)
         obs_group <- lapply(1:ncomp, function(j) which(clus.ind == j))
         n.clus <- listLen(obs_group)
@@ -1645,7 +1662,7 @@ fit_angmix <- function(model = "vmsin",
 
       if (show.progress)
         if (iter %% 2)
-        # if ((round(iter /  n.iter, 2) * 100) %% 5 == 0 || iter == n.iter + 1)
+          # if ((round(iter /  n.iter, 2) * 100) %% 5 == 0 || iter == n.iter + 1)
           tcltk::setTkProgressBar(pb, iter, label = message)
 
     }

@@ -24,7 +24,7 @@ fit_incremental_angmix(
   silent = FALSE,
   return_llik_contri = (crit \%in\% c("LOOIC", "WAIC")),
   use_best_chain = TRUE,
-  alpha = 0.05,
+  alpha = 3e-05,
   ...
 )
 }
@@ -100,8 +100,8 @@ computation of model selection criterion? Here "best" means the chain
 with largest (mean over iterations) log-posterior density. This can be helpful if one of the chains gets stuck at local optima. Defaults to TRUE.}
 
 \item{alpha}{significance level used in the test H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
-with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}. See Details.
-Must be a scalar between 0 and 1. Defaults to 0.05. Ignored for any other \code{crit}.}
+with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}.
+Must be a scalar between 0 and 1. Defaults to 0.05. See Details. Ignored for any other \code{crit}.}
 
 \item{...}{additional arguments passed to \link{fit_angmix}.}
 }

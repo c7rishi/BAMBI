@@ -1,6 +1,6 @@
 #include <RcppArmadillo.h>
 // [[Rcpp::depends(RcppArmadillo)]]
-
+#include "bessel.h"
 
 // [[Rcpp::export]]
 arma::vec rowVars(arma::mat mat_in)
@@ -85,6 +85,7 @@ Rcpp::NumericVector cID(arma::mat probs, int ncomp, arma::vec Uv) {
 }
 
 
+
 // [[Rcpp::export]]
 arma::uvec change_labs(arma::uvec orig, arma::uvec rand_perm) {
  unsigned int n = orig.n_elem;
@@ -97,15 +98,15 @@ arma::uvec change_labs(arma::uvec orig, arma::uvec rand_perm) {
 }
 
 
-int sgn(double val) {
-  if (val > 0) {
-    return 1;
-  } else if (val < 0) {
-    return -1;
-  } else {
-    return 0;
-  }
-}
+// int sgn(double val) {
+//   if (val > 0) {
+//     return 1;
+//   } else if (val < 0) {
+//     return -1;
+//   } else {
+//     return 0;
+//   }
+// }
 
 
 // [[Rcpp::export]]

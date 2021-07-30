@@ -754,10 +754,10 @@ DIC <- function(object, form = 2, ...)
 
 
 #' Watanabe-Akaike Information Criterion (WAIC) for angmcmc objects
-#' @inheritParams pointest
+#'
 #' @param x angmcmc object.
 #' @param ... additional model specific arguments to be passed to \link{waic} from loo. For example, \code{int.displ}
-#' specifies integer dispacement in wnorm and wnorm2 models. See \link{fit_wnormmix} and
+#' specifies integer displacement in wnorm and wnorm2 models. See \link{fit_wnormmix} and
 #' \link{fit_wnorm2mix} for more details.
 #' @return Computes the WAIC for a given angmcmc object.
 #' @details

@@ -10,7 +10,7 @@
 \item{x}{angmcmc object.}
 
 \item{...}{additional model specific arguments to be passed to \link{waic} from loo. For example, \code{int.displ}
-specifies integer dispacement in wnorm and wnorm2 models. See \link{fit_wnormmix} and
+specifies integer displacement in wnorm and wnorm2 models. See \link{fit_wnormmix} and
 \link{fit_wnorm2mix} for more details.}
 }
 \description{

@@ -42,8 +42,8 @@
 #' @param return_llik_contri passed to \link{fit_angmix}. By default, set to \code{TRUE} if \code{crit} is either \code{"LOOIC"}
 #' or \code{"WAIC"}, and to \code{FALSE} otherwise.
 #' @param alpha significance level used in the test H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
-#' with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}. See Details.
-#' Must be a scalar between 0 and 1. Defaults to 0.05. Ignored for any other \code{crit}.
+#' with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}.
+#' Must be a scalar between 0 and 1. Defaults to 0.05. See Details. Ignored for any other \code{crit}.
 #'
 #' @details
 #' The goal is to fit an angular mixture model with an optimally chosen component size K.
@@ -216,7 +216,7 @@ fit_incremental_angmix <- function(model, data,
     stop("\'alpha\' must be a scalar between 0 and 1")
   }
 
-  q_norm <- qnorm(alpha, lower.tail = F)
+  q_norm <- qnorm(alpha, lower.tail = FALSE)
 
 
   # all_fit <- vector("list", n_ncomp)
@@ -433,13 +433,55 @@ fit_incremental_angmix <- function(model, data,
 
     if (j > 1 ) {
       if (crit %in% c("LOOIC", "WAIC")) {
-        compare_crit <- suppressWarnings(loo::compare(all_crit[[j-1]],
-                                                      all_crit[[j]]))
+        # browser()
+        crit_list <- list(
+          comp_j_minus_1 = all_crit[[j-1]],
+          comp_j = all_crit[[j]]
+        )
+
+        compare_crit_obj <- loo::loo_compare(
+          x = crit_list
+        )
+
+        E_diff <-  (
+          compare_crit_obj["comp_j", "elpd_diff"]
+          - compare_crit_obj["comp_j_minus_1", "elpd_diff"]
+        )
+        E_diff_se <- sum(compare_crit_obj[, "se_diff"])
+
+
+        # if (E_diff < 4) {
+        #   warn_msg <- paste(
+        #     "conservative estimate used for se_diff"
+        #   )
+        # }
+
+        # if ((E_diff < 4 & E_diff_se < 4) | all_ncomp[j] > 4) browser()
+
         # test for signif improvement in elpd
         # H0: curr elpd - prev elpd <= 0 vs Ha: >
-        zscore <- compare_crit[1]/compare_crit[2]
+        zscore <- E_diff/E_diff_se
+
+
+        # print(compare_crit_obj, simplify = FALSE)
+        #
+        # compare_crit <- suppressWarnings(
+        #   loo::loo_compare(
+        #     all_crit[[j-1]],
+        #     all_crit[[j]]
+        #   )
+        # )
+        # compare_crit1 <- suppressWarnings(
+        #   loo::compare(
+        #     all_crit[[j-1]],
+        #     all_crit[[j]]
+        #   )
+        # )
+        # test for signif improvement in elpd
+        # H0: curr elpd - prev elpd <= 0 vs Ha: >
+        # zscore <- compare_crit[1]/compare_crit[2]
         if (zscore <= q_norm) {
-          # fail to reject null at alpha = 0.05 --
+          # fail to reject null at alpha --
           # so no signific improvement in curr elpd compared to prev
           check_min <- TRUE
           j.best <- j-1
