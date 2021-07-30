@@ -95,7 +95,7 @@ be printed? Defaults to \code{TRUE}.}
 \item{return_llik_contri}{passed to \link{fit_angmix}. By default, set to \code{TRUE} if \code{crit} is either \code{"LOOIC"}
 or \code{"WAIC"}, and to \code{FALSE} otherwise.}
 
-\item{use_best_chain}{logical. Should only the "best" chain obtained duing each intermediate fit be used during
+\item{use_best_chain}{logical. Should only the "best" chain obtained during each intermediate fit be used during
 computation of model selection criterion? Here "best" means the chain
 with largest (mean over iterations) log-posterior density. This can be helpful if one of the chains gets stuck at local optima. Defaults to TRUE.}
 
