@@ -24,7 +24,7 @@ fit_incremental_angmix(
   silent = FALSE,
   return_llik_contri = (crit \%in\% c("LOOIC", "WAIC")),
   use_best_chain = TRUE,
-  alpha = 3e-05,
+  alpha = 0.05,
   ...
 )
 }
