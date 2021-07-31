@@ -129,6 +129,8 @@ fit_incremental_angmix <- function(model, data,
                                    alpha = 0.05,
                                    ...)
 {
+
+
   if (length(model) > 1)
     stop("\'model\' must be a scalar")
   if(missing(model))
@@ -269,6 +271,12 @@ fit_incremental_angmix <- function(model, data,
 
   check_min <- FALSE
 
+  curr_seed <- NULL
+  if (exists(".Random.seed", .GlobalEnv)) {
+    curr_seed <- .GlobalEnv$.Random.seed
+  }
+
+
 
   for(j in seq_len(length(all_ncomp))) {
     all_input$ncomp <- all_ncomp[j]
@@ -319,7 +327,13 @@ fit_incremental_angmix <- function(model, data,
 
     }
 
-
+    if (!is.null(curr_seed)) {
+       msg <- paste(
+         "\n***Restoring RNG state to specified seed***\n"
+       )
+       cat(msg)
+      .GlobalEnv$.Random.seed <- curr_seed
+    }
 
     fit_angmcmc <- do.call(fit_angmix, all_input)
 
@@ -505,7 +519,7 @@ fit_incremental_angmix <- function(model, data,
 
     if (all_ncomp[j] == max_ncomp) {
       cat("\n\'max_ncomp\' reached. Stopping...\n")
-      j.best <- max_ncomp
+      j.best <- j
       fit_best <- fit_angmcmc
     }
   }

@@ -615,14 +615,23 @@ fit_angmix <- function(model = "vmsin",
 
 
     llik_model_contri <- function(data, par_mat, pi_mix) {
-      signif_(llik_vmsin_contri_C(data, par_mat, pi_mix,
-                                  log_const_vmsin_all(par_mat)),
-              8)
+      signif_(
+        llik_vmsin_contri_C(
+          data, par_mat, pi_mix,
+          signif_(log_const_vmsin_all(par_mat), 8)
+        ),
+        8
+      )
     }
 
     mem_p_model <- function(data, par_mat, pi_mix) {
-      signif_(mem_p_sin(data, par_mat, pi_mix,
-                        log_const_vmsin_all(par_mat), 1), 8)
+      signif_(
+        mem_p_sin(
+          data, par_mat, pi_mix,
+          signif_(log_const_vmsin_all(par_mat), 8), 1
+        ),
+        8
+      )
     }
   }
 
@@ -755,13 +764,23 @@ fit_angmix <- function(model = "vmsin",
 
 
     llik_model_contri <- function(data, par_mat, pi_mix) {
-      signif_(llik_vmcos_contri_C(data, par_mat, pi_mix,
-                                  log_const_vmcos_all(par_mat, qrnd_grid)), 8)
+      signif_(
+        llik_vmcos_contri_C(
+          data, par_mat, pi_mix,
+          signif_(log_const_vmcos_all(par_mat, qrnd_grid), 8)
+        ),
+        8
+      )
     }
 
     mem_p_model <- function(data, par_mat, pi_mix) {
-      signif_(mem_p_cos(data, par_mat, pi_mix,
-                        log_const_vmcos_all(par_mat, qrnd_grid)), 8)
+      signif_(
+        mem_p_cos(
+          data, par_mat, pi_mix,
+          signif_(log_const_vmcos_all(par_mat, qrnd_grid), 8)
+        ),
+        8
+      )
     }
   }
 
@@ -918,13 +937,25 @@ fit_angmix <- function(model = "vmsin",
 
 
     llik_model_contri <- function(data, par_mat, pi_mix) {
-      signif_(llik_wnorm2_contri_C(data, par_mat, pi_mix,
-                                   log_const_wnorm2_all(par_mat), omega.2pi), 8)
+      signif_(
+        llik_wnorm2_contri_C(
+          data, par_mat, pi_mix,
+          signif_(log_const_wnorm2_all(par_mat), 8),
+          omega.2pi
+        ),
+        8
+      )
     }
 
     mem_p_model <- function(data, par_mat, pi_mix) {
-      signif_(mem_p_wnorm2(data, par_mat, pi_mix, log_const_wnorm2_all(par_mat),
-                           omega.2pi), 8)
+      signif_(
+        mem_p_wnorm2(
+          data, par_mat, pi_mix,
+          signif_(log_const_wnorm2_all(par_mat), 8),
+          omega.2pi
+        ),
+        8
+      )
     }
 
 
@@ -1050,13 +1081,23 @@ fit_angmix <- function(model = "vmsin",
 
 
     llik_model_contri <- function(data, par_mat, pi_mix) {
-      signif_(llik_univm_contri_C(data, par_mat, pi_mix,
-                                  log_const_univm_all(par_mat)), 8)
+      signif_(
+        llik_univm_contri_C(
+          data, par_mat, pi_mix,
+          signif_(log_const_univm_all(par_mat), 8)
+        ),
+        8
+      )
     }
 
     mem_p_model <- function(data, par_mat, pi_mix) {
-      signif_(mem_p_univm(data, par_mat, pi_mix,
-                          log_const_univm_all(par_mat)), 8)
+      signif_(
+        mem_p_univm(
+          data, par_mat, pi_mix,
+          signif_(log_const_univm_all(par_mat), 8)
+        ),
+        8
+      )
     }
 
 
@@ -1169,12 +1210,25 @@ fit_angmix <- function(model = "vmsin",
 
 
     llik_model_contri <- function(data, par_mat, pi_mix) {
-      signif_(llik_uniwnorm_contri_C(data, par_mat, pi_mix,
-                                     log_const_uniwnorm_all(par_mat), omega.2pi), 8)
+      signif_(
+        llik_uniwnorm_contri_C(
+          data, par_mat, pi_mix,
+          signif_(log_const_uniwnorm_all(par_mat), 8),
+          omega.2pi
+        ),
+        8
+      )
     }
 
     mem_p_model <- function(data, par_mat, pi_mix) {
-      signif_(mem_p_uniwnorm(data, par_mat, pi_mix, log_const_uniwnorm_all(par_mat), omega.2pi), 8)
+      signif_(
+        mem_p_uniwnorm(
+          data, par_mat, pi_mix,
+          signif_(log_const_uniwnorm_all(par_mat), 8),
+          omega.2pi
+        ),
+        8
+      )
     }
 
 

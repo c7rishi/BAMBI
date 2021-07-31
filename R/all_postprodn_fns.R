@@ -248,7 +248,14 @@ fix_label <- function(object, ...) {
         inargs$int.displ <- object$int.displ
       else if (object$model == "vmcos")
         inargs$qrnd_grid <- object$qrnd_grid
-      res <- res + sum(log(do.call(paste0("d", object$model), inargs)))
+      res <- res + sum(
+        signif(
+          log(
+            do.call(paste0("d", object$model), inargs)
+          ),
+          8
+        )
+      )
     }
 
     res + sum(n.groups * log(pars.t[1, ]))
@@ -832,8 +839,10 @@ waic.angmcmc <- function(x, ...)
         input_pars <- list_by_row(draws[, , j])
         input_pars$log <- TRUE
         input_pars$x <- c(data_i)
-        out[j] <- do.call(paste0("d", object$model, "mix"),
-                          input_pars)
+        out[j] <- signif(
+          do.call(paste0("d", object$model, "mix"), input_pars),
+          8
+        )
       }
       out
     }
@@ -913,8 +922,11 @@ loo.angmcmc <- function(x, ...)
         input_pars <- list_by_row(draws[, , j])
         input_pars$log <- TRUE
         input_pars$x <- c(data_i)
-        out[j] <- do.call(paste0("d", object$model, "mix"),
-                          input_pars)
+        out[j] <- signif(
+          do.call(paste0("d", object$model, "mix"),
+                  input_pars),
+          8
+        )
       }
       out
     }
@@ -1011,7 +1023,7 @@ d_fitted <- function(x, object, type = "point-est", fn = mean, log=FALSE,
     est <- pointest(object, fn = fn)
     inargs <- c(list_by_row(est), inargs)
     inargs$log <- log
-    out <- suppressWarnings(do.call(paste0("d", object$model, "mix"), inargs))
+    out <- signif(suppressWarnings(do.call(paste0("d", object$model, "mix"), inargs)), 8)
   } else {
     samp <- extractsamples(object, chain.no = chain.no, drop = FALSE)
     dim_samp <- dim(samp)
@@ -1023,9 +1035,12 @@ d_fitted <- function(x, object, type = "point-est", fn = mean, log=FALSE,
     out_list <- lapply(seq_len(nsamp),
                        function(j) {
                          inargs1 <- c(list_by_row(as.matrix(samp_coll[, , j])), inargs)
-                         c(suppressWarnings(do.call(paste0("d",
-                                                           object$model,
-                                                           "mix"), inargs1)))
+                         signif(
+                           c(suppressWarnings(do.call(paste0("d",
+                                                             object$model,
+                                                             "mix"), inargs1))),
+                           8
+                         )
                        })
     out <- Reduce('+', out_list)/nsamp
 
@@ -1291,7 +1306,7 @@ bridge_sampler.angmcmc <- function(samples, ..., ave_over_chains = TRUE)
         inargs$qrnd_grid <- object$qrnd_grid
 
       inargs$log <- TRUE
-      llik <- sum(do.call(paste0("d", object$model), inargs))
+      llik <- sum(signif(do.call(paste0("d", object$model), inargs), 8))
 
       if (object$type == "bi") {
         lprior <- sum(-0.5*c((log(allpar_mat[1, ]))^2/norm.var[1],
@@ -1396,7 +1411,11 @@ bridge_sampler.angmcmc <- function(samples, ..., ave_over_chains = TRUE)
         inargs$qrnd_grid <- object$qrnd_grid
 
       inargs$log <- TRUE
-      llik <- suppressWarnings(sum(do.call(paste0("d", object$model, "mix"), inargs)))
+      llik <- suppressWarnings(
+        sum(
+          signif(do.call(paste0("d", object$model, "mix"), inargs)), 8
+        )
+      )
 
 
       par_mat <- allpar_mat[-1, ]
