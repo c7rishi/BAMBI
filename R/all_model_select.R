@@ -44,6 +44,12 @@
 #' @param alpha significance level used in the test H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
 #' with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}.
 #' Must be a scalar between 0 and 1. Defaults to 0.05. See Details. Ignored for any other \code{crit}.
+#' @param bonferroni_alpha logical. Should a Bonferroni correction be made on the test size \code{alpha} to adjust for
+#' multiplicity due to (\code{max_ncomp} - \code{start_ncomp}) possible hypothesis tests? Defaults to TRUE.
+#' Relevant only if \code{crit} is in  \code{c("LOOIC", "WAIC")}, and ignored otherwise. See Details.
+#' @param bonferroni_adj_type character string. Denoting type of Bonferroni adjustment to make.
+#' Possible choices are \code{"decreasing"} (default) and \code{"equal"}. Ignored if either \code{bonferroni_alpha}
+#' is FALSE, or \code{crit} is outside \code{c("LOOIC", "WAIC")}. See Details.
 #'
 #' @details
 #' The goal is to fit an angular mixture model with an optimally chosen component size K.
@@ -53,8 +59,23 @@
 #' If the model selection criterion \code{crit} is \code{"LOOIC"} or \code{"WAIC"}, then a test of hypothesis
 #' H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
 #' with K + 1 components, is performed at every K >= 1. The test-statistic used for the test is an approximate z-score
-#' based on the normalized estimated elpd difference between the two models (obtained from \link[loo]{compare}, which provides
-#' estimated elpd difference along with its standard error estimate). The incremental fitting stops if  H_{0K} cannot be rejected
+#' based on the normalized estimated elpd difference between the two models obtained from \link[loo]{compare}, which provides
+#' estimated elpd difference along with its standard error estimate. Because the computed standard error of elpd difference
+#' can be overly optimistic when the elpd difference is small (in particular < 4),
+#' a conservative worst-case estimate (equal to twice of the computed standard error)
+#' is used in such cases. To account for multiplicity among the
+#' (\code{max_ncomp} - \code{start_ncomp}) possible sequential tests performed,
+#' by default a Bonferroni adjustment to the test level \code{alpha} is made.
+#' Set \code{bonferroni_alpha = FALSE} to remove the adjustment. To encourage
+#' parsimony in the final model, by default (\code{bonferroni_adj_type = "decreasing"})
+#' a decreasing sequence of adjusted alphas of the form
+#' alpha0/2, alpha0/4, ..., alpha0/(2^(\code{max_ncomp} - \code{start_ncomp}))
+#' (with alpha0 chosen such that these add up to alpha) is used in the sequential
+#' hypotheses tests. Set \code{bonferroni_adj_type = "equal"}
+#' to use equal sequence of adjusted alphas
+#' (i.e., \code{alpha}/(\code{max_ncomp} - \code{start_ncomp})) instead.
+#'
+#' The incremental fitting stops if  H_{0K} cannot be rejected
 #' (at level \code{alpha}) for some K >= 1; this K is then regarded as the optimum number of components.
 #' If \code{crit} is not \code{"LOOIC"} or \code{"WAIC"} then mixture model with the first minimum value of the model selection criterion \code{crit}
 #' is taken as the best model.
@@ -127,6 +148,8 @@ fit_incremental_angmix <- function(model, data,
                                    return_llik_contri = (crit %in% c("LOOIC", "WAIC")),
                                    use_best_chain = TRUE,
                                    alpha = 0.05,
+                                   bonferroni_alpha = TRUE,
+                                   bonferroni_adj_type = "decreasing",
                                    ...)
 {
 
@@ -189,6 +212,7 @@ fit_incremental_angmix <- function(model, data,
       stop("\'data\' must be a vector for \'model\' = \'vm\' and \'wnorm\'")
   }
 
+
   fit_all <- NULL
 
   if (return_all)
@@ -210,15 +234,43 @@ fit_incremental_angmix <- function(model, data,
 
   }
 
-  if (any(length(alpha) != 1,
-          !is.numeric(alpha),
-          alpha < 0,
-          alpha > 1)) {
+  ntests_max <- n_ncomp - 1
 
-    stop("\'alpha\' must be a scalar between 0 and 1")
+  if (crit %in% c("LOOIC", "WAIC")) {
+
+    if (any(length(alpha) != 1,
+            !is.numeric(alpha),
+            alpha < 0,
+            alpha > 1)) {
+
+      stop("\'alpha\' must be a scalar between 0 and 1")
+    }
+
+
+
+    stopifnot(
+      is.logical(bonferroni_alpha),
+      length(bonferroni_alpha) == 1,
+      ! is.na(bonferroni_alpha),
+      is.character(bonferroni_adj_type),
+      length(bonferroni_adj_type) == 1,
+      bonferroni_adj_type %in% c("equal", "decreasing"),
+      ! is.na(bonferroni_adj_type)
+    )
+
+    alpha_vec <- rep(NA, ntests_max)
+    if (!bonferroni_alpha) {
+      alpha_vec <- rep(alpha, ntests_max)
+    } else if (bonferroni_adj_type == "decreasing") {
+      alpha_vec <- alpha * (0.5)^(1:ntests_max) / sum((0.5)^(1:ntests_max))
+    } else if (bonferroni_adj_type == "equal") {
+      alpha_vec <- alpha / ntests_max
+    }
+
   }
 
-  q_norm <- qnorm(alpha, lower.tail = FALSE)
+
+  # q_norm <- qnorm(alpha, lower.tail = FALSE)
 
 
   # all_fit <- vector("list", n_ncomp)
@@ -328,10 +380,10 @@ fit_incremental_angmix <- function(model, data,
     }
 
     if (!is.null(curr_seed)) {
-       msg <- paste(
-         "\n***Restoring RNG state to specified seed***\n"
-       )
-       cat(msg)
+      msg <- paste(
+        "\n***Restoring RNG state to specified seed***\n"
+      )
+      # cat(msg)
       .GlobalEnv$.Random.seed <- curr_seed
     }
 
@@ -467,43 +519,28 @@ fit_incremental_angmix <- function(model, data,
           E_diff_se <- 2 * E_diff_se
         }
 
-
-        # if (E_diff < 4) {
-        #   warn_msg <- paste(
-        #     "conservative estimate used for se_diff"
-        #   )
-        # }
-
-        # if ((E_diff < 4 & E_diff_se < 4) | all_ncomp[j] > 4) browser()
-
         # test for signif improvement in elpd
         # H0: curr elpd - prev elpd <= 0 vs Ha: >
         zscore <- E_diff/E_diff_se
+        pval_curr <- pnorm(zscore, lower.tail = FALSE)
 
 
-        # print(compare_crit_obj, simplify = FALSE)
-        #
-        # compare_crit <- suppressWarnings(
-        #   loo::loo_compare(
-        #     all_crit[[j-1]],
-        #     all_crit[[j]]
-        #   )
-        # )
-        # compare_crit1 <- suppressWarnings(
-        #   loo::compare(
-        #     all_crit[[j-1]],
-        #     all_crit[[j]]
-        #   )
-        # )
-        # test for signif improvement in elpd
-        # H0: curr elpd - prev elpd <= 0 vs Ha: >
         # zscore <- compare_crit[1]/compare_crit[2]
-        if (zscore <= q_norm) {
+        if (pval_curr >= alpha_vec[j-1]) {
           # fail to reject null at alpha --
           # so no signific improvement in curr elpd compared to prev
           check_min <- TRUE
           j.best <- j-1
-          cat("\nImprovement in predicitive accuracy not significant. Stopping...\n")
+          pval_txt <- format(pval_curr, digits = 3, scientific = TRUE)
+          alpha_txt <- format(alpha_vec[j-1], digits = 3, scientific = TRUE)
+
+          msg <- paste0(
+            "\nImprovement in predicitive accuracy not significant",
+            " (p=", pval_txt,
+            ">=level=", alpha_txt,
+            "). Stopping...\n\n"
+          )
+          cat(msg)
           fit_best <- fit_prev #previous fit is best
           break
         }
