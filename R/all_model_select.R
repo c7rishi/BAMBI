@@ -63,17 +63,14 @@
 #' estimated elpd difference along with its standard error estimate. Because the computed standard error of elpd difference
 #' can be overly optimistic when the elpd difference is small (in particular < 4),
 #' a conservative worst-case estimate (equal to twice of the computed standard error)
-#' is used in such cases. To account for multiplicity among the
+#' is used in such cases. To account for multiplicity among the M =
 #' (\code{max_ncomp} - \code{start_ncomp}) possible sequential tests performed,
 #' by default a Bonferroni adjustment to the test level \code{alpha} is made.
 #' Set \code{bonferroni_alpha = FALSE} to remove the adjustment. To encourage
 #' parsimony in the final model, by default (\code{bonferroni_adj_type = "decreasing"})
-#' a decreasing sequence of adjusted alphas of the form
-#' alpha0/2, alpha0/4, ..., alpha0/(2^(\code{max_ncomp} - \code{start_ncomp}))
-#' (with alpha0 chosen such that these add up to alpha) is used in the sequential
-#' hypotheses tests. Set \code{bonferroni_adj_type = "equal"}
-#' to use equal sequence of adjusted alphas
-#' (i.e., \code{alpha}/(\code{max_ncomp} - \code{start_ncomp})) instead.
+#' a decreasing sequence of adjusted alphas of the form \code{alpha * (0.5)^(1:M) / sum((0.5)^(1:M))}
+#' is used. Set \code{bonferroni_adj_type = "equal"}
+#' to use equal sequence of adjusted alphas (i.e., \code{alpha/M}) instead.
 #'
 #' The incremental fitting stops if  H_{0K} cannot be rejected
 #' (at level \code{alpha}) for some K >= 1; this K is then regarded as the optimum number of components.
