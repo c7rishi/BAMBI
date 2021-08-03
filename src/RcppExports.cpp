@@ -1099,172 +1099,172 @@ BEGIN_RCPP
 END_RCPP
 }
 // ldwnorm2_num
-double ldwnorm2_num(arma::vec x, arma::vec par, arma::mat omega_2pi);
+double ldwnorm2_num(Rcpp::NumericVector x, Rcpp::NumericVector par, Rcpp::NumericMatrix omega_2pi);
 RcppExport SEXP _BAMBI_ldwnorm2_num(SEXP xSEXP, SEXP parSEXP, SEXP omega_2piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type par(parSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega_2pi(omega_2piSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type par(parSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type omega_2pi(omega_2piSEXP);
     rcpp_result_gen = Rcpp::wrap(ldwnorm2_num(x, par, omega_2pi));
     return rcpp_result_gen;
 END_RCPP
 }
 // l_const_wnorm2
-double l_const_wnorm2(arma::vec par);
+double l_const_wnorm2(Rcpp::NumericVector par);
 RcppExport SEXP _BAMBI_l_const_wnorm2(SEXP parSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type par(parSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type par(parSEXP);
     rcpp_result_gen = Rcpp::wrap(l_const_wnorm2(par));
     return rcpp_result_gen;
 END_RCPP
 }
 // const_wnorm2
-double const_wnorm2(arma::vec par);
+double const_wnorm2(Rcpp::NumericVector par);
 RcppExport SEXP _BAMBI_const_wnorm2(SEXP parSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type par(parSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type par(parSEXP);
     rcpp_result_gen = Rcpp::wrap(const_wnorm2(par));
     return rcpp_result_gen;
 END_RCPP
 }
 // log_const_wnorm2_all
-arma::vec log_const_wnorm2_all(arma::mat par_mat);
+Rcpp::NumericVector log_const_wnorm2_all(Rcpp::NumericMatrix par_mat);
 RcppExport SEXP _BAMBI_log_const_wnorm2_all(SEXP par_matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type par_mat(par_matSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type par_mat(par_matSEXP);
     rcpp_result_gen = Rcpp::wrap(log_const_wnorm2_all(par_mat));
     return rcpp_result_gen;
 END_RCPP
 }
 // mem_p_wnorm2
-arma::mat mem_p_wnorm2(arma::mat data, arma::mat par_mat, arma::vec pi, arma::vec log_c_wnorm, arma::mat omega_2pi, int ncores);
+Rcpp::NumericMatrix mem_p_wnorm2(Rcpp::NumericMatrix data, Rcpp::NumericMatrix par_mat, Rcpp::NumericVector pi, Rcpp::NumericVector log_c_wnorm, Rcpp::NumericMatrix omega_2pi, int ncores);
 RcppExport SEXP _BAMBI_mem_p_wnorm2(SEXP dataSEXP, SEXP par_matSEXP, SEXP piSEXP, SEXP log_c_wnormSEXP, SEXP omega_2piSEXP, SEXP ncoresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type par_mat(par_matSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type pi(piSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type log_c_wnorm(log_c_wnormSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega_2pi(omega_2piSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type par_mat(par_matSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type pi(piSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type log_c_wnorm(log_c_wnormSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type omega_2pi(omega_2piSEXP);
     Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP);
     rcpp_result_gen = Rcpp::wrap(mem_p_wnorm2(data, par_mat, pi, log_c_wnorm, omega_2pi, ncores));
     return rcpp_result_gen;
 END_RCPP
 }
 // llik_wnorm2_contri_C
-arma::vec llik_wnorm2_contri_C(arma::mat data, arma::mat par, arma::vec pi, arma::vec log_c, arma::mat omega_2pi);
+Rcpp::NumericVector llik_wnorm2_contri_C(Rcpp::NumericMatrix data, Rcpp::NumericMatrix par, Rcpp::NumericVector pi, Rcpp::NumericVector log_c, Rcpp::NumericMatrix omega_2pi);
 RcppExport SEXP _BAMBI_llik_wnorm2_contri_C(SEXP dataSEXP, SEXP parSEXP, SEXP piSEXP, SEXP log_cSEXP, SEXP omega_2piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type par(parSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type pi(piSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type log_c(log_cSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega_2pi(omega_2piSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type par(parSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type pi(piSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type log_c(log_cSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type omega_2pi(omega_2piSEXP);
     rcpp_result_gen = Rcpp::wrap(llik_wnorm2_contri_C(data, par, pi, log_c, omega_2pi));
     return rcpp_result_gen;
 END_RCPP
 }
 // llik_wnorm2_one_comp
-double llik_wnorm2_one_comp(arma::mat data, arma::vec par_vec, double log_c, arma::mat omega_2pi);
+double llik_wnorm2_one_comp(Rcpp::NumericMatrix data, Rcpp::NumericVector par_vec, double log_c, Rcpp::NumericMatrix omega_2pi);
 RcppExport SEXP _BAMBI_llik_wnorm2_one_comp(SEXP dataSEXP, SEXP par_vecSEXP, SEXP log_cSEXP, SEXP omega_2piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type par_vec(par_vecSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type par_vec(par_vecSEXP);
     Rcpp::traits::input_parameter< double >::type log_c(log_cSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega_2pi(omega_2piSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type omega_2pi(omega_2piSEXP);
     rcpp_result_gen = Rcpp::wrap(llik_wnorm2_one_comp(data, par_vec, log_c, omega_2pi));
     return rcpp_result_gen;
 END_RCPP
 }
 // grad_llik_wnorm2_C
-arma::vec grad_llik_wnorm2_C(arma::mat data, arma::vec par, arma::mat omega_2pi);
+Rcpp::NumericVector grad_llik_wnorm2_C(Rcpp::NumericMatrix data, Rcpp::NumericVector par, Rcpp::NumericMatrix omega_2pi);
 RcppExport SEXP _BAMBI_grad_llik_wnorm2_C(SEXP dataSEXP, SEXP parSEXP, SEXP omega_2piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type par(parSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega_2pi(omega_2piSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type par(parSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type omega_2pi(omega_2piSEXP);
     rcpp_result_gen = Rcpp::wrap(grad_llik_wnorm2_C(data, par, omega_2pi));
     return rcpp_result_gen;
 END_RCPP
 }
 // grad_den_wnorm2_one_comp_i_unadj
-arma::vec grad_den_wnorm2_one_comp_i_unadj(double x, double y, arma::vec par, double det_sig_inv, double det_sig_inv_sqrt, arma::mat omega_2pi);
+Rcpp::NumericVector grad_den_wnorm2_one_comp_i_unadj(double x, double y, Rcpp::NumericVector par, double det_sig_inv, double det_sig_inv_sqrt, Rcpp::NumericMatrix omega_2pi);
 RcppExport SEXP _BAMBI_grad_den_wnorm2_one_comp_i_unadj(SEXP xSEXP, SEXP ySEXP, SEXP parSEXP, SEXP det_sig_invSEXP, SEXP det_sig_inv_sqrtSEXP, SEXP omega_2piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type x(xSEXP);
     Rcpp::traits::input_parameter< double >::type y(ySEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type par(parSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type par(parSEXP);
     Rcpp::traits::input_parameter< double >::type det_sig_inv(det_sig_invSEXP);
     Rcpp::traits::input_parameter< double >::type det_sig_inv_sqrt(det_sig_inv_sqrtSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega_2pi(omega_2piSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type omega_2pi(omega_2piSEXP);
     rcpp_result_gen = Rcpp::wrap(grad_den_wnorm2_one_comp_i_unadj(x, y, par, det_sig_inv, det_sig_inv_sqrt, omega_2pi));
     return rcpp_result_gen;
 END_RCPP
 }
 // dwnorm2_onex_manypar
-arma::vec dwnorm2_onex_manypar(arma::vec x, arma::vec k1, arma::vec k2, arma::vec k3, arma::vec mu1, arma::vec mu2, arma::mat omega_2pi);
+Rcpp::NumericVector dwnorm2_onex_manypar(Rcpp::NumericVector x, Rcpp::NumericVector k1, Rcpp::NumericVector k2, Rcpp::NumericVector k3, Rcpp::NumericVector mu1, Rcpp::NumericVector mu2, Rcpp::NumericMatrix omega_2pi);
 RcppExport SEXP _BAMBI_dwnorm2_onex_manypar(SEXP xSEXP, SEXP k1SEXP, SEXP k2SEXP, SEXP k3SEXP, SEXP mu1SEXP, SEXP mu2SEXP, SEXP omega_2piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type k1(k1SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type k2(k2SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type k3(k3SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type mu1(mu1SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type mu2(mu2SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega_2pi(omega_2piSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type k1(k1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type k2(k2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type k3(k3SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type mu1(mu1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type mu2(mu2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type omega_2pi(omega_2piSEXP);
     rcpp_result_gen = Rcpp::wrap(dwnorm2_onex_manypar(x, k1, k2, k3, mu1, mu2, omega_2pi));
     return rcpp_result_gen;
 END_RCPP
 }
 // dwnorm2_manyx_onepar
-arma::vec dwnorm2_manyx_onepar(arma::mat x, double k1, double k2, double k3, double mu1, double mu2, arma::mat omega_2pi);
+Rcpp::NumericVector dwnorm2_manyx_onepar(Rcpp::NumericMatrix x, double k1, double k2, double k3, double mu1, double mu2, Rcpp::NumericMatrix omega_2pi);
 RcppExport SEXP _BAMBI_dwnorm2_manyx_onepar(SEXP xSEXP, SEXP k1SEXP, SEXP k2SEXP, SEXP k3SEXP, SEXP mu1SEXP, SEXP mu2SEXP, SEXP omega_2piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< double >::type k1(k1SEXP);
     Rcpp::traits::input_parameter< double >::type k2(k2SEXP);
     Rcpp::traits::input_parameter< double >::type k3(k3SEXP);
     Rcpp::traits::input_parameter< double >::type mu1(mu1SEXP);
     Rcpp::traits::input_parameter< double >::type mu2(mu2SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega_2pi(omega_2piSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type omega_2pi(omega_2piSEXP);
     rcpp_result_gen = Rcpp::wrap(dwnorm2_manyx_onepar(x, k1, k2, k3, mu1, mu2, omega_2pi));
     return rcpp_result_gen;
 END_RCPP
 }
 // dwnorm2_manyx_manypar
-arma::vec dwnorm2_manyx_manypar(arma::mat x, arma::vec k1, arma::vec k2, arma::vec k3, arma::vec mu1, arma::vec mu2, arma::mat omega_2pi);
+Rcpp::NumericVector dwnorm2_manyx_manypar(Rcpp::NumericMatrix x, Rcpp::NumericVector k1, Rcpp::NumericVector k2, Rcpp::NumericVector k3, Rcpp::NumericVector mu1, Rcpp::NumericVector mu2, Rcpp::NumericMatrix omega_2pi);
 RcppExport SEXP _BAMBI_dwnorm2_manyx_manypar(SEXP xSEXP, SEXP k1SEXP, SEXP k2SEXP, SEXP k3SEXP, SEXP mu1SEXP, SEXP mu2SEXP, SEXP omega_2piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type k1(k1SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type k2(k2SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type k3(k3SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type mu1(mu1SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type mu2(mu2SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega_2pi(omega_2piSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type k1(k1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type k2(k2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type k3(k3SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type mu1(mu1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type mu2(mu2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type omega_2pi(omega_2piSEXP);
     rcpp_result_gen = Rcpp::wrap(dwnorm2_manyx_manypar(x, k1, k2, k3, mu1, mu2, omega_2pi));
     return rcpp_result_gen;
 END_RCPP

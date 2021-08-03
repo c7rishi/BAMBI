@@ -1,4 +1,4 @@
-#include <RcppArmadillo.h>
+#include <Rcpp.h>
 // [[Rcpp::depends(RcppArmadillo)]]
 
 // #ifdef _OPENMP
@@ -10,14 +10,14 @@
 
 using namespace Rcpp;
 
-// typedef std::vector<arma::mat> stdvec_mat;
+// typedef std::vector<Rcpp::NumericMatrix> stdvec_mat;
 
 
 
 // [[Rcpp::export]]
-double ldwnorm2_num( arma::vec x, arma::vec par,  arma::mat omega_2pi) {
-  int M = omega_2pi.n_rows;
-  arma::vec allexpons(M);
+double ldwnorm2_num( Rcpp::NumericVector x, Rcpp::NumericVector par,  Rcpp::NumericMatrix omega_2pi) {
+  int M = omega_2pi.nrow();
+  Rcpp::NumericVector allexpons(M);
   double expon_sum = 0.0, term1, term2;
   for(int j = 0; j < M; j++) {
     term1 = (omega_2pi(j,0) - x[0] + par[3]);
@@ -33,13 +33,13 @@ double ldwnorm2_num( arma::vec x, arma::vec par,  arma::mat omega_2pi) {
 
 
 // [[Rcpp::export]]
-double l_const_wnorm2(arma::vec par) {
+double l_const_wnorm2(Rcpp::NumericVector par) {
   double det_sig_inv = par[0] * par[1] - par[2]*par[2];
   return (log(2*M_PI) - 0.5*log(det_sig_inv));
 }
 
 // [[Rcpp::export]]
-double const_wnorm2(arma::vec par) {
+double const_wnorm2(Rcpp::NumericVector par) {
 
   return exp(l_const_wnorm2(par));
 }
@@ -47,26 +47,26 @@ double const_wnorm2(arma::vec par) {
 
 
 // [[Rcpp::export]]
-arma::vec log_const_wnorm2_all(arma::mat par_mat) {
-  int K = par_mat.n_cols;
-  arma::vec result(K);
+Rcpp::NumericVector log_const_wnorm2_all(Rcpp::NumericMatrix par_mat) {
+  int K = par_mat.ncol();
+  Rcpp::NumericVector result(K);
   for(int j = 0; j < K; j++)
-    result[j] = l_const_wnorm2(par_mat.col(j));
+    result[j] = l_const_wnorm2(par_mat.column(j));
   return result;
 }
 
 // [[Rcpp::export]]
-arma::mat mem_p_wnorm2(arma::mat data, arma::mat par_mat, arma::vec pi,
-                       arma::vec log_c_wnorm, arma::mat omega_2pi, int ncores = 1)
+Rcpp::NumericMatrix mem_p_wnorm2(Rcpp::NumericMatrix data, Rcpp::NumericMatrix par_mat, Rcpp::NumericVector pi,
+                       Rcpp::NumericVector log_c_wnorm, Rcpp::NumericMatrix omega_2pi, int ncores = 1)
 {
-  int n = data.n_rows, K = par_mat.n_cols, j;
+  int n = data.nrow(), K = par_mat.ncol(), j;
   double row_total;
-  arma::mat den(n, K);
-  arma::vec log_pi = log(pi);
+  Rcpp::NumericMatrix den(n, K);
+  Rcpp::NumericVector log_pi = log(pi);
   for(int i = 0; i < n; i++) {
     row_total = 0;
     for(j = 0; j < K; j++){
-      den(i, j) = exp(ldwnorm2_num(arma::trans(data.row(i)), par_mat.col(j), omega_2pi) - log_c_wnorm[j] + log_pi[j]);
+      den(i, j) = exp(ldwnorm2_num(data.row(i), par_mat.column(j), omega_2pi) - log_c_wnorm[j] + log_pi[j]);
       row_total += den(i, j);
     }
     if(row_total <= 1e-50) row_total = 1e-50;
@@ -79,23 +79,23 @@ arma::mat mem_p_wnorm2(arma::mat data, arma::mat par_mat, arma::vec pi,
 
 // // not used
 // // [[Rcpp::export]]
-// double llik_wnorm2_full(arma::mat data, arma::mat par, arma::vec pi,
-//                              arma::vec log_c, arma::mat omega_2pi, int ncores = 1)
+// double llik_wnorm2_full(Rcpp::NumericMatrix data, Rcpp::NumericMatrix par, Rcpp::NumericVector pi,
+//                              Rcpp::NumericVector log_c, Rcpp::NumericMatrix omega_2pi, int ncores = 1)
 // {
-//   int n = data.n_rows, K = pi.size(), j;
+//   int n = data.nrow(), K = pi.size(), j;
 //   double temp, log_sum = 0.0;
-//   arma::vec log_pi = log(pi);
+//   Rcpp::NumericVector log_pi = log(pi);
 //
 //   if(K > 1) {
 //     for(int i = 0; i < n; i++) {
 //       temp = 0;
 //       for(j = 0; j < K; j++)
-//         temp += exp(ldwnorm2_num(arma::trans(data.row(i)), par.col(j), omega_2pi) - log_c[j] + log_pi[j] );
+//         temp += exp(ldwnorm2_num(Rcpp::trans(data.row(i)), par.column(j), omega_2pi) - log_c[j] + log_pi[j] );
 //       log_sum += log(temp);
 //     }
 //   } else {
 //     for(int i = 0; i < n; i++) {
-//       log_sum += ldwnorm2_num(arma::trans(data.row(i)), par, omega_2pi);
+//       log_sum += ldwnorm2_num(Rcpp::trans(data.row(i)), par, omega_2pi);
 //     }
 //     log_sum -= n*log_c[0];
 //   }
@@ -105,25 +105,25 @@ arma::mat mem_p_wnorm2(arma::mat data, arma::mat par_mat, arma::vec pi,
 
 
 // [[Rcpp::export]]
-arma::vec llik_wnorm2_contri_C(arma::mat data, arma::mat par, arma::vec pi,
-                               arma::vec log_c, arma::mat omega_2pi)
+Rcpp::NumericVector llik_wnorm2_contri_C(Rcpp::NumericMatrix data, Rcpp::NumericMatrix par, Rcpp::NumericVector pi,
+                               Rcpp::NumericVector log_c, Rcpp::NumericMatrix omega_2pi)
 {
-  int n = data.n_rows, K = pi.size(), j;
+  int n = data.nrow(), K = pi.size(), j;
   double temp;
-  arma::vec log_pi = log(pi);
-  arma::vec llik_contri = arma::vec(n);
+  Rcpp::NumericVector log_pi = log(pi);
+  Rcpp::NumericVector llik_contri = Rcpp::NumericVector(n);
 
 
   if(K > 1) {
     for(int i = 0; i < n; i++) {
       temp = 0;
       for(j = 0; j < K; j++)
-        temp += exp(ldwnorm2_num(arma::trans(data.row(i)), par.col(j), omega_2pi) - log_c[j] + log_pi[j] );
+        temp += exp(ldwnorm2_num(data.row(i), par.column(j), omega_2pi) - log_c[j] + log_pi[j] );
       llik_contri[i] = log(temp);
     }
   } else {
     for(int i = 0; i < n; i++) {
-      llik_contri[i] = ldwnorm2_num(arma::trans(data.row(i)),
+      llik_contri[i] = ldwnorm2_num(data.row(i),
                                     par, omega_2pi) - log_c[0];
     }
   }
@@ -135,14 +135,14 @@ arma::vec llik_wnorm2_contri_C(arma::mat data, arma::mat par, arma::vec pi,
 
 
 // [[Rcpp::export]]
-double llik_wnorm2_one_comp(arma::mat data, arma::vec par_vec,
-                            double log_c, arma::mat omega_2pi)
+double llik_wnorm2_one_comp(Rcpp::NumericMatrix data, Rcpp::NumericVector par_vec,
+                            double log_c, Rcpp::NumericMatrix omega_2pi)
 {
-  int n = data.n_rows;
+  int n = data.nrow();
   double log_sum = 0.0;
 
   for(int i = 0; i < n; i++) {
-    log_sum += ldwnorm2_num(arma::trans(data.row(i)), par_vec, omega_2pi);
+    log_sum += ldwnorm2_num(data.row(i), par_vec, omega_2pi);
   }
   log_sum -= n*log_c;
 
@@ -152,15 +152,15 @@ double llik_wnorm2_one_comp(arma::mat data, arma::vec par_vec,
 
 
 // // [[Rcpp::export]]
-arma::vec grad_log_den_wnorm2_1_comp_1_point(double x, double y,
+Rcpp::NumericVector grad_log_den_wnorm2_1_comp_1_point(double x, double y,
                                              double s11, double s22, double s12,
                                              double mu1, double mu2,
                                              double det_prec,
-                                             arma::mat omega_2pi)
+                                             Rcpp::NumericMatrix omega_2pi)
 {
-  int M = omega_2pi.n_rows;
+  int M = omega_2pi.nrow();
   double expon_j, term1, term2;
-  arma::vec sum_entries = arma::zeros(6);
+  Rcpp::NumericVector sum_entries = Rcpp::NumericVector(6); // automatically fills zero
   for(int j = 0; j < M; j++) {
     term1 = (omega_2pi(j,0) - x + mu1);
     term2 = (omega_2pi(j,1) - y + mu2);
@@ -193,9 +193,9 @@ arma::vec grad_log_den_wnorm2_1_comp_1_point(double x, double y,
 
 
 // [[Rcpp::export]]
-arma::vec grad_llik_wnorm2_C(arma::mat data, arma::vec par, arma::mat omega_2pi) {
-  int n = data.n_rows;
-  arma::vec grad_llik_wo_const = arma::zeros(6);
+Rcpp::NumericVector grad_llik_wnorm2_C(Rcpp::NumericMatrix data, Rcpp::NumericVector par, Rcpp::NumericMatrix omega_2pi) {
+  int n = data.nrow();
+  Rcpp::NumericVector grad_llik_wo_const = Rcpp::NumericVector(6); // automatically fills zero
   // first 5 entries = grad, last entry = llik
   double  s11 = par[0], s22 = par[1], s12 = par[2], mu1 = par[3], mu2 = par[4];
 
@@ -220,13 +220,13 @@ arma::vec grad_llik_wnorm2_C(arma::mat data, arma::vec par, arma::mat omega_2pi)
 
 
 // [[Rcpp::export]]
-arma::vec grad_den_wnorm2_one_comp_i_unadj(double x, double y, arma::vec par, double det_sig_inv,
-                                           double det_sig_inv_sqrt, arma::mat omega_2pi)
+Rcpp::NumericVector grad_den_wnorm2_one_comp_i_unadj(double x, double y, Rcpp::NumericVector par, double det_sig_inv,
+                                           double det_sig_inv_sqrt, Rcpp::NumericMatrix omega_2pi)
 {
   double  s11 = par[0], s22 = par[1], s12 = par[2], mu1 = par[3], mu2 = par[4];
-  int M = omega_2pi.n_rows;
+  int M = omega_2pi.nrow();
   double expon_j, term1, term2;
-  arma::mat all_entries(6, M);
+  Rcpp::NumericMatrix all_entries(6, M);
   for(int j = 0; j < M; j++) {
     term1 = (omega_2pi(j,0) - x + mu1);
     term2 = (omega_2pi(j,1) - y + mu2);
@@ -240,9 +240,9 @@ arma::vec grad_den_wnorm2_one_comp_i_unadj(double x, double y, arma::vec par, do
     all_entries(5, j) = expon_j;
   } // multiply by the consts later
 
-  arma::vec sum_entries = arma::zeros(6);
+  Rcpp::NumericVector sum_entries = Rcpp::NumericVector(6); // automatically fills zero
   for(int j = 0; j < M; j++)
-    sum_entries += all_entries.col(j);
+    sum_entries += all_entries.column(j);
 
   return sum_entries;
 }
@@ -250,31 +250,31 @@ arma::vec grad_den_wnorm2_one_comp_i_unadj(double x, double y, arma::vec par, do
 
 // // not used
 // // [[Rcpp::export]]
-// arma::mat grad_wnorm2_all_comp(arma::mat data, arma::mat par_mat, arma::vec pi,
-//                                arma::mat omega_2pi, int ncores = 1)
+// Rcpp::NumericMatrix grad_wnorm2_all_comp(Rcpp::NumericMatrix data, Rcpp::NumericMatrix par_mat, Rcpp::NumericVector pi,
+//                                Rcpp::NumericMatrix omega_2pi, int ncores = 1)
 // {
-//   int n = data.n_rows, K = pi.size(), j;
+//   int n = data.nrow(), K = pi.size(), j;
 //   double denom;
-//   arma::mat grad_sum = arma::zeros(5, K);
+//   Rcpp::NumericMatrix grad_sum = Rcpp::zeros(5, K);
 //
 //   stdvec_mat grad_sum_part(ncores);
 //   for(int g = 0; g < ncores; g++)
 //     grad_sum_part[g] = grad_sum;
 //
-//   arma::vec det_sig_inv(K);
+//   Rcpp::NumericVector det_sig_inv(K);
 //   for(j = 0; j < K; j++)
 //     det_sig_inv[j] = par_mat(0, j) * par_mat(1, j) - par_mat(2, j) * par_mat(2, j);
 //
-//   arma::vec det_sig_inv_sqrt = arma::sqrt(det_sig_inv);
+//   Rcpp::NumericVector det_sig_inv_sqrt = Rcpp::sqrt(det_sig_inv);
 //
 //   for(int i = 0; i < n; i++) {
-//     arma::mat grad_den_temp(6, K);
+//     Rcpp::NumericMatrix grad_den_temp(6, K);
 //     int g = get_thread_num_final();
 //     // int g = 0;
 //     denom = 0;
 //     for(j = 0; j < K; j++){
-//       // denom += exp(ldwnorm2_num(trans(data.row(i)), par_mat.col(j), omega_2pi) - log_wnorm2_const[j] + log_pi[j] );
-//       grad_den_temp.col(j) = grad_den_wnorm2_one_comp_i_unadj(data(i, 0), data(i, 1), par_mat.col(j),
+//       // denom += exp(ldwnorm2_num(trans(data.row(i)), par_mat.column(j), omega_2pi) - log_wnorm2_const[j] + log_pi[j] );
+//       grad_den_temp.column(j) = grad_den_wnorm2_one_comp_i_unadj(data(i, 0), data(i, 1), par_mat.column(j),
 //                         det_sig_inv[j], det_sig_inv_sqrt[j], omega_2pi);
 //       denom += grad_den_temp(5, j) * det_sig_inv_sqrt[j] * pi[j];
 //     }
@@ -284,7 +284,7 @@ arma::vec grad_den_wnorm2_one_comp_i_unadj(double x, double y, arma::vec par, do
 //   for(int g = 0; g < ncores; g++)
 //     grad_sum += grad_sum_part[g];
 //
-//   arma::mat adj_factor(5, K);
+//   Rcpp::NumericMatrix adj_factor(5, K);
 //   for(j = 0; j < K; j++){
 //     adj_factor(0,j) = pi[j] / (2 * det_sig_inv_sqrt[j]);
 //     adj_factor(1,j) = pi[j] / (2 * det_sig_inv_sqrt[j]);
@@ -300,36 +300,36 @@ arma::vec grad_den_wnorm2_one_comp_i_unadj(double x, double y, arma::vec par, do
 
 // // not used
 // // [[Rcpp::export]]
-// double wnorm2mix(arma::vec x, arma::mat par, arma::vec pi,
-//                       arma::vec log_wnorm_const, arma::mat omega_2pi) {
+// double wnorm2mix(Rcpp::NumericVector x, Rcpp::NumericMatrix par, Rcpp::NumericVector pi,
+//                       Rcpp::NumericVector log_wnorm_const, Rcpp::NumericMatrix omega_2pi) {
 //   double res = 0;
 //   int K = pi.size();
 //
 //   for(int j = 0; j < K; j++)
-//     res += exp(ldwnorm2_num(x, par.col(j), omega_2pi) - log_wnorm_const[j]) * pi[j];
+//     res += exp(ldwnorm2_num(x, par.column(j), omega_2pi) - log_wnorm_const[j]) * pi[j];
 //   return(res);
 //
 // }
 //
 // // [[Rcpp::export]]
-// arma::vec wnorm2mix_manyx(arma::mat x, arma::mat par, arma::vec pi,
-//                           arma::vec log_c_von, arma::mat omega_2pi)
+// Rcpp::NumericVector wnorm2mix_manyx(Rcpp::NumericMatrix x, Rcpp::NumericMatrix par, Rcpp::NumericVector pi,
+//                           Rcpp::NumericVector log_c_von, Rcpp::NumericMatrix omega_2pi)
 // {
-//   int n = x.n_rows;
-//   arma::vec result(n);
+//   int n = x.nrow();
+//   Rcpp::NumericVector result(n);
 //   for(int i = 0; i < n; i++)
-//     result[i] = wnorm2mix(arma::trans(x.row(i)), par, pi, log_c_von, omega_2pi);
+//     result[i] = wnorm2mix(Rcpp::trans(x.row(i)), par, pi, log_c_von, omega_2pi);
 //   return(result);
 // }
 
 
 // [[Rcpp::export]]
-arma::vec dwnorm2_onex_manypar(arma::vec x, arma::vec k1, arma::vec k2, arma::vec k3,
-                               arma::vec mu1, arma::vec mu2, arma::mat omega_2pi)
+Rcpp::NumericVector dwnorm2_onex_manypar(Rcpp::NumericVector x, Rcpp::NumericVector k1, Rcpp::NumericVector k2, Rcpp::NumericVector k3,
+                               Rcpp::NumericVector mu1, Rcpp::NumericVector mu2, Rcpp::NumericMatrix omega_2pi)
 {
   int n = k1.size();
 
-  arma::mat all_par(5, n);
+  Rcpp::NumericMatrix all_par(5, n);
   for(int i = 0; i < n; i++) {
     all_par(0,i) = k1[i];
     all_par(1,i) = k2[i];
@@ -338,40 +338,40 @@ arma::vec dwnorm2_onex_manypar(arma::vec x, arma::vec k1, arma::vec k2, arma::ve
     all_par(4,i) = mu2[i];
   }
 
-  arma::vec l_const_all = log_const_wnorm2_all(all_par);
-  arma::vec ld_num(n);
+  Rcpp::NumericVector l_const_all = log_const_wnorm2_all(all_par);
+  Rcpp::NumericVector ld_num(n);
   for(int i = 0; i < n; i++) {
-    ld_num[i] = ldwnorm2_num(x, all_par.col(i), omega_2pi);
+    ld_num[i] = ldwnorm2_num(x, all_par.column(i), omega_2pi);
   }
 
-  return arma::exp(ld_num - l_const_all);
+  return Rcpp::exp(ld_num - l_const_all);
 }
 
 // [[Rcpp::export]]
-arma::vec dwnorm2_manyx_onepar(arma::mat x, double k1, double k2, double k3,
-                               double mu1, double mu2, arma::mat omega_2pi)
+Rcpp::NumericVector dwnorm2_manyx_onepar(Rcpp::NumericMatrix x, double k1, double k2, double k3,
+                               double mu1, double mu2, Rcpp::NumericMatrix omega_2pi)
 {
-  int n = x.n_rows;
+  int n = x.nrow();
 
 
-  arma::vec par(5);
-  par << k1 << k2 << k3 << mu1 << mu2 << arma::endr;
+  Rcpp::NumericVector par = { k1, k2, k3, mu1, mu2};
+  // par << k1 << k2 << k3 << mu1 << mu2 << Rcpp::endr;
   double l_const = l_const_wnorm2(par);
-  arma::vec ld_num(n);
+  Rcpp::NumericVector ld_num(n);
   for(int i = 0; i < n; i++) {
-    ld_num[i] = ldwnorm2_num(arma::trans(x.row(i)), par, omega_2pi);
+    ld_num[i] = ldwnorm2_num(x.row(i), par, omega_2pi);
   }
 
-  return arma::exp(ld_num - l_const);
+  return Rcpp::exp(ld_num - l_const);
 }
 
 // [[Rcpp::export]]
-arma::vec dwnorm2_manyx_manypar(arma::mat x, arma::vec k1, arma::vec k2, arma::vec k3,
-                                arma::vec mu1, arma::vec mu2, arma::mat omega_2pi)
+Rcpp::NumericVector dwnorm2_manyx_manypar(Rcpp::NumericMatrix x, Rcpp::NumericVector k1, Rcpp::NumericVector k2, Rcpp::NumericVector k3,
+                                Rcpp::NumericVector mu1, Rcpp::NumericVector mu2, Rcpp::NumericMatrix omega_2pi)
 {
   int n = k1.size();
 
-  arma::mat all_par(5, n);
+  Rcpp::NumericMatrix all_par(5, n);
   for(int i = 0; i < n; i++) {
     all_par(0,i) = k1[i];
     all_par(1,i) = k2[i];
@@ -380,14 +380,14 @@ arma::vec dwnorm2_manyx_manypar(arma::mat x, arma::vec k1, arma::vec k2, arma::v
     all_par(4,i) = mu2[i];
   }
 
-  arma::vec l_const_all = log_const_wnorm2_all(all_par);
+  Rcpp::NumericVector l_const_all = log_const_wnorm2_all(all_par);
 
-  arma::vec ld_num(n);
+  Rcpp::NumericVector ld_num(n);
   for(int i = 0; i < n; i++) {
-    ld_num[i] = ldwnorm2_num(arma::trans(x.row(i)), all_par.col(i), omega_2pi);
+    ld_num[i] = ldwnorm2_num(x.row(i), all_par.column(i), omega_2pi);
   }
 
-  return arma::exp(ld_num - l_const_all);
+  return Rcpp::exp(ld_num - l_const_all);
 }
 
 
