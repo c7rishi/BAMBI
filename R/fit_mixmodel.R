@@ -162,8 +162,10 @@ find_lscale_mat_uni <- function(x) {
 #'
 #' @examples
 #' # illustration only - more iterations needed for convergence
-#' fit.vmsin.20 <- fit_angmix("vmsin", tim8, ncomp = 3, n.iter =  20,
-#'                              n.chains = 1)
+#' fit.vmsin.20 <- fit_angmix("vmsin", tim8,
+#'   ncomp = 3, n.iter = 20,
+#'   n.chains = 1
+#' )
 #' fit.vmsin.20
 #'
 #'
@@ -173,15 +175,16 @@ find_lscale_mat_uni <- function(x) {
 #' # Note that not all plan() might work on every OS, as they execute
 #' # functions defined internally in fit_mixmodel. We suggest
 #' # plan(multiprocess).
-#'
 #' \dontrun{
 #' library(future)
 #' library(parallel)
 #' plan(multiprocess)
 #'
 #' set.seed(1)
-#' MC.fit <- fit_angmix("vmsin", tim8, ncomp=3, n.iter=500,
-#'                      n.chains = 3)
+#' MC.fit <- fit_angmix("vmsin", tim8,
+#'   ncomp = 3, n.iter = 500,
+#'   n.chains = 3
+#' )
 #'
 #'
 #' pointest(MC.fit)
@@ -207,7 +210,7 @@ fit_angmix <- function(model = "vmsin",
                        unimodal.component = FALSE,
                        start_par = NULL,
                        rand_start = rep(FALSE, n.chains),
-                       method="hmc",
+                       method = "hmc",
                        perm_sampling = FALSE,
                        n.chains = 3,
                        chains_parallel = TRUE,
@@ -215,8 +218,8 @@ fit_angmix <- function(model = "vmsin",
                        int.displ = 3,
                        epsilon = 0.1,
                        L = 10,
-                       epsilon.random=TRUE,
-                       L.random=FALSE,
+                       epsilon.random = TRUE,
+                       L.random = FALSE,
                        burnin.prop = 0.5,
                        tune.prop = 1,
                        thin = 1,
@@ -238,8 +241,7 @@ fit_angmix <- function(model = "vmsin",
                        kappa_lower = 1e-4,
                        return_tune_param = FALSE,
                        qrnd = NULL,
-                       n_qrnd = NULL, ...)
-{
+                       n_qrnd = NULL, ...) {
 
   # if(is.null(dim(data)) | !(mode(data) %in% c("list", "numeric", "data.frame") && ncol(data) == 2)) stop("non-compatible data")
 
@@ -254,7 +256,7 @@ fit_angmix <- function(model = "vmsin",
 
   stopifnot(is.logical(backward_compatible))
 
-  signif_ <- if (backward_compatible) function(x, ...) x else signif
+  signif_ <- if (backward_compatible) function(x, ...) x else function(x, ...) signif(x, 8)
 
 
 
@@ -264,36 +266,44 @@ fit_angmix <- function(model = "vmsin",
     type <- "bi"
   } else if (model %in% c("vm", "wnorm")) {
     type <- "uni"
-  } else  {
+  } else {
     stop("non-compatible model")
   }
 
-  if (missing(ncomp))
+  if (missing(ncomp)) {
     stop("\'ncomp\' is missing, with no default.")
+  }
 
-  if (length(ncomp) > 1)
+  if (length(ncomp) > 1) {
     stop("\'ncomp\' must be a scalar")
+  }
 
 
-  if (any(length(n.chains) > 1, length(n.chains) < 1, n.chains == 0))
+  if (any(length(n.chains) > 1, length(n.chains) < 1, n.chains == 0)) {
     stop("Invalid n.chains")
+  }
 
   zero_cov <- FALSE
 
   if (type == "bi") {
-    if (!(is.matrix(data) | is.data.frame(data)))
+    if (!(is.matrix(data) | is.data.frame(data))) {
       stop("\'data\' must be a two column matrix for model = \'vmsin\', \'vmcos\' and \'wnorm2\'")
+    }
 
-    if (ncol(data) != 2)
+    if (ncol(data) != 2) {
       stop("\'data\' must be a two column matrix for model = \'vmsin\', \'vmcos\' and \'wnorm2\'")
+    }
 
     if (length(cov.restrict) > 1 |
-        !cov.restrict %in% c("NONE", "POSITIVE", "NEGATIVE", "ZERO"))
+        !cov.restrict %in% c("NONE", "POSITIVE", "NEGATIVE", "ZERO")) {
       stop("cov.restrict must be one of \"NONE\", \"POSITIVE\", \"NEGATIVE\" and  \"ZERO\"")
+    }
 
     if (any(is.na(data))) {
-      stop(paste("\'data\' contains missing value(s). BAMBI cannot handle missing data.\n",
-                 "Either remove them or properly impute them."))
+      stop(paste(
+        "\'data\' contains missing value(s). BAMBI cannot handle missing data.\n",
+        "Either remove them or properly impute them."
+      ))
     }
     data.rad <- rm_NA_rad(data)
     n.data <- nrow(data.rad)
@@ -302,33 +312,31 @@ fit_angmix <- function(model = "vmsin",
     par.names <- c("kappa1", "kappa2", "kappa3", "mu1", "mu2")
 
     par_lower <- replicate(ncomp, c(kappa_lower, kappa_lower, -kappa_upper, 0, 0))
-    par_upper <- replicate(ncomp, c(kappa_upper, kappa_upper,
-                                    kappa_upper, 2*pi, 2*pi))
+    par_upper <- replicate(ncomp, c(
+      kappa_upper, kappa_upper,
+      kappa_upper, 2 * pi, 2 * pi
+    ))
 
     if (cov.restrict == "POSITIVE") {
       par_lower[3, ] <- 0
-
     } else if (cov.restrict == "NEGATIVE") {
       par_upper[3, ] <- 0
-
     } else if (cov.restrict == "ZERO") {
       par_lower[3, ] <- par_upper[3, ] <- 0
       zero_cov <- TRUE
     }
 
-    if (missing(pmix.alpha))
+    if (missing(pmix.alpha)) {
       pmix.alpha <- 5.5
-
-  }
-
-  else {
-
+    }
+  } else {
     if ((is.matrix(data) | is.data.frame(data))) {
       data <- as.vector(as.matrix(data))
     }
 
-    if (!is.numeric(data))
+    if (!is.numeric(data)) {
       stop("\'data\' must be a vector for \'model\' = \'vm\' and \'wnorm\'")
+    }
 
     data <- as.numeric(data)
     data.rad <- rm_NA_rad(data)
@@ -337,54 +345,78 @@ fit_angmix <- function(model = "vmsin",
     npar_1_comp <- 2
     par.names <- c("kappa", "mu")
 
-    par_lower <- replicate(ncomp, c(kappa_lower, 0 ))
-    par_upper <- replicate(ncomp, c(kappa_upper, 2*pi))
+    par_lower <- replicate(ncomp, c(kappa_lower, 0))
+    par_upper <- replicate(ncomp, c(kappa_upper, 2 * pi))
 
-    if (missing(pmix.alpha))
+    if (missing(pmix.alpha)) {
       pmix.alpha <- 4
+    }
   }
 
-  if (any(length(perm_sampling) > 1, length(perm_sampling) < 1,
-          !is.logical(perm_sampling) ))
+  if (any(
+    length(perm_sampling) > 1, length(perm_sampling) < 1,
+    !is.logical(perm_sampling)
+  )) {
     stop("Invalid perm_sampling")
+  }
 
 
-  if (any(length(chains_parallel) > 1, length(chains_parallel) < 1,
-          !is.logical(chains_parallel) ))
+  if (any(
+    length(chains_parallel) > 1, length(chains_parallel) < 1,
+    !is.logical(chains_parallel)
+  )) {
     stop("Invalid chains_parallel")
+  }
 
-  if (any(length(chains_parallel) > 1, length(chains_parallel) < 1,
-          !is.logical(chains_parallel) ))
+  if (any(
+    length(chains_parallel) > 1, length(chains_parallel) < 1,
+    !is.logical(chains_parallel)
+  )) {
     stop("Invalid chains_parallel")
+  }
 
-  if (any(length(autotune) > 1, length(autotune) < 1,
-          !is.logical(autotune) ))
+  if (any(
+    length(autotune) > 1, length(autotune) < 1,
+    !is.logical(autotune)
+  )) {
     stop("Invalid autotune")
+  }
 
-  if (any(length(unimodal.component) > 1, length(unimodal.component) < 1,
-          !is.logical(unimodal.component) ))
+  if (any(
+    length(unimodal.component) > 1, length(unimodal.component) < 1,
+    !is.logical(unimodal.component)
+  )) {
     stop("Invalid unimodal.component")
+  }
 
-  if (any(length(return_llik_contri) > 1, length(return_llik_contri) < 1,
-          !is.logical(return_llik_contri) ))
+  if (any(
+    length(return_llik_contri) > 1, length(return_llik_contri) < 1,
+    !is.logical(return_llik_contri)
+  )) {
     stop("Invalid return_llik_contri")
+  }
 
-  if (any(length(return_tune_param) > 1, length(return_tune_param) < 1,
-          !is.logical(return_tune_param) ))
+  if (any(
+    length(return_tune_param) > 1, length(return_tune_param) < 1,
+    !is.logical(return_tune_param)
+  )) {
     stop("Invalid return_tune_param")
+  }
 
 
 
 
 
-  if (length(pmix.alpha) == 1)
+  if (length(pmix.alpha) == 1) {
     pmix.alpha <- rep(pmix.alpha, ncomp)
-  else if (length(pmix.alpha) != ncomp)
+  } else if (length(pmix.alpha) != ncomp) {
     stop("length(pmix.alpha) and ncomp differ")
+  }
 
 
-  if (n.chains < 1)
+  if (n.chains < 1) {
     stop("\'n.chains\' must be a positive integer")
+  }
 
   if (n.chains == 1) {
     chains_parallel <- FALSE
@@ -393,29 +425,34 @@ fit_angmix <- function(model = "vmsin",
 
 
 
-  if(length(burnin.prop) != 1 || burnin.prop < 0 || burnin.prop >= 1)
+  if (length(burnin.prop) != 1 || burnin.prop < 0 || burnin.prop >= 1) {
     stop("\"burnin.prop\" must be a number in [0, 1)")
+  }
 
-  if(thin < 1)
+  if (thin < 1) {
     stop("\"thin\" must be a positive integer")
+  }
 
-  if (tune.incr <= 0 | tune.incr >= 1)
+  if (tune.incr <= 0 | tune.incr >= 1) {
     stop("\'tune.incr\' must be between 0 and 1")
+  }
 
-  n.burnin <- ceiling(burnin.prop*n.iter)
+  n.burnin <- ceiling(burnin.prop * n.iter)
 
-  if(length(tune.prop) != 1 ||tune.prop < 0 || tune.prop > 1)
+  if (length(tune.prop) != 1 || tune.prop < 0 || tune.prop > 1) {
     stop("\"tune.prop\" must be in [0, 1]")
+  }
 
-  iter.tune <- ceiling(burnin.prop*tune.prop*n.iter)
+  iter.tune <- ceiling(burnin.prop * tune.prop * n.iter)
 
-  if (iter.tune > n.burnin)
+  if (iter.tune > n.burnin) {
     iter.tune <- n.burnin
+  }
 
   n.iter.final <- n.iter - n.burnin
   burnin_iter <- seq_len(n.burnin)
   thin <- round(thin)
-  thin_filter <- c(TRUE, rep(FALSE, thin-1))
+  thin_filter <- c(TRUE, rep(FALSE, thin - 1))
   final_iter_set <- (seq_len(n.iter))[-burnin_iter][thin_filter]
 
   # gam.rate <- 1/gam.scale
@@ -428,8 +465,9 @@ fit_angmix <- function(model = "vmsin",
 
 
   if (method == "hmc") {
-    if (any(L < 1))
+    if (any(L < 1)) {
       stop("\'L\' must be a positive integer")
+    }
 
     L <- ceiling(L)
 
@@ -449,15 +487,13 @@ fit_angmix <- function(model = "vmsin",
       accpt.prob.lower <- 0.6
     }
 
-    if (length(epsilon) == ncomp*npar_1_comp) {
+    if (length(epsilon) == ncomp * npar_1_comp) {
       tune_param <- matrix(c(epsilon), npar_1_comp, ncomp)
     } else if (length(epsilon) == 1) {
       tune_param <- matrix(epsilon, npar_1_comp, ncomp)
-    }
-    else {
+    } else {
       stop("epsilon must either be a scalar or a vector of length 2*ncomp (univariate) or 5*ncomp (bivariate)")
     }
-
   }
 
   #
@@ -481,21 +517,20 @@ fit_angmix <- function(model = "vmsin",
       accpt.prob.lower <- 0.3
     }
 
-    if (length(propscale) == ncomp*npar_1_comp) {
+    if (length(propscale) == ncomp * npar_1_comp) {
       tune_param <- matrix(c(propscale), npar_1_comp, ncomp)
     } else if (length(propscale) == 1) {
       tune_param <- matrix(propscale, npar_1_comp, ncomp)
-    }
-    else {
+    } else {
       stop("propscale must either be a scalar or a vector of length 2*ncomp (univariate) or 5*ncomp (bivariate)")
     }
-
   }
 
   nterms <- tune_ave_size
 
-  if (!model %in% c("wnorm", "wnorm2"))
+  if (!model %in% c("wnorm", "wnorm2")) {
     int.displ <- omega.2pi <- NULL
+  }
 
 
   if (model != "vmcos") {
@@ -506,7 +541,6 @@ fit_angmix <- function(model = "vmsin",
 
 
   if (model == "vmsin") {
-
     if (unimodal.component) {
       dep_cov <- TRUE
       dep_cov_type <- "vmsin_unimodal"
@@ -568,27 +602,30 @@ fit_angmix <- function(model = "vmsin",
 
 
     # in log scale
-    lpd_grad_model_indep_1comp <-  function(data, par_vec_lscale,
-                                            obs_group, n.clus) {
+    lpd_grad_model_indep_1comp <- function(data, par_vec_lscale,
+                                           obs_group, n.clus) {
       par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       lpd_grad <- matrix(NA, 6, 1)
       if (n.clus > 0) {
         lpd_grad <- signif_(suppressWarnings(
-          grad_llik_vmsin_C(data[obs_group, , drop=FALSE],
-                            par_vec))*
-            c(par_vec[1:2], rep(1, 4)) +
-            c( # grad for lprior
-              -par_vec_lscale[1:3]/norm.var, 0, 0,
-              # lprior
-              - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
-            ), 8)
+          grad_llik_vmsin_C(
+            data[obs_group, , drop = FALSE],
+            par_vec
+          )
+        ) *
+          c(par_vec[1:2], rep(1, 4)) +
+          c( # grad for lprior
+            -par_vec_lscale[1:3] / norm.var, 0, 0,
+            # lprior
+            -0.5 * sum(par_vec_lscale[1:3]^2 / norm.var)
+          ))
       } else {
         lpd_grad[] <-
           signif_(c( # grad for lprior
-            -par_vec_lscale[1:3]/norm.var, 0, 0,
+            -par_vec_lscale[1:3] / norm.var, 0, 0,
             # lprior
-            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
-          ), 8)
+            -0.5 * sum(par_vec_lscale[1:3]^2 / norm.var)
+          ))
       }
       list(lpr = (lpd_grad[6]), grad = lpd_grad[1:5])
     }
@@ -599,14 +636,18 @@ fit_angmix <- function(model = "vmsin",
       if (n.clus > 0) {
         # llik + prior
         res <-
-          signif_(llik_vmsin_one_comp(data[obs_group, , drop=FALSE], par_vec,
-                                      log(const_vmsin(par_vec[1],
-                                                      par_vec[2], par_vec[3]))) +
-                    0.5*sum(-par_vec_lscale[1:3]^2/norm.var), 8)
-      } else{
+          signif_(llik_vmsin_one_comp(
+            data[obs_group, , drop = FALSE], par_vec,
+            log(const_vmsin(
+              par_vec[1],
+              par_vec[2], par_vec[3]
+            ))
+          ) +
+            0.5 * sum(-par_vec_lscale[1:3]^2 / norm.var))
+      } else {
         # only prior
         res <-
-          signif_(0.5*sum(-par_vec_lscale[1:3]^2/norm.var), 8)
+          signif_(0.5 * sum(-par_vec_lscale[1:3]^2 / norm.var))
       }
       res
     }
@@ -618,9 +659,8 @@ fit_angmix <- function(model = "vmsin",
       signif_(
         llik_vmsin_contri_C(
           data, par_mat, pi_mix,
-          signif_(log_const_vmsin_all(par_mat), 8)
-        ),
-        8
+          signif_(log_const_vmsin_all(par_mat))
+        )
       )
     }
 
@@ -628,28 +668,26 @@ fit_angmix <- function(model = "vmsin",
       signif_(
         mem_p_sin(
           data, par_mat, pi_mix,
-          signif_(log_const_vmsin_all(par_mat), 8), 1
-        ),
-        8
+          signif_(log_const_vmsin_all(par_mat)), 1
+        )
       )
     }
-  }
-
-  else if (model == "vmcos") {
-
+  } else if (model == "vmcos") {
     ell <- list(qrnd_grid = qrnd, n_qrnd = n_qrnd)
 
     if (!is.null(ell$qrnd)) {
       qrnd_grid <- ell$qrnd
       dim_qrnd <- dim(qrnd_grid)
       if (!is.matrix(qrnd_grid) | is.null(dim_qrnd) |
-          dim_qrnd[2] != 2)
+          dim_qrnd[2] != 2) {
         stop("qrnd_grid must be a two column matrix")
+      }
       n_qrnd <- dim_qrnd[1]
-    } else if (!is.null(ell$n_qrnd)){
+    } else if (!is.null(ell$n_qrnd)) {
       n_qrnd <- round(ell$n_qrnd)
-      if (n_qrnd < 1)
+      if (n_qrnd < 1) {
         stop("n_qrnd must be a positive integer")
+      }
       qrnd_grid <- sobol(n_qrnd, 2, FALSE)
     } else {
       n_qrnd <- 1e4
@@ -722,41 +760,47 @@ fit_angmix <- function(model = "vmsin",
       lpd_grad <- matrix(NA, 6, 1)
       if (n.clus > 0) {
         lpd_grad[] <- signif_(suppressWarnings(
-          grad_llik_vmcos_C(data[obs_group, , drop=FALSE],
-                            par_vec[], qrnd_grid)) *
-            c(par_vec[1:2], rep(1, 4)) +
-            c( # grad for lprior
-              -par_vec_lscale[1:3]/norm.var, 0, 0,
-              # lprior
-              - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
-            ), 8)
+          grad_llik_vmcos_C(
+            data[obs_group, , drop = FALSE],
+            par_vec[], qrnd_grid
+          )
+        ) *
+          c(par_vec[1:2], rep(1, 4)) +
+          c( # grad for lprior
+            -par_vec_lscale[1:3] / norm.var, 0, 0,
+            # lprior
+            -0.5 * sum(par_vec_lscale[1:3]^2 / norm.var)
+          ))
       } else {
         lpd_grad[] <-
           signif_(c( # grad for lprior
-            -par_vec_lscale[1:3]/norm.var, 0, 0,
+            -par_vec_lscale[1:3] / norm.var, 0, 0,
             # lprior
-            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
-          ), 8)
+            -0.5 * sum(par_vec_lscale[1:3]^2 / norm.var)
+          ))
       }
       list(lpr = (lpd_grad[6]), grad = lpd_grad[1:5])
     }
 
     lpd_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
-
       par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
       if (n.clus > 0) {
         # llik + prior
         res <-
-          signif_(llik_vmcos_one_comp(data[obs_group, , drop=FALSE], par_vec[],
-                                      log(const_vmcos(par_vec[1],
-                                                      par_vec[2],
-                                                      par_vec[3],
-                                                      qrnd_grid))) -
-                    0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
-      } else{
+          signif_(llik_vmcos_one_comp(
+            data[obs_group, , drop = FALSE], par_vec[],
+            log(const_vmcos(
+              par_vec[1],
+              par_vec[2],
+              par_vec[3],
+              qrnd_grid
+            ))
+          ) -
+            0.5 * sum(par_vec_lscale[1:3]^2 / norm.var))
+      } else {
         # only prior
         res <-
-          signif_(- 0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
+          signif_(-0.5 * sum(par_vec_lscale[1:3]^2 / norm.var))
       }
       res
     }
@@ -767,9 +811,8 @@ fit_angmix <- function(model = "vmsin",
       signif_(
         llik_vmcos_contri_C(
           data, par_mat, pi_mix,
-          signif_(log_const_vmcos_all(par_mat, qrnd_grid), 8)
-        ),
-        8
+          signif_(log_const_vmcos_all(par_mat, qrnd_grid))
+        )
       )
     }
 
@@ -777,25 +820,21 @@ fit_angmix <- function(model = "vmsin",
       signif_(
         mem_p_cos(
           data, par_mat, pi_mix,
-          signif_(log_const_vmcos_all(par_mat, qrnd_grid), 8)
-        ),
-        8
+          signif_(log_const_vmcos_all(par_mat, qrnd_grid))
+        )
       )
     }
-  }
-
-  else if (model == "wnorm2") {
-
-
+  } else if (model == "wnorm2") {
     dep_cov <- TRUE
     dep_cov_type <- "wnorm2_bound"
 
 
-    if(int.displ >= 5) int.displ <- 5
-    else if(int.displ <= 1) int.displ <- 1
+    if (int.displ >= 5) {
+      int.displ <- 5
+    } else if (int.displ <= 1) int.displ <- 1
 
     int.displ <- floor(int.displ)
-    omega.2pi.all <- expand.grid(-int.displ:int.displ,-int.displ:int.displ) * (2*pi) # 2pi * integer displacements
+    omega.2pi.all <- expand.grid(-int.displ:int.displ, -int.displ:int.displ) * (2 * pi) # 2pi * integer displacements
     omega.2pi <- as.matrix(omega.2pi.all)
 
     # lpd_grad_model_indep <- function(data, par_mat, obs_group, n.clus) {
@@ -894,43 +933,47 @@ fit_angmix <- function(model = "vmsin",
 
     # in log scale
     lpd_grad_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
-
-      par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
+      par_vec <- signif_(c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5]))
       lpd_grad <- matrix(NA, 6, 1)
       if (n.clus > 0) {
-        lpd_grad[] <- signif_(grad_llik_wnorm2_C(data[obs_group, , drop=FALSE],
-                                                 par_vec[], omega.2pi) *
-                                c(par_vec[1:2], rep(1, 4)) +
-                                c( # grad for lprior
-                                  -par_vec_lscale[1:3]/norm.var, 0, 0,
-                                  # lprior
-                                  - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
-                                ), 8)
+        lpd_grad[] <- signif_(
+          grad_llik_wnorm2_C(
+            data[obs_group, , drop = FALSE],
+            par_vec[], omega.2pi
+          ) *
+            c(par_vec[1:2], rep(1, 4)) +
+            c( # grad for lprior
+              -par_vec_lscale[1:3] / norm.var, 0, 0,
+              # lprior
+              -0.5 * sum(par_vec_lscale[1:3]^2 / norm.var)
+            )
+        )
       } else {
         lpd_grad[] <-
           signif_(c( # grad for lprior
-            -par_vec_lscale[1:3]/norm.var, 0, 0,
+            -par_vec_lscale[1:3] / norm.var, 0, 0,
             # lprior
-            - 0.5*sum(par_vec_lscale[1:3]^2/norm.var)
-          ), 8)
+            -0.5 * sum(par_vec_lscale[1:3]^2 / norm.var)
+          ))
       }
       list(lpr = (lpd_grad[6]), grad = lpd_grad[1:5])
     }
 
     lpd_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
-
-      par_vec <- c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5])
+      par_vec <- signif_(c(exp(par_vec_lscale[1:2]), par_vec_lscale[3:5]))
       if (n.clus > 0) {
         # llik + prior
         res <-
-          signif_(llik_wnorm2_one_comp(data[obs_group, , drop=FALSE], par_vec[],
-                                       l_const_wnorm2(par_vec[]),
-                                       omega.2pi)-
-                    0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
-      } else{
+          signif_(llik_wnorm2_one_comp(
+            data[obs_group, , drop = FALSE], par_vec[],
+            l_const_wnorm2(par_vec[]),
+            omega.2pi
+          ) -
+            0.5 * sum(par_vec_lscale[1:3]^2 / norm.var))
+      } else {
         # only prior
         res <-
-          signif_(- 0.5*sum(par_vec_lscale[1:3]^2/norm.var), 8)
+          signif_(-0.5 * sum(par_vec_lscale[1:3]^2 / norm.var))
       }
       res
     }
@@ -940,10 +983,9 @@ fit_angmix <- function(model = "vmsin",
       signif_(
         llik_wnorm2_contri_C(
           data, par_mat, pi_mix,
-          signif_(log_const_wnorm2_all(par_mat), 8),
+          signif_(log_const_wnorm2_all(par_mat)),
           omega.2pi
-        ),
-        8
+        )
       )
     }
 
@@ -951,18 +993,12 @@ fit_angmix <- function(model = "vmsin",
       signif_(
         mem_p_wnorm2(
           data, par_mat, pi_mix,
-          signif_(log_const_wnorm2_all(par_mat), 8),
+          signif_(log_const_wnorm2_all(par_mat)),
           omega.2pi
-        ),
-        8
+        )
       )
     }
-
-
-  }
-
-  else if (model == "vm") {
-
+  } else if (model == "vm") {
     dep_cov <- FALSE
 
     # lpd_grad_model_indep <- function(data, par_mat, obs_group, n.clus) {
@@ -1041,24 +1077,26 @@ fit_angmix <- function(model = "vmsin",
       par_vec <- c(exp(par_vec_lscale[1]), par_vec_lscale[2])
       if (n.clus > 0) {
         lpd_grad[] <- signif_(suppressWarnings(
-          grad_llik_univm_C(data[obs_group],
-                            par_vec[])) * c(par_vec[1], 1, 1) +
+          grad_llik_univm_C(
+            data[obs_group],
+            par_vec[]
+          )
+        ) * c(par_vec[1], 1, 1) +
 
-            c( # grad for lprior
-              -par_vec_lscale[1]/norm.var, 0,
-              # lprior
-              - 0.5*sum(par_vec_lscale[1]^2/norm.var)
-            ), 8)
-
+          c( # grad for lprior
+            -par_vec_lscale[1] / norm.var, 0,
+            # lprior
+            -0.5 * sum(par_vec_lscale[1]^2 / norm.var)
+          ))
       } else {
         lpd_grad[] <-
           signif_(c( # grad for lprior
-            -par_vec_lscale[1]/norm.var, 0,
+            -par_vec_lscale[1] / norm.var, 0,
             # lprior
-            - 0.5*sum(par_vec_lscale[1]^2/norm.var)
-          ), 8)
+            -0.5 * sum(par_vec_lscale[1]^2 / norm.var)
+          ))
       }
-      list(lpr = (lpd_grad[3 ]), grad = lpd_grad[1:2 ])
+      list(lpr = (lpd_grad[3]), grad = lpd_grad[1:2])
     }
 
     lpd_model_indep_1comp <- function(data, par_vec_lscale, obs_group, n.clus) {
@@ -1066,14 +1104,17 @@ fit_angmix <- function(model = "vmsin",
       if (n.clus > 0) {
         # llik + prior
         res <-
-          signif_(llik_univm_one_comp(data[obs_group], par_vec[],
-                                      log(const_univm(par_vec[1]))) -
-                    0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
-
-      } else{
+          signif_(
+            llik_univm_one_comp(
+              data[obs_group], par_vec[],
+              log(const_univm(par_vec[1]))
+            ) -
+              0.5 * sum(par_vec_lscale[1]^2 / norm.var)
+          )
+      } else {
         # only prior
         res <-
-          signif_(- 0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
+          signif_(-0.5 * sum(par_vec_lscale[1]^2 / norm.var))
       }
       unname(res)
     }
@@ -1084,9 +1125,8 @@ fit_angmix <- function(model = "vmsin",
       signif_(
         llik_univm_contri_C(
           data, par_mat, pi_mix,
-          signif_(log_const_univm_all(par_mat), 8)
-        ),
-        8
+          signif_(log_const_univm_all(par_mat))
+        )
       )
     }
 
@@ -1094,27 +1134,23 @@ fit_angmix <- function(model = "vmsin",
       signif_(
         mem_p_univm(
           data, par_mat, pi_mix,
-          signif_(log_const_univm_all(par_mat), 8)
-        ),
-        8
+          signif_(log_const_univm_all(par_mat))
+        )
       )
     }
-
-
-
   }
 
   # else if (model == "wnorm")
-  else    {
-
+  else {
     dep_cov <- FALSE
 
 
-    if(int.displ >= 5) int.displ <- 5
-    else if(int.displ <= 1) int.displ <- 1
+    if (int.displ >= 5) {
+      int.displ <- 5
+    } else if (int.displ <= 1) int.displ <- 1
 
     int.displ <- floor(int.displ)
-    omega.2pi <- (-int.displ):int.displ * (2*pi) # 2pi * 1d integer displacements
+    omega.2pi <- (-int.displ):int.displ * (2 * pi) # 2pi * 1d integer displacements
 
     #
     #     lpd_grad_model_indep <- function(data, par_mat, obs_group, n.clus) {
@@ -1167,24 +1203,25 @@ fit_angmix <- function(model = "vmsin",
       lpd_grad <- matrix(NA, 3, 1)
       par_vec <- c(exp(par_vec_lscale[1]), par_vec_lscale[2])
       if (n.clus > 0) {
-        lpd_grad[] <- signif_(grad_llik_uniwnorm_C(data[obs_group],
-                                                   par_vec[], omega.2pi) * c(par_vec[1], 1, 1) +
+        lpd_grad[] <- signif_(grad_llik_uniwnorm_C(
+          data[obs_group],
+          par_vec[], omega.2pi
+        ) * c(par_vec[1], 1, 1) +
 
-                                c( # grad for lprior
-                                  -par_vec_lscale[1]/norm.var, 0,
-                                  # lprior
-                                  - 0.5*sum(par_vec_lscale[1]^2/norm.var)
-                                ), 8)
-
+          c( # grad for lprior
+            -par_vec_lscale[1] / norm.var, 0,
+            # lprior
+            -0.5 * sum(par_vec_lscale[1]^2 / norm.var)
+          ))
       } else {
         lpd_grad[] <-
           signif_(c( # grad for lprior
-            -par_vec_lscale[1]/norm.var, 0,
+            -par_vec_lscale[1] / norm.var, 0,
             # lprior
-            - 0.5*sum(par_vec_lscale[1]^2/norm.var)
-          ), 8)
+            -0.5 * sum(par_vec_lscale[1]^2 / norm.var)
+          ))
       }
-      list(lpr = (lpd_grad[3 ]), grad = lpd_grad[1:2 ])
+      list(lpr = (lpd_grad[3]), grad = lpd_grad[1:2])
     }
 
 
@@ -1193,15 +1230,16 @@ fit_angmix <- function(model = "vmsin",
       if (n.clus > 0) {
         # llik + prior
         res <-
-          signif_(llik_uniwnorm_one_comp(data[obs_group], par_vec[],
-                                         l_const_uniwnorm(par_vec[1]),
-                                         omega.2pi)  -
-                    0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
-
-      } else{
+          signif_(llik_uniwnorm_one_comp(
+            data[obs_group], par_vec[],
+            l_const_uniwnorm(par_vec[1]),
+            omega.2pi
+          ) -
+            0.5 * sum(par_vec_lscale[1]^2 / norm.var))
+      } else {
         # only prior
         res <-
-          signif_(- 0.5*sum(par_vec_lscale[1]^2/norm.var), 8)
+          signif_(-0.5 * sum(par_vec_lscale[1]^2 / norm.var))
       }
       unname(res)
     }
@@ -1213,10 +1251,9 @@ fit_angmix <- function(model = "vmsin",
       signif_(
         llik_uniwnorm_contri_C(
           data, par_mat, pi_mix,
-          signif_(log_const_uniwnorm_all(par_mat), 8),
+          signif_(log_const_uniwnorm_all(par_mat)),
           omega.2pi
-        ),
-        8
+        )
       )
     }
 
@@ -1224,10 +1261,9 @@ fit_angmix <- function(model = "vmsin",
       signif_(
         mem_p_uniwnorm(
           data, par_mat, pi_mix,
-          signif_(log_const_uniwnorm_all(par_mat), 8),
+          signif_(log_const_uniwnorm_all(par_mat)),
           omega.2pi
-        ),
-        8
+        )
       )
     }
 
@@ -1247,45 +1283,55 @@ fit_angmix <- function(model = "vmsin",
     #
     # grad_llik_uniwnorm_C(data.rad, par.mat[, 1], omega.2pi)
     # grad_llik_uniwnorm_R(data.rad, par.mat[, 1])
-
   }
 
 
 
 
   if (!is.null(start_par)) {
-    if (!is.list(start_par))
+    if (!is.list(start_par)) {
       stop("start_par must be a list")
+    }
     if (!is.list(start_par[[1]])) {
-      if (length(setdiff(c(par.names, "pmix"), names(start_par))) > 0)
+      if (length(setdiff(c(par.names, "pmix"), names(start_par))) > 0) {
         stop("start_par does not have all parameters")
+      }
       start_par <- lapply(1:n.chains, function(ii) start_par)
     } else {
-      if (length(start_par) != n.chains)
+      if (length(start_par) != n.chains) {
         stop("length(start_par) must be either 1 or equal to n.chains")
-      for(jj in 1:n.chains) {
-        if (length(setdiff(c(par.names, "pmix"), names(start_par[[jj]]))) > 0)
-          stop(paste0("start_par[[", jj,   "]] does not have all parameters"))
+      }
+      for (jj in 1:n.chains) {
+        if (length(setdiff(c(par.names, "pmix"), names(start_par[[jj]]))) > 0) {
+          stop(paste0("start_par[[", jj, "]] does not have all parameters"))
+        }
       }
     }
   }
 
-  if (any(is.null(start_par), !is.list(start_par[[1]]))
-      & all(!rand_start) ) {
-    starting_1 <- process_startpar(start_par,
-                                   data.rad,
-                                   ncomp,
-                                   model,
-                                   FALSE)
+  if (any(is.null(start_par), !is.list(start_par[[1]])) &
+      all(!rand_start)) {
+    starting_1 <- process_startpar(
+      start_par,
+      data.rad,
+      ncomp,
+      model,
+      FALSE
+    )
     starting <- lapply(1:n.chains, function(j) starting_1)
   } else {
-    starting <- lapply(1:n.chains,
-                       function(j)
-                         process_startpar(start_par[[j]],
-                                          data.rad,
-                                          ncomp,
-                                          model,
-                                          rand_start[j]))
+    starting <- lapply(
+      1:n.chains,
+      function(j) {
+        process_startpar(
+          start_par[[j]],
+          data.rad,
+          ncomp,
+          model,
+          rand_start[j]
+        )
+      }
+    )
   }
 
   run_MC <- function(starting, L, chain_no) {
@@ -1297,13 +1343,14 @@ fit_angmix <- function(model = "vmsin",
     if (method == "hmc") # using hmc
     {
       L_vec <- rep(L, n.iter)
-      if (L.random)
+      if (L.random) {
         L.orig <- L
+      }
     }
 
 
-    starting$par.mat[abs(starting$par.mat) >= kappa_upper/2] <- kappa_upper/2
-    starting$par.mat[abs(starting$par.mat) <= 2*kappa_lower] <- 2*kappa_lower
+    starting$par.mat[abs(starting$par.mat) >= kappa_upper / 2] <- kappa_upper / 2
+    starting$par.mat[abs(starting$par.mat) <= 2 * kappa_lower] <- 2 * kappa_lower
 
     par.mat.all <- array(0, dim = c(npar_1_comp, ncomp, n.iter))
     par.mat_lscale.all <- par.mat.all
@@ -1364,10 +1411,13 @@ fit_angmix <- function(model = "vmsin",
     tcltk_fail <- FALSE
 
     if (show.progress & !exists("pb")) {
-      pb <- tryCatch(tcltk::tkProgressBar(title = paste("Chain", chain_no),
-                                          label = "Initializing...",
-                                          min = 1, max = n.iter),
-                     error = function(e) "error")
+      pb <- tryCatch(tcltk::tkProgressBar(
+        title = paste("Chain", chain_no),
+        label = "Initializing...",
+        min = 1, max = n.iter
+      ),
+      error = function(e) "error"
+      )
       if (unlist(pb)[1] == "error") {
         show.progress <- FALSE
         tcltk_fail <- TRUE
@@ -1387,17 +1437,18 @@ fit_angmix <- function(model = "vmsin",
     tune_status <- matrix(0, ncomp, n.iter)
 
     #  Run the Markov chain
-    for(iter in  1:n.iter) {
+    for (iter in 1:n.iter) {
       # browser()
 
       if (method == "hmc") {
         if (epsilon.random) {
-          tune_param_final <- tune_param*runif(1, 1-epsilon.incr, 1+epsilon.incr)
+          tune_param_final <- tune_param * runif(1, 1 - epsilon.incr, 1 + epsilon.incr)
         } else {
           tune_param_final <- tune_param
         }
-        if (L.random)
-          L_vec[iter] <- L <- sample(ceiling(L.orig/exp(L.incr)):ceiling(L.orig*exp(L.incr)), 1)
+        if (L.random) {
+          L_vec[iter] <- L <- sample(ceiling(L.orig / exp(L.incr)):ceiling(L.orig * exp(L.incr)), 1)
+        }
       }
 
       #----------------------------------------------------------------------------------
@@ -1405,15 +1456,15 @@ fit_angmix <- function(model = "vmsin",
       #----------------------------------------------------------------------------------
 
 
-      if(ncomp > 1) {
+      if (ncomp > 1) {
         post.wt <- mem_p_model(data.rad, par.mat, pi.mix)
-        clus.ind <-  cID(post.wt, ncomp, runif(n.data))
+        clus.ind <- cID(post.wt, ncomp, runif(n.data))
         # clus.ind <- apply(post.wt, 1, function(x) which.max(rmultinom(n = 1, size = 1, prob = x)))
         # n.clus <- tabulate(clus.ind_curr, nbins = ncomp)
         obs_group <- lapply(1:ncomp, function(j) which(clus.ind == j))
         n.clus <- listLen(obs_group)
         pi.mix <-
-          as.numeric(rdirichlet(1, (pmix.alpha + n.clus))) #new mixture proportions
+          as.numeric(rdirichlet(1, (pmix.alpha + n.clus))) # new mixture proportions
       }
 
 
@@ -1424,9 +1475,6 @@ fit_angmix <- function(model = "vmsin",
       #----------------------------------------------------------------------------------
 
       if (type == "bi") {
-
-
-
         if (method == "hmc") {
 
           # hmc_curr <-
@@ -1469,26 +1517,29 @@ fit_angmix <- function(model = "vmsin",
           for (j in 1:ncomp) {
             # browser()
             hmc_curr <-
-              bounded_hmc_biv(lpr_grad =
-                                function(par_vec_lscale)
-                                  lpd_grad_model_indep_1comp(data.rad, par_vec_lscale,
-                                                             obs_group[[j]], n.clus[j]),
-                              init =  par.mat_lscale[, j, drop=FALSE],
-                              lower = par_lower_lscale[, j, drop=FALSE],
-                              upper = par_upper_lscale[, j, drop=FALSE],
-                              dep_cov = dep_cov,
-                              dep_cov_type = dep_cov_type,
-                              zero_cov = zero_cov,
-                              nsteps = L,
-                              step = tune_param_final[, j, drop=FALSE])
+              bounded_hmc_biv(
+                lpr_grad =
+                  function(par_vec_lscale) {
+                    lpd_grad_model_indep_1comp(
+                      data.rad, par_vec_lscale,
+                      obs_group[[j]], n.clus[j]
+                    )
+                  },
+                init = par.mat_lscale[, j, drop = FALSE],
+                lower = par_lower_lscale[, j, drop = FALSE],
+                upper = par_upper_lscale[, j, drop = FALSE],
+                dep_cov = dep_cov,
+                dep_cov_type = dep_cov_type,
+                zero_cov = zero_cov,
+                nsteps = L,
+                step = tune_param_final[, j, drop = FALSE]
+              )
 
             par.mat[, j] <- find_expscale(hmc_curr$final)
             par.mat_lscale[, j] <- hmc_curr$final
             accpt.par.mat.all[j, iter] <- hmc_curr$acc
           }
-        }
-
-        else {
+        } else {
 
           # rwmh_curr <- bounded_rwmh_biv(lpr =
           #                                 function(par_mat)
@@ -1505,36 +1556,38 @@ fit_angmix <- function(model = "vmsin",
           # par.mat <- rwmh_curr$final
           # accpt.par.mat.all[iter] <- rwmh_curr$accpt
 
-          for(j in 1:ncomp) {
-            rwmh_curr <- bounded_rwmh_biv(lpr =
-                                            function(par_vec_lscale)
-                                              lpd_model_indep_1comp(data.rad, par_vec_lscale,
-                                                                    obs_group[[j]], n.clus[j]),
-                                          init =  par.mat_lscale[, j, drop=FALSE],
-                                          lower = par_lower_lscale[, j, drop=FALSE],
-                                          upper = par_upper_lscale[, j, drop=FALSE],
-                                          dep_cov = dep_cov,
-                                          dep_cov_type = dep_cov_type,
-                                          zero_cov = zero_cov,
-                                          step = tune_param[, j])
+          for (j in 1:ncomp) {
+            rwmh_curr <- bounded_rwmh_biv(
+              lpr =
+                function(par_vec_lscale) {
+                  lpd_model_indep_1comp(
+                    data.rad, par_vec_lscale,
+                    obs_group[[j]], n.clus[j]
+                  )
+                },
+              init = par.mat_lscale[, j, drop = FALSE],
+              lower = par_lower_lscale[, j, drop = FALSE],
+              upper = par_upper_lscale[, j, drop = FALSE],
+              dep_cov = dep_cov,
+              dep_cov_type = dep_cov_type,
+              zero_cov = zero_cov,
+              step = tune_param[, j]
+            )
 
             par.mat[, j] <- find_expscale(rwmh_curr$final)
             par.mat_lscale[, j] <- rwmh_curr$final
             accpt.par.mat.all[j, iter] <- rwmh_curr$accpt
           }
-
         }
 
 
         lprior.all[iter] <-
-          - 0.5*sum(par.mat_lscale[1:3, ]^2/norm.var) +
-          sum(pmix.alpha*log(pi.mix))
-
+          -0.5 * sum(par.mat_lscale[1:3, ]^2 / norm.var) +
+          sum(pmix.alpha * log(pi.mix))
       }
 
       # if type == "uni"
       else {
-
         if (method == "hmc") {
           # hmc_curr <-
           #   bounded_hmc_uni(lpr_grad =
@@ -1551,29 +1604,27 @@ fit_angmix <- function(model = "vmsin",
           # accpt.par.mat.all[iter] <- hmc_curr$acc
 
           for (j in 1:ncomp) {
-
-
-
             hmc_curr <-
-              bounded_hmc_uni(lpr_grad =
-                                function(par_vec_lscale)
-                                  lpd_grad_model_indep_1comp(data.rad, par_vec_lscale,
-                                                             obs_group[[j]], n.clus[j]),
-                              init =  par.mat_lscale[, j, drop=FALSE],
-                              lower = par_lower_lscale[, j, drop=FALSE],
-                              upper = par_upper_lscale[, j, drop=FALSE],
-                              nsteps = L,
-                              step = tune_param_final[, j, drop=FALSE])
+              bounded_hmc_uni(
+                lpr_grad =
+                  function(par_vec_lscale) {
+                    lpd_grad_model_indep_1comp(
+                      data.rad, par_vec_lscale,
+                      obs_group[[j]], n.clus[j]
+                    )
+                  },
+                init = par.mat_lscale[, j, drop = FALSE],
+                lower = par_lower_lscale[, j, drop = FALSE],
+                upper = par_upper_lscale[, j, drop = FALSE],
+                nsteps = L,
+                step = tune_param_final[, j, drop = FALSE]
+              )
 
             par.mat[, j] <- find_expscale_uni(hmc_curr$final)
             par.mat_lscale[, j] <- hmc_curr$final
             accpt.par.mat.all[j, iter] <- hmc_curr$acc
           }
-
-
-        }
-
-        else {
+        } else {
 
           # rwmh_curr <- bounded_rwmh_uni(lpr =
           #                                 function(par_mat)
@@ -1587,15 +1638,20 @@ fit_angmix <- function(model = "vmsin",
           # par.mat <- rwmh_curr$final
           # accpt.par.mat.all[iter] <- rwmh_curr$accpt
 
-          for(j in 1:ncomp) {
-            rwmh_curr <- bounded_rwmh_uni(lpr =
-                                            function(par_vec_lscale)
-                                              lpd_model_indep_1comp(data.rad, par_vec_lscale,
-                                                                    obs_group[[j]], n.clus[j]),
-                                          init =  par.mat_lscale[, j, drop=FALSE],
-                                          lower = par_lower_lscale[, j, drop=FALSE],
-                                          upper = par_upper_lscale[, j, drop=FALSE],
-                                          step = tune_param[, j])
+          for (j in 1:ncomp) {
+            rwmh_curr <- bounded_rwmh_uni(
+              lpr =
+                function(par_vec_lscale) {
+                  lpd_model_indep_1comp(
+                    data.rad, par_vec_lscale,
+                    obs_group[[j]], n.clus[j]
+                  )
+                },
+              init = par.mat_lscale[, j, drop = FALSE],
+              lower = par_lower_lscale[, j, drop = FALSE],
+              upper = par_upper_lscale[, j, drop = FALSE],
+              step = tune_param[, j]
+            )
 
             par.mat[, j] <- find_expscale_uni(rwmh_curr$final)
             par.mat_lscale[, j] <- rwmh_curr$final
@@ -1604,8 +1660,8 @@ fit_angmix <- function(model = "vmsin",
         }
 
         lprior.all[iter] <-
-          - 0.5*sum(par.mat_lscale[1, ]^2/norm.var) +
-          sum(pmix.alpha*log(pi.mix))
+          -0.5 * sum(par.mat_lscale[1, ]^2 / norm.var) +
+          sum(pmix.alpha * log(pi.mix))
       }
 
 
@@ -1615,25 +1671,25 @@ fit_angmix <- function(model = "vmsin",
       if (perm_sampling & iter > n.burnin) {
         rand_perm <- sample(1:ncomp)
         clus.ind <- rand_perm[clus.ind] # random label switch
-        post.wt <- post.wt[, rand_perm, drop=FALSE]
-        par.mat <- par.mat[, rand_perm, drop=FALSE]
-        par.mat_lscale <- par.mat_lscale[, rand_perm, drop=FALSE]
-        pi.mix <- pi.mix[rand_perm, drop=FALSE]
+        post.wt <- post.wt[, rand_perm, drop = FALSE]
+        par.mat <- par.mat[, rand_perm, drop = FALSE]
+        par.mat_lscale <- par.mat_lscale[, rand_perm, drop = FALSE]
+        pi.mix <- pi.mix[rand_perm, drop = FALSE]
 
-        par.mat.all.order[, , iter] <- par.mat[, order(rand_perm), drop=FALSE]
+        par.mat.all.order[, , iter] <- par.mat[, order(rand_perm), drop = FALSE]
         # needed for tuning
 
         # if (method == "hmc")
-        tune_param <- tune_param[, rand_perm, drop=FALSE]
-
+        tune_param <- tune_param[, rand_perm, drop = FALSE]
       }
 
       # browser()
 
       llik_contri <- llik_model_contri(data.rad, par.mat, pi.mix)
 
-      if (return_llik_contri)
+      if (return_llik_contri) {
         llik_contri_all[, iter] <- llik_contri
+      }
 
       llik.all[iter] <- sum(llik_contri)
       lpd.all[iter] <- llik.all[iter] + lprior.all[iter]
@@ -1653,18 +1709,16 @@ fit_angmix <- function(model = "vmsin",
       if (autotune & iter >= nterms & iter %% 10 == 0 &
           iter <= iter.tune) {
         ave_accpt_all <- rep(0, ncomp)
-        for(j in 1:ncomp) {
+        for (j in 1:ncomp) {
           ave_accpt_all[j] <-
-            ave_accpt <- sum(accpt.par.mat.all[j, (iter-nterms+1):iter])/nterms
+            ave_accpt <- sum(accpt.par.mat.all[j, (iter - nterms + 1):iter]) / nterms
 
           if (ave_accpt > accpt.prob.upper) {
             tune_param[, j] <- tune_param[, j] * (1 + tune.incr)
 
             ntunes_up[j] <- ntunes_up[j] + 1
             tune_status[j, iter] <- 1
-
-          }
-          else if (ave_accpt < accpt.prob.lower) {
+          } else if (ave_accpt < accpt.prob.lower) {
             tune_param[, j] <- tune_param[, j] * (1 - tune.incr)
 
             ntunes_down[j] <- ntunes_down[j] + 1
@@ -1672,12 +1726,12 @@ fit_angmix <- function(model = "vmsin",
           }
 
           if (iter %% nterms == 0) {
-
-            par.sd <- apply(par.mat_lscale.all[, j, (iter-nterms+1):iter], 1, sd)
-            mean_par.sd <- sum(par.sd)/(npar_1_comp)
-            mean_tune_param_j <- sum(tune_param[, j])/(npar_1_comp)
-            if(mean_par.sd > 0)
-              tune_param[, j] <- 0.5*par.sd/mean_par.sd*mean_tune_param_j + 0.5*tune_param[, j]
+            par.sd <- apply(par.mat_lscale.all[, j, (iter - nterms + 1):iter], 1, sd)
+            mean_par.sd <- sum(par.sd) / (npar_1_comp)
+            mean_tune_param_j <- sum(tune_param[, j]) / (npar_1_comp)
+            if (mean_par.sd > 0) {
+              tune_param[, j] <- 0.5 * par.sd / mean_par.sd * mean_tune_param_j + 0.5 * tune_param[, j]
+            }
 
             #   else {
             #   par.sd <- apply(par.mat.all.order[, , (iter-nterms+1):iter], c(1:2), sd)
@@ -1709,34 +1763,38 @@ fit_angmix <- function(model = "vmsin",
       # }
 
 
-      message <- paste0("Progress: ", round(iter/n.iter*100), "% ",
-                        ifelse(iter <= n.burnin,
-                               "(Burn-in)",
-                               "(Sampling)"))
+      message <- paste0(
+        "Progress: ", round(iter / n.iter * 100), "% ",
+        ifelse(iter <= n.burnin,
+               "(Burn-in)",
+               "(Sampling)"
+        )
+      )
 
-      if (show.progress)
-        if (iter %% 2)
+      if (show.progress) {
+        if (iter %% 2) {
           # if ((round(iter /  n.iter, 2) * 100) %% 5 == 0 || iter == n.iter + 1)
           tcltk::setTkProgressBar(pb, iter, label = message)
-
+        }
+      }
     }
 
 
-    if(grepl(method, "hmc")) {
+    if (grepl(method, "hmc")) {
       epsilon_ave <- epsilon <- mean(tune_param_all)
 
-      if(L.random) {
-        L_ave <- sum(L_vec)/n.iter
+      if (L.random) {
+        L_ave <- sum(L_vec) / n.iter
       } else {
         L_ave <- L
       }
     }
 
-    if(grepl(method, "rwmh")) {
-      propscale_final <- propscale <- rowSums(tune_param_all)/n.iter
+    if (grepl(method, "rwmh")) {
+      propscale_final <- propscale <- rowSums(tune_param_all) / n.iter
     }
 
-    allpar_val <- array(1, dim = c(npar_1_comp+1, ncomp, n.iter))
+    allpar_val <- array(1, dim = c(npar_1_comp + 1, ncomp, n.iter))
     allpar_val[1, , ] <- pi.mix.all
     allpar_val[-1, , ] <- par.mat.all
     rm(pi.mix.all, par.mat.all)
@@ -1750,24 +1808,26 @@ fit_angmix <- function(model = "vmsin",
     }
 
 
-    result <- list("par.value" = allpar_val, #[, , final_iter_set],
-                   "par.name" = allpar_name,
-                   "llik.contri" = llik_contri_all, #[, final_iter_set],
-                   "llik" = llik.all, #[final_iter_set],
-                   "lpd" = lpd.all,#[final_iter_set],
-                   "lprior" = lprior.all,#[final_iter_set],
-                   "accpt.modelpar" = accpt.par.mat.all,#[final_iter_set],
-                   "clus.ind" = clus_ind.all,#[, final_iter_set],
-                   "mem.prob" = mem_prob_all,#[, , final_iter_set],
-                   "epsilon" = epsilon_ave,
-                   "L" = L_ave,
-                   "propscale" = propscale_final,
-                   "tune_param" = tune_param_all,
-                   "par.upper" = par_upper,
-                   "par.lower" = par_lower,
-                   "tcltk_fail" = tcltk_fail)
+    result <- list(
+      "par.value" = allpar_val, # [, , final_iter_set],
+      "par.name" = allpar_name,
+      "llik.contri" = llik_contri_all, # [, final_iter_set],
+      "llik" = llik.all, # [final_iter_set],
+      "lpd" = lpd.all, # [final_iter_set],
+      "lprior" = lprior.all, # [final_iter_set],
+      "accpt.modelpar" = accpt.par.mat.all, # [final_iter_set],
+      "clus.ind" = clus_ind.all, # [, final_iter_set],
+      "mem.prob" = mem_prob_all, # [, , final_iter_set],
+      "epsilon" = epsilon_ave,
+      "L" = L_ave,
+      "propscale" = propscale_final,
+      "tune_param" = tune_param_all,
+      "par.upper" = par_upper,
+      "par.lower" = par_lower,
+      "tcltk_fail" = tcltk_fail
+    )
 
-    if(show.progress) close(pb)
+    if (show.progress) close(pb)
 
     result
   }
@@ -1778,104 +1838,114 @@ fit_angmix <- function(model = "vmsin",
   # browser()
   # generate three chains in parallel, if possible
   if (chains_parallel) {
-
     res_list <- future_lapply(1:n.chains,
-                              function(ii) run_MC(starting[[ii]],
-                                                  L[ii], ii),
-                              future.seed = TRUE)
+                              function(ii) {
+                                run_MC(
+                                  starting[[ii]],
+                                  L[ii], ii
+                                )
+                              },
+                              future.seed = TRUE
+    )
   } else {
-    res_list <- lapply(1:n.chains,
-                       function(ii) run_MC(starting[[ii]], L[ii], ii))
+    res_list <- lapply(
+      1:n.chains,
+      function(ii) run_MC(starting[[ii]], L[ii], ii)
+    )
   }
 
 
 
-  if (res_list[[1]]$tcltk_fail)
+  if (res_list[[1]]$tcltk_fail) {
     warning("tcltk could not be loaded. \'show.progress\' was set to FALSE.")
+  }
 
   # combine the results from the lists
-  allpar_val <- array(0, dim=c(npar_1_comp+1, ncomp, n.iter, n.chains))
+  allpar_val <- array(0, dim = c(npar_1_comp + 1, ncomp, n.iter, n.chains))
   llik_all <- lprior_all <- lpd_all <- matrix(0, n.iter, n.chains)
   accpt.modelpar_all <- array(0, dim = c(ncomp, n.iter, n.chains))
-  clus.ind_all <- array(0, dim=c(n.data, n.iter, n.chains))
+  clus.ind_all <- array(0, dim = c(n.data, n.iter, n.chains))
   if (return_llik_contri) {
-    llik_contri_all <- array(0, dim=c(n.data, n.iter, n.chains))
+    llik_contri_all <- array(0, dim = c(n.data, n.iter, n.chains))
   } else {
     llik_contri_all <- NULL
   }
 
-  mem_prob_all <- array(1, dim=c(n.data, ncomp, n.iter, n.chains))
+  mem_prob_all <- array(1, dim = c(n.data, ncomp, n.iter, n.chains))
 
   if (return_tune_param) {
-    tune_param_all <- array(NA, dim=c(length(tune_param), n.iter, n.chains))
+    tune_param_all <- array(NA, dim = c(length(tune_param), n.iter, n.chains))
   } else {
     tune_param_all <- NULL
   }
 
-  for(j in 1:n.chains) {
+  for (j in 1:n.chains) {
     allpar_val[, , , j] <- res_list[[j]]$par.value
     llik_all[, j] <- res_list[[j]]$llik
     lprior_all[, j] <- res_list[[j]]$lprior
     lpd_all[, j] <- res_list[[j]]$lpd
     accpt.modelpar_all[, , j] <- res_list[[j]]$accpt.modelpar
     clus.ind_all[, , j] <- res_list[[j]]$clus.ind
-    if (return_llik_contri)
+    if (return_llik_contri) {
       llik_contri_all[, , j] <- res_list[[j]]$llik.contri
+    }
     mem_prob_all[, , , j] <- res_list[[j]]$mem.prob
-    if (return_tune_param)
+    if (return_tune_param) {
       tune_param_all[, , j] <- res_list[[j]]$tune_param
+    }
   }
 
-  if(method == "hmc") {
+  if (method == "hmc") {
     epsilon_final <- do.call(cbind, lapply(res_list, function(x) x$epsilon))
     L_final <- unlist(lapply(res_list, function(x) x$L))
     propscale_final <- NULL
-  }
-  else {
+  } else {
     propscale_final <- do.call(cbind, lapply(res_list, function(x) x$propscale))
     epsilon_final <- NULL
     L_final <- NULL
   }
 
-  out <- list("par.value" = allpar_val,
-              "clus.ind" = clus.ind_all,
-              "par.name" = res_list[[1]]$par.name,
-              "modelpar.lower" = res_list[[1]]$par.lower,
-              "modelpar.upper" = res_list[[1]]$par.upper,
-              "return_llik_contri" = return_llik_contri,
-              "llik.contri" = llik_contri_all,
-              "mem.prob" = mem_prob_all,
-              "llik" = llik_all,
-              "lpd" = lpd_all,
-              "lprior" = lprior_all,
-              "accpt.modelpar" = accpt.modelpar_all,
-              "model" = curr.model,
-              "method" = method,
-              "perm_sampling" = perm_sampling,
-              "epsilon.random" = epsilon.random,
-              "epsilon" = epsilon_final,
-              "L.random" = L.random,
-              "L" = L_final,
-              "iter.tune" = iter.tune,
-              "propscale" = propscale_final,
-              "tune_param" = tune_param_all,
-              "return_tune_param" = return_tune_param,
-              "type" = type,
-              "data" = data.rad,
-              "cov.restrict" = cov.restrict,
-              "pmix.alpha" = pmix.alpha,
-              "norm.var" = norm.var,
-              "n.data" = n.data,
-              "ncomp" = ncomp,
-              "n.chains" = n.chains,
-              "n.iter" = n.iter,
-              "n.burnin" = n.burnin,
-              "thin" = thin,
-              "n.iter.final" = n.iter.final,
-              "final_iter" = final_iter_set,
-              "int.displ" = int.displ,
-              "qrnd_grid" = qrnd_grid,
-              "omega.2pi" = omega.2pi)
+  out <- list(
+    "par.value" = allpar_val,
+    "clus.ind" = clus.ind_all,
+    "par.name" = res_list[[1]]$par.name,
+    "modelpar.lower" = res_list[[1]]$par.lower,
+    "modelpar.upper" = res_list[[1]]$par.upper,
+    "return_llik_contri" = return_llik_contri,
+    "llik.contri" = llik_contri_all,
+    "mem.prob" = mem_prob_all,
+    "llik" = llik_all,
+    "lpd" = lpd_all,
+    "lprior" = lprior_all,
+    "accpt.modelpar" = accpt.modelpar_all,
+    "model" = curr.model,
+    "method" = method,
+    "perm_sampling" = perm_sampling,
+    "epsilon.random" = epsilon.random,
+    "epsilon" = epsilon_final,
+    "L.random" = L.random,
+    "L" = L_final,
+    "iter.tune" = iter.tune,
+    "propscale" = propscale_final,
+    "tune_param" = tune_param_all,
+    "return_tune_param" = return_tune_param,
+    "type" = type,
+    "data" = data.rad,
+    "cov.restrict" = cov.restrict,
+    "pmix.alpha" = pmix.alpha,
+    "norm.var" = norm.var,
+    "n.data" = n.data,
+    "ncomp" = ncomp,
+    "n.chains" = n.chains,
+    "n.iter" = n.iter,
+    "n.burnin" = n.burnin,
+    "thin" = thin,
+    "n.iter.final" = n.iter.final,
+    "final_iter" = final_iter_set,
+    "int.displ" = int.displ,
+    "qrnd_grid" = qrnd_grid,
+    "omega.2pi" = omega.2pi
+  )
 
   class(out) <- "angmcmc"
 

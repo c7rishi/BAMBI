@@ -3,12 +3,12 @@
 #include "bessel.h"
 
 // [[Rcpp::export]]
-arma::vec rowVars(arma::mat mat_in)
+Rcpp::NumericVector rowVars(Rcpp::NumericMatrix mat_in)
 {
-  int nrow = mat_in.n_rows;
-  arma::vec res(nrow);
+  int nrow = mat_in.nrow();
+  Rcpp::NumericVector res(nrow);
   for(int i = 0; i < nrow; i++) {
-    res[i] = arma::var(mat_in.row(i));
+    res[i] = Rcpp::var(mat_in.row(i));
   }
   return res;
 }
@@ -40,7 +40,7 @@ arma::cube par_mat_permute(arma::cube par_mat,
 // arma::cube comp_ind_permute(arma::cube clus_ind,
 //                            arma::umat perm_lab)
 // {
-//   int n_iter = par_mat.n_slices, n_row = par_mat.n_rows, n_col = par_mat.n_cols;
+//   int n_iter = par_mat.n_slices, n_row = par_mat.nrow(), n_col = par_mat.ncol();
 //   arma::cube result(n_row, n_col, n_iter);
 //   for(int iter = 0; iter < n_iter; iter++) {
 //     for(int row = 0; row < n_row; row++) {
@@ -56,12 +56,12 @@ arma::cube par_mat_permute(arma::cube par_mat,
 
 
 // [[Rcpp::export]]
-Rcpp::NumericVector cID(arma::mat probs, int ncomp, arma::vec Uv) {
+Rcpp::NumericVector cID(Rcpp::NumericMatrix probs, int ncomp, Rcpp::NumericVector Uv) {
   double U;
   double* p = new double[ncomp];
-  Rcpp::NumericVector clID(probs.n_rows);
+  Rcpp::NumericVector clID(probs.nrow());
 
-  for (int i = 0; i < (int)probs.n_rows; i++) {
+  for (int i = 0; i < (int)probs.nrow(); i++) {
     U = Uv[i];
     //Rcout << U;
     p[0] = probs(i,0);
@@ -110,9 +110,9 @@ arma::uvec change_labs(arma::uvec orig, arma::uvec rand_perm) {
 
 
 // [[Rcpp::export]]
-double calc_corr_tau_2(arma::mat samp_mat)
+double calc_corr_tau_2(Rcpp::NumericMatrix samp_mat)
 {
-  int N = samp_mat.n_rows;
+  int N = samp_mat.nrow();
   double theta_ij, phi_ij;
   double num = 0;
   for(int i = 0; i < N-1; i++) {
@@ -141,9 +141,9 @@ double calc_corr_tau_2(arma::mat samp_mat)
 
 
 // [[Rcpp::export]]
-double calc_corr_tau_1(arma::mat samp_mat)
+double calc_corr_tau_1(Rcpp::NumericMatrix samp_mat)
 {
-  int N = samp_mat.n_rows;
+  int N = samp_mat.nrow();
   double sum_delta_ij = 0;
   for(int i = 0; i < N-2; i++) {
     for(int j = i+1; j < N-1; j++) {
@@ -164,9 +164,9 @@ double calc_corr_tau_1(arma::mat samp_mat)
 
 
 // [[Rcpp::export]]
-double calc_corr_fl(arma::mat samp_mat)
+double calc_corr_fl(Rcpp::NumericMatrix samp_mat)
 {
-  int N = samp_mat.n_rows;
+  int N = samp_mat.nrow();
   double sum_1 = 0, sum_2 = 0, sum_prod = 0, temp_1, temp_2;
   for(int i = 0; i < N-1; i++) {
     for(int j = i+1; j < N; j++) {
@@ -183,9 +183,9 @@ double calc_corr_fl(arma::mat samp_mat)
 
 
 // // [[Rcpp::export]]
-// double calc_corr_js(arma::mat samp_mat)
+// double calc_corr_js(Rcpp::NumericMatrix samp_mat)
 // {
-//   int N = samp_mat.n_rows;
+//   int N = samp_mat.nrow();
 //   double sum_1 = 0, sum_2 = 0, sum_prod = 0, temp_1, temp_2;
 //   for(int i = 0; i < N; i++) {
 //       temp_1 = sin(samp_mat(i, 0));

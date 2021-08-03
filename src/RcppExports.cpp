@@ -12,12 +12,12 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // rowVars
-arma::vec rowVars(arma::mat mat_in);
+Rcpp::NumericVector rowVars(Rcpp::NumericMatrix mat_in);
 RcppExport SEXP _BAMBI_rowVars(SEXP mat_inSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type mat_in(mat_inSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat_in(mat_inSEXP);
     rcpp_result_gen = Rcpp::wrap(rowVars(mat_in));
     return rcpp_result_gen;
 END_RCPP
@@ -35,14 +35,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // cID
-Rcpp::NumericVector cID(arma::mat probs, int ncomp, arma::vec Uv);
+Rcpp::NumericVector cID(Rcpp::NumericMatrix probs, int ncomp, Rcpp::NumericVector Uv);
 RcppExport SEXP _BAMBI_cID(SEXP probsSEXP, SEXP ncompSEXP, SEXP UvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type probs(probsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type probs(probsSEXP);
     Rcpp::traits::input_parameter< int >::type ncomp(ncompSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type Uv(UvSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type Uv(UvSEXP);
     rcpp_result_gen = Rcpp::wrap(cID(probs, ncomp, Uv));
     return rcpp_result_gen;
 END_RCPP
@@ -60,34 +60,34 @@ BEGIN_RCPP
 END_RCPP
 }
 // calc_corr_tau_2
-double calc_corr_tau_2(arma::mat samp_mat);
+double calc_corr_tau_2(Rcpp::NumericMatrix samp_mat);
 RcppExport SEXP _BAMBI_calc_corr_tau_2(SEXP samp_matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type samp_mat(samp_matSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type samp_mat(samp_matSEXP);
     rcpp_result_gen = Rcpp::wrap(calc_corr_tau_2(samp_mat));
     return rcpp_result_gen;
 END_RCPP
 }
 // calc_corr_tau_1
-double calc_corr_tau_1(arma::mat samp_mat);
+double calc_corr_tau_1(Rcpp::NumericMatrix samp_mat);
 RcppExport SEXP _BAMBI_calc_corr_tau_1(SEXP samp_matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type samp_mat(samp_matSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type samp_mat(samp_matSEXP);
     rcpp_result_gen = Rcpp::wrap(calc_corr_tau_1(samp_mat));
     return rcpp_result_gen;
 END_RCPP
 }
 // calc_corr_fl
-double calc_corr_fl(arma::mat samp_mat);
+double calc_corr_fl(Rcpp::NumericMatrix samp_mat);
 RcppExport SEXP _BAMBI_calc_corr_fl(SEXP samp_matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type samp_mat(samp_matSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type samp_mat(samp_matSEXP);
     rcpp_result_gen = Rcpp::wrap(calc_corr_fl(samp_mat));
     return rcpp_result_gen;
 END_RCPP
