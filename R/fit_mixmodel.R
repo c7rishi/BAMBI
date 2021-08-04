@@ -1535,8 +1535,8 @@ fit_angmix <- function(model = "vmsin",
                 step = tune_param_final[, j, drop = FALSE]
               )
 
-            par.mat[, j] <- find_expscale(hmc_curr$final)
-            par.mat_lscale[, j] <- hmc_curr$final
+            par.mat[, j] <- signif_(find_expscale(hmc_curr$final))
+            par.mat_lscale[, j] <- signif_(hmc_curr$final)
             accpt.par.mat.all[j, iter] <- hmc_curr$acc
           }
         } else {
@@ -1574,8 +1574,8 @@ fit_angmix <- function(model = "vmsin",
               step = tune_param[, j]
             )
 
-            par.mat[, j] <- find_expscale(rwmh_curr$final)
-            par.mat_lscale[, j] <- rwmh_curr$final
+            par.mat[, j] <- signif_(find_expscale(rwmh_curr$final))
+            par.mat_lscale[, j] <- signif_(rwmh_curr$final)
             accpt.par.mat.all[j, iter] <- rwmh_curr$accpt
           }
         }
@@ -1620,8 +1620,8 @@ fit_angmix <- function(model = "vmsin",
                 step = tune_param_final[, j, drop = FALSE]
               )
 
-            par.mat[, j] <- find_expscale_uni(hmc_curr$final)
-            par.mat_lscale[, j] <- hmc_curr$final
+            par.mat[, j] <- signif_(find_expscale_uni(hmc_curr$final))
+            par.mat_lscale[, j] <- signif_(hmc_curr$final)
             accpt.par.mat.all[j, iter] <- hmc_curr$acc
           }
         } else {
@@ -1653,8 +1653,8 @@ fit_angmix <- function(model = "vmsin",
               step = tune_param[, j]
             )
 
-            par.mat[, j] <- find_expscale_uni(rwmh_curr$final)
-            par.mat_lscale[, j] <- rwmh_curr$final
+            par.mat[, j] <- signif_(find_expscale_uni(rwmh_curr$final))
+            par.mat_lscale[, j] <- signif_(rwmh_curr$final)
             accpt.par.mat.all[j, iter] <- rwmh_curr$accpt
           }
         }

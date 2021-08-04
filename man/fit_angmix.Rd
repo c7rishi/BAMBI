@@ -201,8 +201,10 @@ the initiation of each chain.
 }
 \examples{
 # illustration only - more iterations needed for convergence
-fit.vmsin.20 <- fit_angmix("vmsin", tim8, ncomp = 3, n.iter =  20,
-                             n.chains = 1)
+fit.vmsin.20 <- fit_angmix("vmsin", tim8,
+  ncomp = 3, n.iter = 20,
+  n.chains = 1
+)
 fit.vmsin.20
 
 
@@ -212,15 +214,16 @@ fit.vmsin.20
 # Note that not all plan() might work on every OS, as they execute
 # functions defined internally in fit_mixmodel. We suggest
 # plan(multiprocess).
-
 \dontrun{
 library(future)
 library(parallel)
 plan(multiprocess)
 
 set.seed(1)
-MC.fit <- fit_angmix("vmsin", tim8, ncomp=3, n.iter=500,
-                     n.chains = 3)
+MC.fit <- fit_angmix("vmsin", tim8,
+  ncomp = 3, n.iter = 500,
+  n.chains = 3
+)
 
 
 pointest(MC.fit)
