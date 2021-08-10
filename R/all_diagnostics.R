@@ -56,9 +56,9 @@ contour.angmcmc <-  function(x, fn = "MAP", type = "point-est", show.data = TRUE
   }
 
   if(x$ncomp > 1) {
-    main <- paste("contour plot for fitted", x$ncomp, "component", x$model, "mixtures")
+    main <- paste("Contour plot for fitted", x$ncomp, "component", x$model, "mixtures")
   } else {
-    main <- paste("contour plot for fitted (single component)", x$model)
+    main <- paste("Contour plot for fitted (single component)", x$model)
   }
 
   coords <- as.matrix(expand.grid(xpoints, ypoints))
@@ -172,9 +172,9 @@ densityplot.angmcmc <- function(x, fn = mean, type = "point-est", log.density = 
 
     if (missing(main)) {
       if(x$ncomp > 1) {
-        main <- paste("contour plot for fitted", x$ncomp, "component", x$model, "mixtures")
+        main <- paste("Contour plot for fitted", x$ncomp, "component", x$model, "mixtures")
       } else {
-        main <- paste("contour plot for fitted (single component)", x$model)
+        main <- paste("Contour plot for fitted (single component)", x$model)
       }
     }
 
@@ -215,8 +215,8 @@ densityplot.angmcmc <- function(x, fn = mean, type = "point-est", log.density = 
       # facetcol <- cut(denfacet, nbcol)
 
       print(basic_surfaceplot(xpoints = xpoints, ypoints = ypoints,
-                        denmat = denmat, xlab = xlab, ylab = ylab,
-                        main = main, zlab = zlab, ...))
+                              denmat = denmat, xlab = xlab, ylab = ylab,
+                              main = main, zlab = zlab, ...))
 
       # persp(x=xpoints, y=ypoints, z=denmat, theta = theta, phi = phi, expand = expand, col = color[facetcol],
       #       ltheta = 120, shade = shade, ticktype = "detailed",
@@ -277,14 +277,14 @@ densityplot.angmcmc <- function(x, fn = mean, type = "point-est", log.density = 
 
       if (missing(main)) {
         if(object$ncomp > 1) {
-          main <- paste("density plot for fitted", object$ncomp, "component", object$model, "mixtures")
+          main <- paste("Density plot for fitted", object$ncomp, "component", object$model, "mixtures")
         } else {
-          main <- paste("density plot for fitted (single component)", object$model)
+          main <- paste("Density plot for fitted (single component)", object$model)
         }
       }
 
       if (missing(xlab))
-        xlab <- "Angles in radian"
+        xlab <- "Angles in radians"
 
       if (missing(ylab)) {
         ylab <- zlab
@@ -304,7 +304,74 @@ densityplot.angmcmc <- function(x, fn = mean, type = "point-est", log.density = 
   invisible(out)
 }
 
+extract_digits <- function(x) {
+  tmp <- regmatches(
+    x,
+    gregexpr("[[:digit:]]+", x)
+  )[[1]]
 
+  out <- if (length(tmp) > 0) {
+    strsplit(
+      tmp,
+      ""
+    )[[1]]
+  } else ""
+
+  out
+}
+
+# get_unicode <- function(x) {
+#   subscript_char <- extract_digits(x)
+#   subscript_char_unicode <- if (subscript_char != "") {
+#     paste0(
+#       sapply(
+#         subscript_char,
+#         function(this_digit) {
+#           unicode_num <- 2080 + as.numeric(this_digit)
+#           unicode_num_char <- eval(parse(text = paste0("'\\u", unicode_num, "'")))
+#         }
+#       ),
+#       collapse = ""
+#     )
+#   } else ""
+#
+#   parameter_greek <- if (grepl("mu", x)) {
+#     "\u03BC"
+#   } else if (grepl("kappa", x)) {
+#     "\u03BA"
+#   } else if (grepl("pmix", x)) {
+#     "p"
+#   }
+#
+#   out <- paste0(parameter_greek, subscript_char_unicode)
+#
+#   if (grepl("pmix", x)) {
+#     # append superscript 'mix'
+#     out <- paste0(out, "\u1D50", "\u2071", "\u02E3")
+#   }
+#
+#   out
+# }
+
+get_bquote_expr <- function(x) {
+  subscript_char <- extract_digits(x)
+  param_char <- gsub(subscript_char, "", x)
+  out <- if (grepl("pmix", x)) {
+    "p['mix']"
+  } else {
+    paste0(param_char, "[", subscript_char, "]")
+  }
+  out
+}
+
+parse_text <- function(x) {
+  eval(parse(text = x))
+}
+
+parse_text_bquote <- function(x) {
+  tmp <- paste0("bquote(", x, ")")
+  parse_text(tmp)
+}
 
 #' Trace plot for parameters from an angmcmc object
 #' @inheritParams pointest
@@ -376,21 +443,25 @@ paramtrace <- function(object, par.name, comp.label, chain.no,
   n.chains <- length(chain.no)
   col_brew <- brewer.pal(n = max(n.chains, 3), name = "Pastel2")
 
-  if(singleplot) {
+  if (singleplot) {
+
     val <- extractsamples(object, par.name, comp.label, chain.no, drop = FALSE)
     plot(NULL, xlim = c(1, object$n.iter.final), ylim = range(val),  ylab="", xlab = "Iteration")
     for(ch in 1:n.chains)
       points(val[, , , ch], type = "l", col = col_brew[ch])
     legend("bottomright", legend = paste("Chain", chain.no), col = col_brew,
            lty = 1)
+
+    par.name.1 <- sapply(par.name, get_bquote_expr)
     if(object$ncomp > 1) {
-      ylab <- paste(par.name, "for component", comp.label)
-      main <- paste("Traceplot for", ylab, "in", object$ncomp, "component", object$model, "mixtures")
+      ylab <- paste0(par.name.1, "~'for component ", comp.label, "'")
+      main <- paste0("'Traceplot for'~", ylab, "~'in ",
+                     object$ncomp, "-component ", object$model, " mixtures'")
     } else {
-      ylab <- par.name
-      main <- paste("Traceplot for", ylab, "in (single component)", object$model)
+      ylab <- par.name.1
+      main <- paste0("Traceplot for'~", ylab, "~'in (single component) ", object$model, "'")
     }
-    title(main = main, ylab = ylab)
+    title(main = parse_text_bquote(main), ylab = parse_text_bquote(ylab))
   }
 
   # not singleplot
@@ -403,17 +474,20 @@ paramtrace <- function(object, par.name, comp.label, chain.no,
         plot(NULL, xlim = c(1, object$n.iter.final), ylim = range(val),  ylab="", xlab = "Iteration")
         for(ch in 1:n.chains)
           points(val[, , , ch], type = "l", col = col_brew[ch])
+
         legend("bottomright", legend = paste("Chain", chain.no), col = col_brew,
                lty = 1)
+
+        par.curr.1 <- sapply(par.curr, get_bquote_expr)
         if(object$ncomp > 1) {
-          ylab <- paste(par.curr, "for component", comp.label.curr)
-          main <- paste("Traceplot for", ylab, "in ", object$ncomp, "component", object$model, "mixtures")
+          ylab <- paste(par.curr.1, "~' for component", comp.label.curr, "'")
+          main <- paste0("'Traceplot for'~", ylab, "*' in ", object$ncomp, "-component ", object$model, " mixtures'")
         } else {
-          ylab <- par.curr
-          main <- paste("Traceplot for", ylab, "in  (single component)", object$model)
+          ylab <- par.curr.1
+          main <- paste0("'Traceplot for'~", ylab, "*' in  (single component)", object$model, "'")
         }
 
-        title(main = main, ylab = ylab)
+        title(main = parse_text_bquote(main), ylab = parse_text_bquote(ylab))
 
         # --not required--
         # if(currplotno < nplots) {
@@ -477,8 +551,6 @@ lpdtrace <- function(object, chain.no, use.llik = FALSE,
   n.chains <- length(chain.no)
   final_iter_set <- object$final_iter
   col_brew <- brewer.pal(n = max(n.chains, 3), name = "Paired")
-
-  # browser()
 
   if (use.llik) {
     val <- object$llik[final_iter_set, chain.no, drop = FALSE]
