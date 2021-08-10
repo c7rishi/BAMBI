@@ -484,7 +484,7 @@ fit_angmix <- function(model = "vmsin",
     }
 
     if (missing(accpt.prob.lower)) {
-      accpt.prob.lower <- 0.6
+      accpt.prob.lower <- if (model %in% c("wnorm", "wnorm2")) 0.58 else 0.6
     }
 
     if (length(epsilon) == ncomp * npar_1_comp) {
