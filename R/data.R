@@ -10,7 +10,7 @@
 #'
 #' @format A data frame with 490 rows and 2 variables (backbone dihedral angles) phi and psi.
 #' @source 8TIM PDB file: \url{http://www.rcsb.org/pdb/explore.do?structureId=8tim}.
-#' @source DSSP software: \url{http://swift.cmbi.ru.nl/gv/dssp/}.
+#' @source DSSP software: \url{https://swift.cmbi.umcn.nl/gv/dssp/}.
 #'
 #' @usage
 #' data(tim8)
