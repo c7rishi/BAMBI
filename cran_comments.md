@@ -1,3 +1,53 @@
+# BAMBI v2.3.1
+
+## Resubmission
+This is a resubmission. In this version we have made the following changes.
+
+## Changelog:
+* Modified internal handling of floating points to ensure reproducibility across all platforms
+* Updated loo::compare() (which is now deprecated) calls to loo::loo_compare()
+* Introduced multiplicity adjustments to the sequential tests for incremental model fits.
+* Minor bug fixes
+
+## Test environments
+* local Windows 10 install, R 4.1.0
+* win-builder (devel and release)
+* Ubuntu release 20.04, R 4.1.0
+
+## R CMD check results
+There were no ERRORs or WARNINGs.
+
+There was a NOTE on compile code on R 4.1.0 on  Windows 10 but not on win-builder:
+```
+> checking compiled code ... NOTE
+  Note: information on .o files for i386 is not available
+  Note: information on .o files for x64 is not available
+  File 'D:/Documents/GitHub/BAMBI.Rcheck/BAMBI/libs/i386/BAMBI.dll':
+    Found 'abort', possibly from 'abort' (C), 'runtime' (Fortran)
+    Found 'exit', possibly from 'exit' (C), 'stop' (Fortran)
+    Found 'printf', possibly from 'printf' (C)
+  File 'D:/Documents/GitHub/BAMBI.Rcheck/BAMBI/libs/x64/BAMBI.dll':
+    Found 'abort', possibly from 'abort' (C), 'runtime' (Fortran)
+    Found 'exit', possibly from 'exit' (C), 'stop' (Fortran)
+    Found 'printf', possibly from 'printf' (C)
+  
+  Compiled code should not call entry points which might terminate R nor
+  write to stdout/stderr instead of to the console, nor use Fortran I/O
+  nor system RNGs. The detected symbols are linked into the code but
+  might come from libraries and not actually be called.
+```
+
+There was one NOTE on package size on R 4.1.0 on Ubuntu 20.04:
+
+```
+* checking installed package size ... NOTE 
+  installed size is  8.5Mb
+  sub-directories of 1Mb or more:
+    libs   7.9Mb
+```
+
+
+
 # BAMBI v2.3.0
 ## Resubmission
 This is a resubmission. In this version we have made the following changes.
