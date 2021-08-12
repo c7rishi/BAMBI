@@ -10,9 +10,9 @@ and the column day provides the days on which the data points were collected (ra
 October 1-10, 2016).
 }
 \source{
-Environment Canada: \url{http://climate.weather.gc.ca/climate_data/data_quality_e.html}.
+Environment Canada: \url{https://climate.weather.gc.ca/climate_data/data_quality_e.html}.
 
-CBC news on the storm: \url{http://www.cbc.ca/news/canada/british-columbia/storm-bc-1.3795204}.
+CBC news on the storm: \url{https://www.cbc.ca/news/canada/british-columbia/storm-bc-1.3795204}.
 }
 \usage{
 data(wind)
