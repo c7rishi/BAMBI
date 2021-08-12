@@ -35,6 +35,8 @@ There was a NOTE on compile code on R 4.1.0 on  Windows 10 but not on win-builde
   write to stdout/stderr instead of to the console, nor use Fortran I/O
   nor system RNGs. The detected symbols are linked into the code but
   might come from libraries and not actually be called.
+  
+  See 'Writing portable packages' in the 'Writing R Extensions' manual. 
 ```
 
 There was one NOTE on package size on R 4.1.0 on Ubuntu 20.04:
