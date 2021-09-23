@@ -9,7 +9,7 @@ Maintainer: Saptarshi Chakraborty <chakra.saptarshi@gmail.com>
 Description: Fit (using Bayesian methods) and simulate mixtures of univariate and bivariate angular distributions. Chakraborty and Wong (2017) <arXiv:1708.07804>.
 License: GPL-3
 LazyData: TRUE
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 LinkingTo: Rcpp,
            RcppArmadillo
 Imports: stats,
