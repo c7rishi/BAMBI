@@ -1,14 +1,48 @@
 # BAMBI v2.3.2
 
 ## Resubmission
-This is a resubmission. In this version we have made the following changes.
+This is a resubmission. In this version we have made the following change.
 
 ## Changelog:
-* Updated contour::angmcmc so that the "..." arguments are passed to graphics::contour
+* Updated contour.angmcmc so that the ellipsis "..." arguments are properly passed to graphics::contour()
 
 ## Test environment:
 
-Need to add.
+* local Windows 10 install, R 4.1.1
+* win-builder (devel, release, and old release)
+* Ubuntu release 20.04, R 4.1.0
+
+## R CMD check results
+There were no ERRORs or WARNINGs.
+
+There was a NOTE on compile code on R 4.1.1 on  Windows 10 but not on win-builder:
+```
+> checking compiled code ... NOTE
+  Note: information on .o files for i386 is not available
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  Note: information on .o files for x64 is not available
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  File 'BAMBI/libs/i386/BAMBI.dll':
+    Found no calls to: 'R_registerRoutines', 'R_useDynamicSymbols'
+  File 'BAMBI/libs/x64/BAMBI.dll':
+    Found no calls to: 'R_registerRoutines', 'R_useDynamicSymbols'
+  
+  It is good practice to register native routines and to disable symbol
+  search.
+  
+  See 'Writing portable packages' in the 'Writing R Extensions' manual.
+```
+
 
 
 # BAMBI v2.3.1
