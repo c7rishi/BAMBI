@@ -15,7 +15,7 @@ This is a resubmission. In this version we have made the following change.
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There was a NOTE on compile code on R 4.1.1 on  Windows 10 but not on win-builder:
+There was a NOTE on compile code on R 4.1.1 on Windows 10 but not on win-builder:
 ```
 > checking compiled code ... NOTE
   Note: information on .o files for i386 is not available
@@ -43,6 +43,14 @@ There was a NOTE on compile code on R 4.1.1 on  Windows 10 but not on win-builde
   See 'Writing portable packages' in the 'Writing R Extensions' manual.
 ```
 
+There was one NOTE on R 4.1.0 on Ubuntu 20.04:
+```
+* checking installed package size ... NOTE
+  installed size is  8.5Mb
+  sub-directories of 1Mb or more:
+    libs   7.9Mb
+
+```
 
 
 # BAMBI v2.3.1
