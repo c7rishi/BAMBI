@@ -65,17 +65,25 @@ contour.angmcmc <-  function(x, fn = "MAP", type = "point-est", show.data = TRUE
 
   coords <- as.matrix(expand.grid(xpoints, ypoints))
   dens <- d_fitted(coords, x, fn = fn, type = type)
-  contour(xpoints, ypoints, matrix(dens, nrow=length(xpoints)),
-          levels=levels)
+
+  contour_in <- c(
+    list(
+      x = xpoints,
+      y = ypoints,
+      z = matrix(dens, nrow=length(xpoints)),
+      levels = levels
+    ),
+    dots
+  )
+
+  if (is.null(dots$xlab)) contour_in$xlab <- xlab
+  if (is.null(dots$ylab)) contour_in$ylab <- ylab
+  if (is.null(dots$main)) contour_in$main <- main
+
+  do.call(contour, contour_in)
 
   if(show.data) points(x$data, col = scales::alpha(col, alpha),
                        cex = cex, pch = pch)
-
-  xlab1 <- if (is.null(dots$xlab)) xlab else dots$xlab
-  ylab1 <- if (is.null(dots$ylab)) ylab else dots$ylab
-  main1 <- if (is.null(dots$main)) main else dots$main
-
-  title(main = main1, xlab = xlab1, ylab = ylab1)
 }
 
 
