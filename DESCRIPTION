@@ -2,7 +2,7 @@ Package: BAMBI
 Type: Package
 Title: Bivariate Angular Mixture Models
 Version: 2.3.2
-Date: 2021-08-10
+Date: 2021-09-24
 Author: Saptarshi Chakraborty,
         Samuel W.K. Wong
 Maintainer: Saptarshi Chakraborty <chakra.saptarshi@gmail.com>
