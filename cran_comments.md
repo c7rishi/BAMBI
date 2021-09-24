@@ -1,3 +1,16 @@
+# BAMBI v2.3.2
+
+## Resubmission
+This is a resubmission. In this version we have made the following changes.
+
+## Changelog:
+* Updated contour::angmcmc so that the "..." arguments are passed to graphics::contour
+
+## Test environment:
+
+Need to add.
+
+
 # BAMBI v2.3.1
 
 ## Resubmission
