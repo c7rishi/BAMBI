@@ -20,7 +20,24 @@ This is a resubmission. In this version we have made the following change.
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There was a NOTE on compile code on R 4.1.1 on Windows 10 but not on win-builder:
+There was one NOTE on the DOI (please see our comment above):
+```
+Found the following (possibly) invalid URLs:
+  URL: https://doi.org/10.18637/jss.v099.i11
+    From: DESCRIPTION
+          man/BAMBI.Rd
+    Status: 404
+    Message: Not Found
+
+Found the following (possibly) invalid DOIs:
+  DOI: 10.18637/jss.v099.i11
+    From: DESCRIPTION
+          inst/CITATION
+    Status: Not Found
+    Message: 404
+```
+
+There was one NOTE on compiled code on R 4.1.1 on Windows 10 but not on win-builder:
 ```
 > checking compiled code ... NOTE
   Note: information on .o files for i386 is not available
