@@ -1,3 +1,22 @@
+#' `BAMBI`: An R package for Bivariate Angular Mixture Models
+#'
+#' `BAMBI` is an R package that provides functions for fitting
+#' (using Bayesian methods) and simulating mixtures of univariate
+#' and bivariate angular distributions. See the reference for a
+#' detailed description of the functionalities of `BAMBI`.
+#'
+#' @references
+#'
+#' Chakraborty, S., & Wong, S. W. (2021). BAMBI: An R package for
+#' fitting bivariate angular mixture models. *Journal of Statistical Software*.
+#' <doi:10.18637/jss.v099.i11>
+#'
+#' @name BAMBI
+#' @md
+NULL
+#> NULL
+
+
 #' @useDynLib BAMBI, .registration = TRUE
 #' @import stats
 #' @import graphics
@@ -7,9 +26,10 @@
 #' @importFrom parallel detectCores
 #' @importFrom Rcpp sourceCpp evalCpp
 
-
-
 NULL
+
+
+
 
 
 #' @export

@@ -1,3 +1,64 @@
+# BAMBI v2.3.3
+
+Dear CRAN maintainers,
+
+This resubmission aims to fully sync all references between the manuscript and the software. Our Journal of Statistical Software manuscript for BAMBI is now ready for publication, and we have recently received a DOI for the manuscript. The DOI displayed in the CITATION is for a new JSS publication that will be registered after publication on CRAN. We were unaware that we would be asked for the release of an updated package by JSS. We regret the need for making two concurrent submissions within the same week, and sincerely appreciate your understanding.     
+
+## Resubmission
+This is a resubmission. In this version we have made the following change.
+
+## Changelog:
+* Updated all citations to the manuscript for BAMBI with the DOI for the JSS article
+* Created a new .Rd documentation for the package with a reference to the BAMBI manuscript.    
+
+## Test environment:
+
+* local Windows 10 install, R 4.1.1
+* win-builder (devel, release, and old release)
+* Ubuntu release 20.04, R 4.1.0
+
+## R CMD check results
+There were no ERRORs or WARNINGs.
+
+There was a NOTE on compile code on R 4.1.1 on Windows 10 but not on win-builder:
+```
+> checking compiled code ... NOTE
+  Note: information on .o files for i386 is not available
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  Note: information on .o files for x64 is not available
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  Warning in read_symbols_from_dll(so, rarch) :
+    this requires 'objdump.exe' to be on the PATH
+  File 'BAMBI/libs/i386/BAMBI.dll':
+    Found no calls to: 'R_registerRoutines', 'R_useDynamicSymbols'
+  File 'BAMBI/libs/x64/BAMBI.dll':
+    Found no calls to: 'R_registerRoutines', 'R_useDynamicSymbols'
+  
+  It is good practice to register native routines and to disable symbol
+  search.
+  
+  See 'Writing portable packages' in the 'Writing R Extensions' manual.
+```
+
+There was one NOTE on R 4.1.0 on Ubuntu 20.04:
+```
+* checking installed package size ... NOTE
+  installed size is  8.5Mb
+  sub-directories of 1Mb or more:
+    libs   7.9Mb
+
+```
+
+
+
 # BAMBI v2.3.2
 
 ## Resubmission
