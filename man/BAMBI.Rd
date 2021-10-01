@@ -6,11 +6,11 @@
 \description{
 \code{BAMBI} is an R package that provides functions for fitting
 (using Bayesian methods) and simulating mixtures of univariate
-and bivariate angular distributions. See the reference for a
+and bivariate angular distributions. Please see the reference for a
 detailed description of the functionalities of \code{BAMBI}.
 }
 \references{
 Chakraborty, S., & Wong, S. W. (2021). BAMBI: An R package for
 fitting bivariate angular mixture models. \emph{Journal of Statistical Software}.
-\url{doi:10.18637/jss.v099.i11}
+\doi{10.18637/jss.v099.i11}.
 }
