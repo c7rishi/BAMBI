@@ -11,6 +11,6 @@ detailed description of the functionalities of \code{BAMBI}.
 }
 \references{
 Chakraborty, S., & Wong, S. W. (2021). BAMBI: An R package for
-fitting bivariate angular mixture models. \emph{Journal of Statistical Software}.
-\url{doi:10.18637/jss.v099.i11}
+fitting bivariate angular mixture models. \emph{Journal of Statistical Software},
+99 (11), 1-69. \doi{10.18637/jss.v099.i11}
 }

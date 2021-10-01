@@ -6,7 +6,7 @@ Date: 2021-10-01
 Author: Saptarshi Chakraborty,
         Samuel W.K. Wong
 Maintainer: Saptarshi Chakraborty <chakra.saptarshi@gmail.com>
-Description: Fit (using Bayesian methods) and simulate mixtures of univariate and bivariate angular distributions. Chakraborty and Wong (2017) <doi:10.18637/jss.v099.i11>.
+Description: Fit (using Bayesian methods) and simulate mixtures of univariate and bivariate angular distributions. Chakraborty and Wong (2021) <doi:10.18637/jss.v099.i11>.
 License: GPL-3
 LazyData: TRUE
 RoxygenNote: 7.1.2
@@ -35,6 +35,6 @@ Imports: stats,
 Suggests: future,
       gridExtra
 Depends: R (>= 3.2.0)
-URL: https://arxiv.org/abs/1708.07804
+URL: https://doi.org/10.18637/jss.v099.i11
 BugReports: https://github.com/c7rishi/BAMBI/issues
 Encoding: UTF-8

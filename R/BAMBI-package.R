@@ -8,8 +8,8 @@
 #' @references
 #'
 #' Chakraborty, S., & Wong, S. W. (2021). BAMBI: An R package for
-#' fitting bivariate angular mixture models. *Journal of Statistical Software*.
-#' <doi:10.18637/jss.v099.i11>
+#' fitting bivariate angular mixture models. *Journal of Statistical Software*,
+#' 99 (11), 1-69. \doi{10.18637/jss.v099.i11}
 #'
 #' @name BAMBI
 #' @md
