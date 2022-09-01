@@ -1,8 +1,14 @@
+# BAMBI v2.3.4
+
+## Resubmission
+
+This is a re-submission. In this version we have replaced all instances of '<<' redirect-based initialization of RcppArmadillo matrices or vectors with brace-initialization in the source C++ scripts. This follows the latest guidelines of RcppArmadillo, which notes that the '<<' redirect based initialization will be deprecated in a future release of the package.    
+
 # BAMBI v2.3.3
 
 Dear CRAN maintainers,
 
-This resubmission aims to fully sync all references between the manuscript and the software. Our Journal of Statistical Software manuscript for BAMBI is now ready for publication, and we have recently received a DOI for the manuscript. The DOI displayed in the CITATION is for a new JSS publication that will be registered after publication on CRAN. We were unaware that we would be asked for the release of an updated package by JSS. We regret the need for making two concurrent submissions within the same week, and sincerely appreciate your understanding.     
+This re-submission aims to fully sync all references between the manuscript and the software. Our Journal of Statistical Software manuscript for BAMBI is now ready for publication, and we have recently received a DOI for the manuscript. The DOI displayed in the CITATION is for a new JSS publication that will be registered after publication on CRAN. We were unaware that we would be asked for the release of an updated package by JSS. We regret the need for making two concurrent submissions within the same week, and sincerely appreciate your understanding.     
 
 ## Resubmission
 This is a resubmission. In this version we have made the following change.

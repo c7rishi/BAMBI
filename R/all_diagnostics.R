@@ -543,7 +543,7 @@ lpdtrace <- function(object, chain.no, use.llik = FALSE,
                      # press.enter = TRUE,
                      lag.max = NULL, ...)
 {
-  if(class(object) != "angmcmc") stop("lpdtrace can only be used for \'angmcmc\' objects")
+  if (!is.angmcmc(object)) stop("lpdtrace can only be used for \'angmcmc\' objects")
 
   ell <- list(...)
 

@@ -19,6 +19,7 @@ NULL
 
 #' @useDynLib BAMBI, .registration = TRUE
 #' @import stats
+#' @importFrom stats4 mle
 #' @import graphics
 #' @importFrom grDevices colorRampPalette
 #' @importFrom methods is

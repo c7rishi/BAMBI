@@ -95,8 +95,8 @@ arma::vec d_const_vmsin(arma::vec par)
     I_p_k2 = BESSI(p, k2),
     I_pplus1_k1 = BESSI(p+1, k1),
     I_pplus1_k2 = BESSI(p+1, k2);
-    // I_pplus2_k1 = BESSI(p+2, k1),
-    // I_pplus2_k2 = BESSI(p+2, k2);
+  // I_pplus2_k1 = BESSI(p+2, k1),
+  // I_pplus2_k2 = BESSI(p+2, k2);
 
   double temp_c = choose *  rat_pow_p * I_p_k1 * I_p_k2,
     temp_c_k1 = choose * rat_pow_p * I_pplus1_k1 * I_p_k2,
@@ -150,23 +150,18 @@ arma::vec d_const_vmsin(arma::vec par)
   arma::vec out;
 
   if(lambda != 0) {
-    out //<< c * pi_sq_times_4
-          << c_k1 * pi_sq_times_4
-          << c_k2 * pi_sq_times_4
-          << c_lambda * pi_sq_times_4 * 2/lambda
-    // << c_k1k2 * pi_sq_times_4
-    // << c_k1k1 * pi_sq_times_4
-    // << c_k2k2 * pi_sq_times_4
-       << arma::endr;
+    out = {
+      c_k1 * pi_sq_times_4,
+      c_k2 * pi_sq_times_4,
+      c_lambda * pi_sq_times_4 * 2/lambda
+    };
+
   } else {
-    out //<< c * pi_sq_times_4
-          << c_k1 * pi_sq_times_4
-          << c_k2 * pi_sq_times_4
-          << 0
-    // << c_k1k2 * pi_sq_times_4
-    // << c_k1k1 * pi_sq_times_4
-    // << c_k2k2 * pi_sq_times_4
-       << arma::endr;
+    out = {
+      c_k1 * pi_sq_times_4,
+      c_k2 * pi_sq_times_4,
+      0.0
+    };
   }
 
   return out;
@@ -417,7 +412,7 @@ arma::rowvec2 rsin_bimodal_single(double k1, double k2, double k3,
       );
     ntry++;
     if (ntry % 100 == 0) checkUserInterrupt();
-      // Rcout << ntry << "\t";
+    // Rcout << ntry << "\t";
 
 
     U1 = R::unif_rand();
@@ -469,8 +464,8 @@ arma::mat rsin_bimodal(int n, double k1, double k2, double k3,
 // generates a single observation
 arma::rowvec rsin_single_onepar(double k1, double k2, double k3,
                                 double mu1, double mu2, double I_upper_bd) {
-  arma::vec par(5);
-  par << k1 << k2 << k3 << mu1 << mu2 << arma::endr;
+  arma::vec par = { k1, k2, k3, mu1, mu2 };
+
 
   double x, y, U1;
 
@@ -590,8 +585,8 @@ arma::vec llik_vmsin_contri_C(arma::mat data, arma::mat par, arma::vec pi, arma:
     }
   }
   else {
-  for(int i = 0; i < n; i++) {
-    llik_contri[i] = ldsinnum(data(i,0), data(i,1), par) - log_c[0];
+    for(int i = 0; i < n; i++) {
+      llik_contri[i] = ldsinnum(data(i,0), data(i,1), par) - log_c[0];
     }
   }
   return(llik_contri);
@@ -845,9 +840,9 @@ List vmsin_var_corr_anltc(double k1, double k2, double lambda)
     temp_c_k1k1 =
       (k1 == 0) ?
       0 : choose * rat_pow_p * (I_pplus1_k1/k1 + I_pplus2_k1) * I_p_k2,
-    temp_c_k2k2 =
-      (k2 == 0) ?
-      0 : choose * rat_pow_p * (I_pplus1_k2/k2 + I_pplus2_k2) * I_p_k1;
+      temp_c_k2k2 =
+        (k2 == 0) ?
+        0 : choose * rat_pow_p * (I_pplus1_k2/k2 + I_pplus2_k2) * I_p_k1;
 
   c += temp_c;
   c_k1 += temp_c_k1;
@@ -910,42 +905,42 @@ List vmsin_var_corr_anltc(double k1, double k2, double lambda)
   //     var1 = 1 - (c_k1/c),
   //     var2 = 1 - (c_k2/c);
 
-    // rho_js = (c_k3) /
-    //   sqrt((c-c_k1k1) * (c-c_k2k2)),
-    double
-      rho_js = (fabs(c_lambda) < 1e-10) ? 0 :
-      sgn(c_lambda) *
-        fmin(1, exp(log(plus(fabs(c_lambda)))
-              - 0.5*log(plus(c-c_k1k1))
-              - 0.5*log(plus(c-c_k2k2)))
-        ),
-
-
-        // rho_fl = rho_js * c_k1k2 / sqrt(c_k1k1 * c_k2k2),
-        rho_fl = (fabs(c_k1k2) < 1e-10) ?  0 :
-      rho_js * sgn(c_k1k2) *
-        fmin(1, exp(log(plus(fabs(c_k1k2)))
-              - 0.5*log(plus(c_k1k1))
-              - 0.5*log(plus(c_k2k2)))
-        );
-
-    double
-      // var1 = 1 - (c_k1/c);
-      var1 = fmin(1,
-                  1 - sgn(c_k1) *
-                    exp(log(plus(fabs(c_k1)))
-                          - log(plus(c)))
+  // rho_js = (c_k3) /
+  //   sqrt((c-c_k1k1) * (c-c_k2k2)),
+  double
+    rho_js = (fabs(c_lambda) < 1e-10) ? 0 :
+    sgn(c_lambda) *
+      fmin(1, exp(log(plus(fabs(c_lambda)))
+                    - 0.5*log(plus(c-c_k1k1))
+                    - 0.5*log(plus(c-c_k2k2)))
       ),
-      // var2 = 1 - (c_k2/c);
-      var2 = fmin(1, 1 - sgn(c_k2)*exp(log(plus(fabs(c_k2)))
-                                         - log(plus(c)))
+
+
+      // rho_fl = rho_js * c_k1k2 / sqrt(c_k1k1 * c_k2k2),
+      rho_fl = (fabs(c_k1k2) < 1e-10) ?  0 :
+    rho_js * sgn(c_k1k2) *
+      fmin(1, exp(log(plus(fabs(c_k1k2)))
+                    - 0.5*log(plus(c_k1k1))
+                    - 0.5*log(plus(c_k2k2)))
       );
 
+  double
+    // var1 = 1 - (c_k1/c);
+    var1 = fmin(1,
+                1 - sgn(c_k1) *
+                  exp(log(plus(fabs(c_k1)))
+                        - log(plus(c)))
+    ),
+    // var2 = 1 - (c_k2/c);
+    var2 = fmin(1, 1 - sgn(c_k2)*exp(log(plus(fabs(c_k2)))
+                                       - log(plus(c)))
+    );
 
-    return List::create(Rcpp::Named("var1") = var1,
-                        Rcpp::Named("var2") = var2,
-                        Rcpp::Named("rho_fl") = rho_fl,
-                        Rcpp::Named("rho_js") = rho_js);
+
+  return List::create(Rcpp::Named("var1") = var1,
+                      Rcpp::Named("var2") = var2,
+                      Rcpp::Named("rho_fl") = rho_fl,
+                      Rcpp::Named("rho_js") = rho_js);
 }
 
 
@@ -1003,7 +998,7 @@ List vmsin_var_corr_mc(double k1, double k2, double k3,
   // double pisq_4_exp_temp_over_nsim = 4 * M_PI * M_PI * exp_temp / nsim;
   double pisq_4_exp_temp_over_nsim = 4 * M_PI * M_PI / nsim;
 
- // all the following need to be multiplied by exp(temp)
+  // all the following need to be multiplied by exp(temp)
   double c = sum_exp * pisq_4_exp_temp_over_nsim,
     c_k1 = sum_exp1 * pisq_4_exp_temp_over_nsim,
     c_k2 = sum_exp2 * pisq_4_exp_temp_over_nsim,
@@ -1017,8 +1012,8 @@ List vmsin_var_corr_mc(double k1, double k2, double k3,
     rho_js = (fabs(c_k3) < 1e-10) ? 0 :
     sgn(c_k3) *
       fmin(1, exp(log(plus(fabs(c_k3)))
-            - 0.5*log(plus(c-c_k1k1))
-            - 0.5*log(plus(c-c_k2k2)))
+                    - 0.5*log(plus(c-c_k1k1))
+                    - 0.5*log(plus(c-c_k2k2)))
       ),
 
 
@@ -1026,8 +1021,8 @@ List vmsin_var_corr_mc(double k1, double k2, double k3,
       rho_fl = (fabs(c_k1k2) < 1e-10) ?  0 :
     rho_js * sgn(c_k1k2) *
       fmin(1, exp(log(plus(fabs(c_k1k2)))
-            - 0.5*log(plus(c_k1k1))
-            - 0.5*log(plus(c_k2k2)))
+                    - 0.5*log(plus(c_k1k1))
+                    - 0.5*log(plus(c_k2k2)))
       );
 
   double
@@ -1054,7 +1049,7 @@ List vmsin_var_corr_mc(double k1, double k2, double k3,
 
 // [[Rcpp::export]]
 List vmsin_var_cor_singlepar_cpp(double k1, double k2, double k3,
-                    arma::mat uni_rand, int ncores = 1)
+                                 arma::mat uni_rand, int ncores = 1)
 {
   // if unimodal, then analytic formula for derivatives,
   // else numeric

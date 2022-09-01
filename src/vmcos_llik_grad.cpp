@@ -180,12 +180,12 @@ arma::vec d_const_vmcos_anltc(double k1, double k2, double k3)
     start2 += temp2;
     start3 += temp3;
   }
-  arma::vec out;
+  arma::vec out = {
+    4 * M_PI * M_PI * start1,
+    4 * M_PI * M_PI * start2,
+    4 * M_PI * M_PI * start3
+  };
 
-  out << 4 * M_PI * M_PI * start1
-      << 4 * M_PI * M_PI * start2
-      << 4 * M_PI * M_PI * start3
-      << arma::endr;
   return  out;
 }
 
@@ -208,10 +208,13 @@ arma::vec d_const_vmcos_mc(double k1, double k2, double k3, arma::mat uni_rand, 
     sum_exp2 += exp(expon - temp) * cos(y);
     sum_exp3 += exp(expon - temp) * cos(x-y);
   }
-  arma::vec result;
-  result << 4 * M_PI * M_PI * exp(temp) * sum_exp1 / nsim
-         << 4 * M_PI * M_PI * exp(temp) * sum_exp2 / nsim
-         << 4 * M_PI * M_PI * exp(temp) * sum_exp3 / nsim << arma::endr;
+  arma::vec result = {
+    4 * M_PI * M_PI * exp(temp) * sum_exp1 / nsim,
+    4 * M_PI * M_PI * exp(temp) * sum_exp2 / nsim,
+    4 * M_PI * M_PI * exp(temp) * sum_exp3 / nsim
+  };
+
+
   return result;
 }
 

@@ -607,7 +607,7 @@ fit_incremental_angmix <- function(model, data,
 #' @export
 
 bestmodel <- function(step_object) {
-  if(class(step_object) != "stepfit") stop("\'step_object\' is not a stepwise fitted object")
+  if (!is(step_object, "stepfit")) stop("\'step_object\' is not a stepwise fitted object")
   step_object$fit.best
 }
 
@@ -615,6 +615,6 @@ bestmodel <- function(step_object) {
 #' @rdname bestmodel
 #' @export
 bestcriterion <- function(step_object) {
-  if(class(step_object) != "stepfit") stop("\'step_object\' is not a stepwise fitted object")
+  if (!is(step_object, "stepfit")) stop("\'step_object\' is not a stepwise fitted object")
   step_object$crit.best
 }

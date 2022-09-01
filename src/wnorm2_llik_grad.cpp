@@ -355,7 +355,6 @@ Rcpp::NumericVector dwnorm2_manyx_onepar(Rcpp::NumericMatrix x, double k1, doubl
 
 
   Rcpp::NumericVector par = { k1, k2, k3, mu1, mu2};
-  // par << k1 << k2 << k3 << mu1 << mu2 << Rcpp::endr;
   double l_const = l_const_wnorm2(par);
   Rcpp::NumericVector ld_num(n);
   for(int i = 0; i < n; i++) {
