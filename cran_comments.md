@@ -11,7 +11,7 @@ This is a re-submission. In this version we have replaced all instances of '<<' 
 
 ## Test environment:
 
-* local Windows 10 install, R 4.1.1
+* local Windows 10 install, R 4.2.1
 * win-builder (devel, release, and old release)
 * Ubuntu release 20.04, R 4.2.1
 * experimental macbuilder at https://mac.r-project.org/
