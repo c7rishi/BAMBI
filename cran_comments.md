@@ -2,7 +2,31 @@
 
 ## Resubmission
 
-This is a re-submission. In this version we have replaced all instances of '<<' redirect-based initialization of RcppArmadillo matrices or vectors with brace-initialization in the source C++ scripts. This follows the latest guidelines of RcppArmadillo, which notes that the '<<' redirect based initialization will be deprecated in a future release of the package.    
+This is a re-submission. In this version we have replaced all instances of '<<' redirect-based initialization of RcppArmadillo matrices or vectors with brace-initialization in the source C++ scripts. This follows the latest guidelines of RcppArmadillo, which notes that the '<<' redirect based initialization will be deprecated in a future release of the package.   
+
+
+## Changelog:
+* Replace '<<' redirect based initialization of armadillo vec/mat to brace-initializatiaon in c++ scripts
+
+
+## Test environment:
+
+* local Windows 10 install, R 4.1.1
+* win-builder (devel, release, and old release)
+* Ubuntu release 20.04, R 4.2.1
+* experimental macbuilder at https://mac.r-project.org/
+
+## R CMD check results
+
+There were no ERRORs or WARNINGs in any platforms, and no NOTES on Windows - local or win-builder (devel, release, and old release).
+
+There was a NOTE on Ubuntu 20.04 and on experimental macbuilder about the installed size of the package. Below is the NOTE from Ubuntu 20.04: 
+
+installed size is  8.3Mb
+  sub-directories of 1Mb or more:
+    libs   7.8Mb
+
+
 
 # BAMBI v2.3.3
 
