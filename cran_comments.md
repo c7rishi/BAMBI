@@ -42,8 +42,11 @@ There was a NOTE on Ubuntu 20.04 and on experimental macbuilder about the instal
 ```
 There was a NOTE on Windows old release about spelling error relating to the author's name in the citation, which is a false alarm:
 ```
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: 'Saptarshi Chakraborty <chakra.saptarshi@gmail.com>'
+
 Possibly mis-spelled words in DESCRIPTION:
-  Chakraborty
+  Chakraborty (9:116)
 ```
 
 ## Resubmission
