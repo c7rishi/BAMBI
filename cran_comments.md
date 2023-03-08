@@ -24,22 +24,30 @@ This is a re-submission, with various bug fixes and  typo corrections
 
 - Ubuntu release 20.04, R version 4.2.2 Patched (2022-11-10 r83330)
 
-- win-builder (devel, release, and old release)
+- online CRAN win-builder (devel, release, and old release)
 
-- mac-builder
+- online CRAN mac-builder
 
 
 ## R CMD check results
 
 There were no ERRORs or WARNINGs in any platforms, and no NOTES on local Windows and win-builder devel and win-builder release.
 
-There was a NOTE on Ubuntu 20.04 and on experimental macbuilder about the installed size of the package. Below is the NOTE from Ubuntu 20.04: 
+There was a NOTE on Ubuntu 20.04 and on experimental macbuilder about the installed size of the installed package. Below is the NOTE from Ubuntu 20.04: 
 ```
  checking installed package size ... NOTE
     installed size is  8.3Mb
     sub-directories of 1Mb or more:
       libs   7.8Mb
 ```
+and from mac-builder
+```
+* checking installed package size ... NOTE
+  installed size is  5.1Mb
+  sub-directories of 1Mb or more:
+    libs   4.5Mb
+```    
+
 There was a NOTE on Windows old release about spelling error relating to the author's name in the citation, which is a false alarm:
 ```
 * checking CRAN incoming feasibility ... NOTE
