@@ -1424,9 +1424,9 @@ fit_angmix <- function(model = "vmsin",
         label = "Initializing...",
         min = 1, max = n.iter
       ),
-      error = function(e) "error"
+      error = function(e) e
       )
-      if (is(pb, "error")) {
+      if (is(pb, "error") | is(pb, "warning")) {
         show.progress <- FALSE
         tcltk_fail <- TRUE
       }
@@ -1439,11 +1439,12 @@ fit_angmix <- function(model = "vmsin",
 
     if (tcltk_fail) {
       msg <- paste(
-        "tcltk could not be loaded; 'show.progress' was set to FALSE.",
-        "Consider setting progress.backend = \"txt\" for a text-based",
-        "progress bar. See ?fit_angmix for more details."
+        "{tcltk} could not be loaded; 'show.progress' was set to FALSE."#,
+        # "Consider setting progress.backend = \"txt\" for a text-based",
+        # "progress bar. See ?fit_angmix for more details."
       )
       message(msg)
+      show.progress <- FALSE
     }
 
 

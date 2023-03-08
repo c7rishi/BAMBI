@@ -7,7 +7,11 @@ This is a re-submission, with various bug fixes and  typo corrections
 ## Changelog
 
 - Remove the C++11 compiler specification in src/Makevars and src/Makevars.win
-- Add parameter `data` to function densityplot.angmcmc() to ensure S3 generic/method consistency with lattice::
+
+- Add parameter `data` to function densityplot.angmcmc() to ensure S3 generic/method consistency with lattice::densityplot
+
+- Replace all \dontrun by \donttest
+
 
 ## Resubmission
 

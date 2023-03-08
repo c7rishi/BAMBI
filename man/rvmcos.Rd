@@ -117,7 +117,7 @@ rvmcos(n, kappa1, kappa2, kappa3, mu1, mu2)
 ## the normalizing constant through density evaluations.
 
 # "good" setup, where the analytic formula for C_c can be
-# calulated without numerical issues
+# calculated without numerical issues
 # kappa1 = 1, kappa2 = 1, kappa3 = -2, mu1 = pi, mu2 = pi
 
 n_qrnd <-  (1:500)*20
