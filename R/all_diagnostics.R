@@ -99,6 +99,8 @@ contour.angmcmc <-  function(x, fn = "MAP", type = "point-est", show.data = TRUE
 #' @description Plot fitted angular mixture model density surfaces or curves.
 #' @inheritParams pointest
 #' @param x angmcmc object.
+#' @param data unused. The parameter is already filled with results from fitted angular model. It is kept
+#' to ensure compatibility with the lattice S3 generic \code{densityplot}.
 #' @param plot logical. Should the density surface (if the fitted data is bivariate) or the density
 #' curve (if univariate) be plotted?
 #' @param log.density logical. Should log density be used for the plot?
@@ -107,7 +109,7 @@ contour.angmcmc <-  function(x, fn = "MAP", type = "point-est", show.data = TRUE
 #' @param show.hist logical. Should a histogram for the data
 #' points be added to the plot, if the fitted data is univariate? Ignored if data is
 #' bivariate.
-#' @param xlab,ylab,zlab,main grahpical parameters passed to \code{lattice::wireframe} (if
+#' @param xlab,ylab,zlab,main graphical parameters passed to \code{lattice::wireframe} (if
 #' bivariate) or \link{plot} (if univariate). If the data is univariate, \code{zlab} and \code{ylab} can be
 #' used interchangeably (both correspond to the density).
 #' @param xpoints,ypoints Points on the  x and y coordinates (if bivariate) or only x coordinate
@@ -156,7 +158,9 @@ contour.angmcmc <-  function(x, fn = "MAP", type = "point-est", show.data = TRUE
 #'
 #' @export
 
-densityplot.angmcmc <- function(x, fn = mean, type = "point-est", log.density = FALSE,
+densityplot.angmcmc <- function(x,
+                                data = NULL,
+                                fn = mean, type = "point-est", log.density = FALSE,
                                 xpoints=seq(0, 2*pi, length.out=35),
                                 ypoints=seq(0, 2*pi, length.out=35),
                                 plot=TRUE,

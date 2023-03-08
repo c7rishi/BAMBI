@@ -149,7 +149,7 @@ falls below (above) \code{accpt.prob.lower} (\code{accpt.prob.upper}). In adddit
 \code{tune_ave_size}, \code{epsilon} for each model parameter is rescaled via the standard deviation of
 the corresponding parameter over the past \code{tune_ave_size} iterations.}
 
-\item{show.progress}{logical. Should a progress bar be included?}
+\item{show.progress}{logical. Should a progress bar be displayed?}
 
 \item{accpt.prob.lower, accpt.prob.upper}{lower and upper limits of acceptance ratio to be maintained while tuning
 during burn-in. Must be numbers between 0 and 1, which \code{accpt.prob.lower < accpt.prob.upper}. See \code{autotune}. Default to (0.6, 0,9) for HMC and  (0.3, 0.5) for RWMH.
@@ -213,15 +213,15 @@ fit.vmsin.20
 # plan(); otherwise the chains will run sequentially.
 # Note that not all plan() might work on every OS, as they execute
 # functions defined internally in fit_mixmodel. We suggest
-# plan(multiprocess).
-\dontrun{
+# plan(multisession) which works on every OS.
+\donttest{
 library(future)
 library(parallel)
-plan(multiprocess)
+plan(multisession, gc = TRUE) # parallelize chains
 
 set.seed(1)
 MC.fit <- fit_angmix("vmsin", tim8,
-  ncomp = 3, n.iter = 500,
+  ncomp = 3, n.iter = 5000,
   n.chains = 3
 )
 

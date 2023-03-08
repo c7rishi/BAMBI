@@ -864,7 +864,7 @@ waic.angmcmc <- function(x, ...)
 #' @inheritParams waic.angmcmc
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # illustration only - more iterations needed for convergence
 #' fit.vmsin.20 <- fit_vmsinmix(tim8, ncomp = 3, n.iter =  20,
 #'                              n.chains = 1, return_llik_contri = TRUE)
@@ -1230,14 +1230,15 @@ logLik.angmcmc <- function(object, method = 1, fn, ...)
 #' @importFrom bridgesampling bridge_sampler
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(future)
 #' library(parallel)
-#' plan(multiprocess)
+#' plan(multisession, gc = TRUE) # parallelize chains
 #'
 #' set.seed(100)
-#' MC.fit <- fit_angmix("vmsin", tim8, ncomp=3, n.iter=500,
+#' MC.fit <- fit_angmix("vmsin", tim8, ncomp=3, n.iter=5000,
 #'                      n.chains = 3)
+#'
 #'
 #' library(bridgesampling)
 #' bridge_sampler(MC.fit)

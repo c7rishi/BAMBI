@@ -6,6 +6,7 @@
 \usage{
 \method{densityplot}{angmcmc}(
   x,
+  data = NULL,
   fn = mean,
   type = "point-est",
   log.density = FALSE,
@@ -22,6 +23,9 @@
 }
 \arguments{
 \item{x}{angmcmc object.}
+
+\item{data}{unused. The parameter is already filled with results from fitted angular model. It is kept
+to ensure compatibility with the lattice S3 generic \code{densityplot}.}
 
 \item{fn}{function, or a single character string specifying its name, to evaluate on MCMC samples to estimate
 parameters.  Defaults to \code{mean}, which computes the estimated posterior mean.
@@ -42,7 +46,7 @@ curve (if univariate) be plotted?}
 points be added to the plot, if the fitted data is univariate? Ignored if data is
 bivariate.}
 
-\item{xlab, ylab, zlab, main}{grahpical parameters passed to \code{lattice::wireframe} (if
+\item{xlab, ylab, zlab, main}{graphical parameters passed to \code{lattice::wireframe} (if
 bivariate) or \link{plot} (if univariate). If the data is univariate, \code{zlab} and \code{ylab} can be
 used interchangeably (both correspond to the density).}
 

@@ -1,15 +1,15 @@
 Package: BAMBI
 Type: Package
 Title: Bivariate Angular Mixture Models
-Version: 2.3.4
-Date: 2022-09-02
+Version: 2.3.5
+Date: 2023-03-08
 Author: Saptarshi Chakraborty,
         Samuel W.K. Wong
 Maintainer: Saptarshi Chakraborty <chakra.saptarshi@gmail.com>
 Description: Fit (using Bayesian methods) and simulate mixtures of univariate and bivariate angular distributions. Chakraborty and Wong (2021) <doi:10.18637/jss.v099.i11>.
 License: GPL-3
 LazyData: TRUE
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 LinkingTo: Rcpp,
            RcppArmadillo
 Imports: stats,

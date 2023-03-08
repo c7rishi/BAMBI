@@ -117,7 +117,7 @@ find_lscale_mat_uni <- function(x) {
 #' the corresponding parameter over the past \code{tune_ave_size} iterations.
 #' @param tune.prop proportion of *\code{burnin}* used to tune the parameters (\code{epsilon} in HMC and
 #' \code{propscale} in RWMH). Must be a number between 0 and 1; defaults to 1.  Ignored if \code{autotune == FALSE}.
-#' @param show.progress logical. Should a progress bar be included?
+#' @param show.progress logical. Should a progress bar be displayed?
 #' @param accpt.prob.lower,accpt.prob.upper lower and upper limits of acceptance ratio to be maintained while tuning
 #' during burn-in. Must be numbers between 0 and 1, which \code{accpt.prob.lower < accpt.prob.upper}. See \code{autotune}. Default to (0.6, 0,9) for HMC and  (0.3, 0.5) for RWMH.
 #' Ignored if \code{autotune = FALSE}.
@@ -174,15 +174,15 @@ find_lscale_mat_uni <- function(x) {
 #' # plan(); otherwise the chains will run sequentially.
 #' # Note that not all plan() might work on every OS, as they execute
 #' # functions defined internally in fit_mixmodel. We suggest
-#' # plan(multiprocess).
-#' \dontrun{
+#' # plan(multisession) which works on every OS.
+#' \donttest{
 #' library(future)
 #' library(parallel)
-#' plan(multiprocess)
+#' plan(multisession, gc = TRUE) # parallelize chains
 #'
 #' set.seed(1)
 #' MC.fit <- fit_angmix("vmsin", tim8,
-#'   ncomp = 3, n.iter = 500,
+#'   ncomp = 3, n.iter = 5000,
 #'   n.chains = 3
 #' )
 #'
@@ -254,7 +254,14 @@ fit_angmix <- function(model = "vmsin",
     backward_compatible <- FALSE
   }
 
-  stopifnot(is.logical(backward_compatible))
+  stopifnot(
+    is.logical(backward_compatible)
+  )
+
+  # progress.backend <- "tcltk"
+  # progressor <- function(...) NULL
+  progress.backend <- "tcltk"
+
 
   signif_ <- if (backward_compatible) function(x, ...) x else function(x, ...) signif(x, 8)
 
@@ -1268,6 +1275,7 @@ fit_angmix <- function(model = "vmsin",
     }
 
 
+
     # grad_llik_uniwnorm_R <- function(data, par) {
     #   gr <- numDeriv::grad(function(par) llik_uniwnorm_one_comp(data, par,
     #                                                             l_const_uniwnorm(par[1]),
@@ -1410,7 +1418,7 @@ fit_angmix <- function(model = "vmsin",
 
     tcltk_fail <- FALSE
 
-    if (show.progress & !exists("pb")) {
+    if (show.progress & !exists("pb") & progress.backend == "tcltk") {
       pb <- tryCatch(tcltk::tkProgressBar(
         title = paste("Chain", chain_no),
         label = "Initializing...",
@@ -1418,10 +1426,24 @@ fit_angmix <- function(model = "vmsin",
       ),
       error = function(e) "error"
       )
-      if (unlist(pb)[1] == "error") {
+      if (is(pb, "error")) {
         show.progress <- FALSE
         tcltk_fail <- TRUE
       }
+    } else if (show.progress & !exists("pb") & progress.backend == "txt") {
+      pb <- utils::txtProgressBar(title = paste("Chain", chain_no),
+                                  label = "Initializing...",
+                                  min = 1, max = n.iter, style = 3)
+      tcltk_fail <- FALSE
+    }
+
+    if (tcltk_fail) {
+      msg <- paste(
+        "tcltk could not be loaded; 'show.progress' was set to FALSE.",
+        "Consider setting progress.backend = \"txt\" for a text-based",
+        "progress bar. See ?fit_angmix for more details."
+      )
+      message(msg)
     }
 
 
@@ -1437,7 +1459,7 @@ fit_angmix <- function(model = "vmsin",
     tune_status <- matrix(0, ncomp, n.iter)
 
     #  Run the Markov chain
-    for (iter in 1:n.iter) {
+    for (iter in seq_len(n.iter)) {
       # browser()
 
       if (method == "hmc") {
@@ -1763,18 +1785,19 @@ fit_angmix <- function(model = "vmsin",
       # }
 
 
-      message <- paste0(
-        "Progress: ", round(iter / n.iter * 100), "% ",
-        ifelse(iter <= n.burnin,
-               "(Burn-in)",
-               "(Sampling)"
-        )
-      )
 
       if (show.progress) {
-        if (iter %% 2) {
-          # if ((round(iter /  n.iter, 2) * 100) %% 5 == 0 || iter == n.iter + 1)
+        message <- paste0(
+          "Progress: ", round(iter / n.iter * 100), "% ",
+          ifelse(iter <= n.burnin,
+                 "(Burn-in)",
+                 "(Sampling)"
+          )
+        )
+        if (progress.backend == "tcltk") {
           tcltk::setTkProgressBar(pb, iter, label = message)
+        } else if (progress.backend == "txt") {
+          utils::setTxtProgressBar(pb, value = iter, label = message)
         }
       }
     }
@@ -1827,6 +1850,7 @@ fit_angmix <- function(model = "vmsin",
       "tcltk_fail" = tcltk_fail
     )
 
+    # if (show.progress & progress.backend == "tcltk")
     if (show.progress) close(pb)
 
     result
@@ -1856,9 +1880,14 @@ fit_angmix <- function(model = "vmsin",
 
 
 
-  if (res_list[[1]]$tcltk_fail) {
-    warning("tcltk could not be loaded. \'show.progress\' was set to FALSE.")
-  }
+  # if (res_list[[1]]$tcltk_fail) {
+  #   msg <- paste(
+  #     "tcltk could not be loaded; 'show.progress' was set to FALSE.",
+  #     "Consider setting progress.backend = \"txt\" for a text-based",
+  #     "progress bar. See ?fit_angmix for more details."
+  #   )
+  #   warning()
+  # }
 
   # combine the results from the lists
   allpar_val <- array(0, dim = c(npar_1_comp + 1, ncomp, n.iter, n.chains))

@@ -29,14 +29,15 @@ usually provides more stable results; the final log ML is computed by averaging 
 chain specific MLs.
 }
 \examples{
-\dontrun{
+\donttest{
 library(future)
 library(parallel)
-plan(multiprocess)
+plan(multisession, gc = TRUE) # parallelize chains
 
 set.seed(100)
-MC.fit <- fit_angmix("vmsin", tim8, ncomp=3, n.iter=500,
+MC.fit <- fit_angmix("vmsin", tim8, ncomp=3, n.iter=5000,
                      n.chains = 3)
+
 
 library(bridgesampling)
 bridge_sampler(MC.fit)

@@ -112,7 +112,7 @@ rvmcos(n, kappa1[1], kappa2[1], kappa3[1], mu1[1], mu2[1])
 rvmcos(n, kappa1, kappa2, kappa3, mu1, mu2)
 
 
-\dontrun{
+\donttest{
 ## Visualizing (quasi) Monte Carlo based approximations of
 ## the normalizing constant through density evaluations.
 
