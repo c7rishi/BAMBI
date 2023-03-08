@@ -1233,7 +1233,7 @@ logLik.angmcmc <- function(object, method = 1, fn, ...)
 #' \donttest{
 #' library(future)
 #' library(parallel)
-#' plan(multisession, gc = TRUE) # parallelize chains
+#' # plan(multisession, gc = TRUE) # parallelize chains
 #'
 #' set.seed(100)
 #' MC.fit <- fit_angmix("vmsin", tim8, ncomp=3, n.iter=5000,

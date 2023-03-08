@@ -4,6 +4,7 @@
 
 This is a re-submission, with various bug fixes and  typo corrections
 
+
 ## Changelog
 
 - Remove the C++11 compiler specification in src/Makevars and src/Makevars.win
@@ -12,6 +13,38 @@ This is a re-submission, with various bug fixes and  typo corrections
 
 - Replace all \dontrun by \donttest
 
+- Replace future plan(multiprocess) by plan(multisession) everywehere
+
+- Fix typos in documentations
+
+
+## Test environment:
+
+- local Windows 10 install, R version 4.2.2 (2022-10-31 ucrt)
+
+- Ubuntu release 20.04, R version 4.2.2 Patched (2022-11-10 r83330)
+
+- win-builder (devel, release, and old release)
+
+- mac-builder
+
+
+## R CMD check results
+
+There were no ERRORs or WARNINGs in any platforms, and no NOTES on local Windows and win-builder devel and win-builder release.
+
+There was a NOTE on Ubuntu 20.04 and on experimental macbuilder about the installed size of the package. Below is the NOTE from Ubuntu 20.04: 
+```
+ checking installed package size ... NOTE
+    installed size is  8.3Mb
+    sub-directories of 1Mb or more:
+      libs   7.8Mb
+```
+There was a NOTE on Windows old release about spelling error relating to the author's name in the citation, which is a false alarm:
+```
+Possibly mis-spelled words in DESCRIPTION:
+  Chakraborty
+```
 
 ## Resubmission
 

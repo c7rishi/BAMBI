@@ -178,7 +178,7 @@ find_lscale_mat_uni <- function(x) {
 #' \donttest{
 #' library(future)
 #' library(parallel)
-#' plan(multisession, gc = TRUE) # parallelize chains
+#' # plan(multisession, gc = TRUE) # parallelize chains
 #'
 #' set.seed(1)
 #' MC.fit <- fit_angmix("vmsin", tim8,

@@ -217,7 +217,7 @@ fit.vmsin.20
 \donttest{
 library(future)
 library(parallel)
-plan(multisession, gc = TRUE) # parallelize chains
+# plan(multisession, gc = TRUE) # parallelize chains
 
 set.seed(1)
 MC.fit <- fit_angmix("vmsin", tim8,
