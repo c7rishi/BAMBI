@@ -25,12 +25,7 @@ selection criterion corresponding to the best fitted model in stepwise fits
 These are convenience functions; the best fitted model and the corresponding value of model selection criterion
 can also be directly obtained by
 extracting the elements \code{"fit.best"} and \code{"crit.best"} from \code{step_object} respectively.
-Note that \code{bestcriterion} returns:
-(a) a scalar number (class = \code{numeric}) if \code{crit}
-used in original \code{fit_incremental_angmix} call is \code{'AIC'}, \code{'BIC'} or \code{'DIC'},
-(b) an element of class \code{bridge} from package \code{bridgesampling} if \code{crit} is
-\code{LOGML}, (c) an element of class \code{c("waic", "loo")} if \code{crit = 'WAIC'}, and (d) an element of
-class \code{c("psis_loo", "loo")} if \code{crit = "LOOIC"}. See documentations of these model
+Note that \verb{bestcriterion\} returns: (a) a scalar number (class = }numeric\verb{) if }crit\verb{used in original}fit_incremental_angmix\verb{call is}'AIC'\verb{, }'BIC'\code{or}'DIC'\verb{, (b) an element of class }bridge\verb{from package}bridgesampling\code{if}crit\code{is}LOGML\verb{, (c) an element of class }c("waic", "loo")\code{if}crit = 'WAIC'\verb{, and (d) an element of class }c("psis_loo", "loo")\code{if}crit = "LOOIC"`. See documentations of these model
 selection criteria for more details.
 }
 \examples{
@@ -45,4 +40,5 @@ fit.vmsin.best.15
 
 crit.best <- bestcriterion(fit.vmsin.step.15)
 crit.best
+
 }

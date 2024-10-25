@@ -9,11 +9,11 @@
 \arguments{
 \item{samples}{angmcmc object}
 
-\item{...}{additional argument passed to \link{bridge_sampler}. Note that default for
+\item{...}{additional argument passed to \link[bridgesampling]{bridge_sampler}. Note that default for
 the argument \code{method} is \code{"warp3"}, (instead of \code{"normal"} as used in \code{bridgesampling} package)
 to account for multi-modality of the posterior density.}
 
-\item{ave_over_chains}{logical. Separately call \link{bridge_sampler} on
+\item{ave_over_chains}{logical. Separately call \link[bridgesampling]{bridge_sampler} on
 each chain in the angmcmc object and then take the average? Defaults to \code{TRUE}.
 See details.}
 }
@@ -22,9 +22,9 @@ Log Marginal Likelihood via Bridge Sampling for angmcmc objects
 }
 \details{
 Marginal likelihood is calculated by first converting the \code{angmcmc} object \code{samples} to an
-\code{mcmc.list} object, and then by passing the resulting \code{mcmc.list} object to \link{bridge_sampler}.
+\code{mcmc.list} object, and then by passing the resulting \code{mcmc.list} object to \link[bridgesampling]{bridge_sampler}.
 If variablity across multiple chains (if any) are very different,
-then calling \link{bridge_sampler} separately for each chain
+then calling \link[bridgesampling]{bridge_sampler} separately for each chain
 usually provides more stable results; the final log ML is computed by averaging over
 chain specific MLs.
 }

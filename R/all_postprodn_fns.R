@@ -146,9 +146,9 @@ as.mcmc.list.angmcmc <- function(x, ...)
 #' @inheritParams pointest
 #'
 #' @param ... arguments other than \code{z, K, complete, mcmc, p}
-#' and \code{data} passed to \link{label.switching}. See details.
+#' and \code{data} passed to \link[label.switching]{label.switching}. See details.
 #'
-#' @details \code{fix_label} is a wrapper for  \link{label.switching} from
+#' @details \code{fix_label} is a wrapper for  \link[label.switching]{label.switching} from
 #' package \code{label.switching} for \code{angmcmc} objects. The arguments
 #' \code{z, K, complete, mcmc, p} and \code{data} are appropriately filled in
 #' from \code{object}. The \code{label.switching} argument \code{method} can
@@ -158,7 +158,7 @@ as.mcmc.list.angmcmc <- function(x, ...)
 #'
 #' @return Returns a single \code{angmcmc} object or a list of \code{angmcmc} objects (according as whether
 #' the argument \code{method} is a scalar or vector) with label switchings corrected (after burn-in and thin)
-#' according to the resulting permutation from \link{label.switching}.
+#' according to the resulting permutation from \link[label.switching]{label.switching}.
 #'
 #' @examples
 #' # first fit a vmsin mixture model
@@ -763,7 +763,7 @@ DIC <- function(object, form = 2, ...)
 #' Watanabe-Akaike Information Criterion (WAIC) for angmcmc objects
 #'
 #' @param x angmcmc object.
-#' @param ... additional model specific arguments to be passed to \link{waic} from loo. For example, \code{int.displ}
+#' @param ... additional model specific arguments to be passed to \link[loo]{waic} from loo. For example, \code{int.displ}
 #' specifies integer displacement in wnorm and wnorm2 models. See \link{fit_wnormmix} and
 #' \link{fit_wnorm2mix} for more details.
 #' @return Computes the WAIC for a given angmcmc object.
@@ -784,7 +784,7 @@ DIC <- function(object, form = 2, ...)
 #' where for \eqn{i = 1, ..., n}, \eqn{\hat{var} \log p(y_i|\eta)} denotes the estimated variance
 #' of \eqn{\log p(y_i|\eta)} based on the realizations \eqn{\eta_1, ..., \eta_N}.
 #'
-#' Note that waic.angmcmc calls \link{waic} for computation. If the likelihood contribution of each data
+#' Note that waic.angmcmc calls \link[loo]{waic} for computation. If the likelihood contribution of each data
 #' point for each MCMC iteration is available in \code{object} (can be returned by setting \code{return_llik_contri = TRUE})
 #' during \link{fit_angmix} call), \code{waic.array} is used; otherwise \code{waic.function} is
 #' called. Computation is much faster if the likelihood contributions are available - however, they are very
@@ -874,7 +874,7 @@ waic.angmcmc <- function(x, ...)
 #' @export
 #'
 #' @details
-#' Note that loo.angmcmc calls \link{loo} for computation. If the likelihood contribution of each data
+#' Note that loo.angmcmc calls \link[loo]{loo} for computation. If the likelihood contribution of each data
 #' point for each MCMC iteration is available in \code{object} (can be returned by setting \code{return_llik_contri = TRUE})
 #' during \link{fit_angmix} call), \code{loo.array} is used; otherwise \code{loo.function} is
 #' called. Computation is much faster if the likelihood contributions are available - however, they are very
@@ -1212,18 +1212,18 @@ logLik.angmcmc <- function(object, method = 1, fn, ...)
 
 #' Log Marginal Likelihood via Bridge Sampling for angmcmc objects
 #' @param samples angmcmc object
-#' @param ... additional argument passed to \link{bridge_sampler}. Note that default for
+#' @param ... additional argument passed to \link[bridgesampling]{bridge_sampler}. Note that default for
 #' the argument \code{method} is \code{"warp3"}, (instead of \code{"normal"} as used in \code{bridgesampling} package)
 #' to account for multi-modality of the posterior density.
-#' @param ave_over_chains logical. Separately call \link{bridge_sampler} on
+#' @param ave_over_chains logical. Separately call \link[bridgesampling]{bridge_sampler} on
 #' each chain in the angmcmc object and then take the average? Defaults to \code{TRUE}.
 #' See details.
 #'
 #' @details
 #' Marginal likelihood is calculated by first converting the \code{angmcmc} object \code{samples} to an
-#' \code{mcmc.list} object, and then by passing the resulting \code{mcmc.list} object to \link{bridge_sampler}.
+#' \code{mcmc.list} object, and then by passing the resulting \code{mcmc.list} object to \link[bridgesampling]{bridge_sampler}.
 #' If variablity across multiple chains (if any) are very different,
-#' then calling \link{bridge_sampler} separately for each chain
+#' then calling \link[bridgesampling]{bridge_sampler} separately for each chain
 #' usually provides more stable results; the final log ML is computed by averaging over
 #' chain specific MLs.
 #'

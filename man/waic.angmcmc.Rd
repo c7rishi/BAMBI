@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{angmcmc object.}
 
-\item{...}{additional model specific arguments to be passed to \link{waic} from loo. For example, \code{int.displ}
+\item{...}{additional model specific arguments to be passed to \link[loo]{waic} from loo. For example, \code{int.displ}
 specifies integer displacement in wnorm and wnorm2 models. See \link{fit_wnormmix} and
 \link{fit_wnorm2mix} for more details.}
 }
@@ -36,7 +36,7 @@ An alternative form (form 2) for \eqn{p_W} is given by
 where for \eqn{i = 1, ..., n}, \eqn{\hat{var} \log p(y_i|\eta)} denotes the estimated variance
 of \eqn{\log p(y_i|\eta)} based on the realizations \eqn{\eta_1, ..., \eta_N}.
 
-Note that waic.angmcmc calls \link{waic} for computation. If the likelihood contribution of each data
+Note that waic.angmcmc calls \link[loo]{waic} for computation. If the likelihood contribution of each data
 point for each MCMC iteration is available in \code{object} (can be returned by setting \code{return_llik_contri = TRUE})
 during \link{fit_angmix} call), \code{waic.array} is used; otherwise \code{waic.function} is
 called. Computation is much faster if the likelihood contributions are available - however, they are very

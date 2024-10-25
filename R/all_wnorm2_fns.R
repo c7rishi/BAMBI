@@ -6,7 +6,7 @@
 #' @param mu1,mu2 vectors of mean parameters.
 #' @param kappa1,kappa2,kappa3 vectors of concentration parameters; \code{kappa1, kappa2 > 0},
 #' and \code{kappa3^2 < kappa1*kappa2}.
-#' @param ... additional arguments passed to \link{rmvnorm} from package \code{mvtnorm}
+#' @param ... additional arguments passed to \link[mvtnorm]{rmvnorm} from package \code{mvtnorm}
 #' @importFrom mvtnorm rmvnorm
 #'
 #' @details
@@ -20,13 +20,10 @@
 #'
 #' Note that above density is essentially the "wrapped" version of a bivariate normal density with mean
 #' \deqn{\mu = (\mu_1, \mu_2)}
-#' and dispersion matrix  \eqn{\Sigma = \Delta^{-1}}, where
-#'
-#' \tabular{lrrr}{
-#'                \tab \eqn{\kappa_1} \tab  \eqn{ } \tab \eqn{\kappa_3} \cr
-#' \eqn{\Delta =} \tab \eqn{ }        \tab  \eqn{ } \tab \eqn{ } \cr
-#'                \tab \eqn{\kappa_3} \tab  \eqn{ } \tab  \eqn{\kappa_2}.
-#' }
+#' and dispersion matrix  \eqn{\Sigma = \Delta^{-1}}, with \eqn{\Delta} being a \eqn{2 \times 2}
+#' symmetric, positive definite matrix
+#' with diagonal entries \eqn{\kappa_1} and \eqn{\kappa_2} and the off-diagonal entries
+#' \eqn{\kappa_3}.
 #'
 #'
 #' @return \code{dwnorm2} gives the density  and \code{rwnorm2} generates random deviates.

@@ -90,7 +90,7 @@ Defaults to and is set to \code{FALSE}.}
 \item{n.chains}{number of chains to run. Must be a positive integer.}
 
 \item{chains_parallel}{logical. Should the chains be run in parallel? Defaluts to TRUE, and ignored if \code{n.chains} = 1.
-Note that parallelization is implemented via \link{future_lapply} from package \code{future.apply} which
+Note that parallelization is implemented via \link[future.apply]{future_lapply} from package \code{future.apply} which
 uses futures for this purpose, and thus provides a convenient way of parallelization across various OSs and computing environments.
 However, a proper \link[future]{plan} must be set for the parallization before running the chain. Otherwise the chains will run sequentially.}
 

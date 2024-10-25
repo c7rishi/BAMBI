@@ -3,16 +3,17 @@
 #' @inheritParams pointest
 #' @param type Passed to \link{d_fitted}. Possible choices are "point-est" and "post-pred".
 #' @param x angular MCMC object (with bivariate data).
-#' @param show.data logical. Should the data points be added to the contour plot? Ignored if \code{object} is NOT supplied.
-#' @param cex,col,pch graphical parameters passed to \code{\link{points}} from graphics for plotting the data points.
-#' Ignored if {show.data == FALSE}.
-#' @param alpha color transparency for the data points, implemented via \code{\link[scales]{alpha}} from package \code{scales}.
-#' Ignored if {show.data == FALSE}.
+#' @param show.data logical. Should the data points be added to the contour plot? Ignored if `object` is NOT supplied.
+#' @param cex,col,pch graphical parameters passed to \link{points} from graphics for plotting the data points.
+#' Ignored if `show.data == FALSE`.
+#' @param alpha color transparency for the data points, implemented via \link[scales]{alpha} from package `scales`.
+#' Ignored if `show.data == FALSE`.
 #' @inheritParams contour_model
-#' @param ... additional arguments to be passed to the function \code{\link{contour}}.
+#' @param ... additional arguments to be passed to the function \link{contour}.
+#' @md
 #'
 #' @details
-#' \code{contour.angmcmc} is an S3 function for angmcmc objects that calls \code{\link{contour}} from graphics.
+#' `contour.angmcmc` is an S3 function for `angmcmc` objects that calls \link{contour} from graphics.
 #'
 #' To estimate the mixture density required to construct the contour plot, first the parameter vector \eqn{\eta} is estimated
 #' by applying \code{fn} on the MCMC samples, yielding the (consistent) Bayes estimate \eqn{\hat{\eta}}. Then the mixture density
@@ -126,7 +127,7 @@ contour.angmcmc <-  function(x, fn = "MAP", type = "point-est", show.data = TRUE
 #'
 #' Note that \code{densityplot.angmcmc} \strong{does not} plot the kernel densitie estimates
 #' of the MCMC parameters. (These plots can be obtained by first converting an \code{angmcmc}
-#' object to an \code{mcmc} object via \link{as.mcmc.list}, and then
+#' object to an \code{mcmc} object via \link[coda]{as.mcmc.list}, and then
 #' by using \code{densplot} from package coda on the resulting \code{mcmc.list} object. Instead,
 #' \code{densityplot.angmcmc} returns the surface (if 2-D) or the curve (if 1-D)
 #' of the fitted model density evaluated at the estimated parameter vector (obtain through \link{pointest}).

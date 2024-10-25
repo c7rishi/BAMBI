@@ -38,7 +38,7 @@ bivariate data, and \code{"vm"} and \code{"wnorm"} for univariate data.}
 are transformed into the scale \eqn{[0, 2\pi)}. *Note:* BAMBI cannot handle missing data. Missing values must
 either be removed or properly imputed.}
 
-\item{crit}{model selection criteria, one of \code{"LOOIC", "WAIC", "AIC", "BIC", "DIC"} or \code{"LOGML"}. Default is
+\item{crit}{model selection criteria, one of \code{"LOOIC"}, \code{"WAIC"}, \code{"AIC"}, \code{"BIC"}, \code{"DIC"} or \code{"LOGML"}. Default is
 \code{"LOOIC"}.}
 
 \item{start_ncomp}{starting component size. A single component model is fitted if \code{start_ncomp} is equal to one.}
@@ -73,10 +73,10 @@ of iterations. As such, we recommend using the default option, which is k-means 
 with \code{ncomp = K+1} as the starting parameters, with the component with largest mixing proportion appearing twice in the
 bigger model?}
 
-\item{logml_maxiter}{maximum number of iterations (\code{maxiter}) passed to \link{bridge_sampler} for calculating
+\item{logml_maxiter}{maximum number of iterations (\code{maxiter}) passed to \link[bridgesampling]{bridge_sampler} for calculating
 \code{LOGML}. Ignored if \code{crit} is not \code{LOGML}.}
 
-\item{return_all}{logical. Should all angmcmc objects obtained during step-wise run be returned? *Warning*: depending on the
+\item{return_all}{logical. Should all angmcmc objects obtained during step-wise run be returned? \emph{Warning}: depending on the
 sizes of \code{n.iter}, \code{start_ncomp}, \code{max_ncomp} and \code{n.chains}, this can be very memory intesive. In such
 cases, it is recommended that \code{return_all} be set to \code{FALSE}, and, if required, the intermediate fitted objects be
 saved to file by setting \code{save_fits = TRUE}.}
@@ -88,7 +88,7 @@ to file using \link{save}? Defaults to TRUE. See \code{save_file} and \code{save
 with k-th entry providing the \code{file}
 argument used to \link{save} the intermediate angmcmc object with \code{ncomp = k} (titled \code{"fit_angmcmc"}).
 If not provided, then k-th element
-of \code{save_file[[k]]} is taken to be \code{\link{paste}(save_dir, "comp_k", sep="/")}. Both are ignored if
+of \code{save_file[[k]]} is taken to be \code{paste(save_dir, "comp_k", sep="/")}. Both are ignored if
 \code{save_fits = FALSE}.}
 
 \item{silent}{logical. Should the current status (such as what is the current component labels, which job is being done etc.)
@@ -101,7 +101,7 @@ or \code{"WAIC"}, and to \code{FALSE} otherwise.}
 computation of model selection criterion? Here "best" means the chain
 with largest (mean over iterations) log-posterior density. This can be helpful if one of the chains gets stuck at local optima. Defaults to TRUE.}
 
-\item{alpha}{significance level used in the test H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
+\item{alpha}{significance level used in the test \eqn{H_{0K}}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
 with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}.
 Must be a scalar between 0 and 1. Defaults to 0.05. See Details. Ignored for any other \code{crit}.}
 
@@ -111,7 +111,7 @@ Relevant only if \code{crit} is in  \code{c("LOOIC", "WAIC")}, and ignored other
 
 \item{bonferroni_adj_type}{character string. Denoting type of Bonferroni adjustment to make.
 Possible choices are \code{"decreasing"} (default) and \code{"equal"}. Ignored if either \code{bonferroni_alpha}
-is FALSE, or \code{crit} is outside \code{c("LOOIC", "WAIC")}. See Details.}
+is \code{FALSE}, or \code{crit} is outside \code{c("LOOIC", "WAIC")}. See Details.}
 
 \item{...}{additional arguments passed to \link{fit_angmix}.}
 }
@@ -124,7 +124,7 @@ Returns a named list (with class = \code{stepfit}) with the following seven elem
 
 \code{ncomp.best} - optimum component size (integer);
 
-\code{crit} - which model comparison criterion used (one of \code{"LOOIC", "WAIC", "AIC", "BIC", "DIC"} or \code{"LOGML"});
+\code{crit} - which model comparison criterion used (one of \verb{"LOOIC", "WAIC", "AIC", "BIC", "DIC"} or \code{"LOGML"});
 
 \code{crit.all} - all \code{crit} values calculated (for all component sizes);
 
@@ -145,7 +145,7 @@ To obtain an optimum K, mixture models with incremental component sizes
 between \code{start_ncomp} and \code{max_ncomp} are fitted incrementally using \link{fit_angmix},
 starting from K = 1.
 If the model selection criterion \code{crit} is \code{"LOOIC"} or \code{"WAIC"}, then a test of hypothesis
-H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
+\eqn{H_{0K}}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
 with K + 1 components, is performed at every K >= 1. The test-statistic used for the test is an approximate z-score
 based on the normalized estimated elpd difference between the two models obtained from \link[loo]{compare}, which provides
 estimated elpd difference along with its standard error estimate. Because the computed standard error of elpd difference
@@ -154,13 +154,9 @@ a conservative worst-case estimate (equal to twice of the computed standard erro
 is used in such cases. To account for multiplicity among the M =
 (\code{max_ncomp} - \code{start_ncomp}) possible sequential tests performed,
 by default a Bonferroni adjustment to the test level \code{alpha} is made.
-Set \code{bonferroni_alpha = FALSE} to remove the adjustment. To encourage
-parsimony in the final model, by default (\code{bonferroni_adj_type = "decreasing"})
-a decreasing sequence of adjusted alphas of the form \code{alpha * (0.5)^(1:M) / sum((0.5)^(1:M))}
-is used. Set \code{bonferroni_adj_type = "equal"}
-to use equal sequence of adjusted alphas (i.e., \code{alpha/M}) instead.
+Set \verb{bonferroni_alpha = FALSE\} to remove the adjustment. To encourage parsimony in the final model, by default (}bonferroni_adj_type = "decreasing"\verb{) a decreasing sequence of adjusted alphas of the form }alpha * (0.5)^(1:M) / sum((0.5)^(1:M))\verb{is used. Set}bonferroni_adj_type = "equal"\verb{to use equal sequence of adjusted alphas (i.e.,}alpha/M`) instead.
 
-The incremental fitting stops if  H_{0K} cannot be rejected
+The incremental fitting stops if  \eqn{H_{0K}} cannot be rejected
 (at level \code{alpha}) for some K >= 1; this K is then regarded as the optimum number of components.
 If \code{crit} is not \code{"LOOIC"} or \code{"WAIC"} then mixture model with the first minimum value of the model selection criterion \code{crit}
 is taken as the best model.
@@ -172,8 +168,8 @@ This approach of selecting an optimal K follows the perspective "let two compone
 be identical" for overfitting mixtures, and as such the  Dirichlet prior hyper-parameters \code{pmix.alpha}
 (passed to \link{fit_angmix}) should be large. See  Fruhwirth-Schnatter (2011) for more deltails.
 
-Note that the stability of \link{bridge_sampler} used in marginal likelihood estimation heavily depends on stationarity of the
-chains. As such, while using this criterion, we recommending running the chain long engouh, and setting \code{fix_label = TRUE}
+Note that the stability of \link[bridgesampling]{bridge_sampler} used in marginal likelihood estimation heavily depends on stationarity of the
+chains. As such, while using this criterion, we recommending running the chain long enough, and setting \code{fix_label = TRUE}
 for optimal performance.
 }
 \examples{
@@ -184,6 +180,7 @@ fit.vmsin.step.15 <- fit_incremental_angmix("vmsin", tim8, "BIC", start_ncomp = 
                                           n.chains = 1, save_fits=FALSE)
 (fit.vmsin.best.15 <- bestmodel(fit.vmsin.step.15))
 lattice::densityplot(fit.vmsin.best.15)
+
 
 }
 \references{

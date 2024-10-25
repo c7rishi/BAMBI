@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{angmcmc object.}
 
-\item{...}{additional model specific arguments to be passed to \link{waic} from loo. For example, \code{int.displ}
+\item{...}{additional model specific arguments to be passed to \link[loo]{waic} from loo. For example, \code{int.displ}
 specifies integer displacement in wnorm and wnorm2 models. See \link{fit_wnormmix} and
 \link{fit_wnorm2mix} for more details.}
 }
@@ -17,7 +17,7 @@ specifies integer displacement in wnorm and wnorm2 models. See \link{fit_wnormmi
 Leave-one-out cross-validation (LOO) for angmcmc objects
 }
 \details{
-Note that loo.angmcmc calls \link{loo} for computation. If the likelihood contribution of each data
+Note that loo.angmcmc calls \link[loo]{loo} for computation. If the likelihood contribution of each data
 point for each MCMC iteration is available in \code{object} (can be returned by setting \code{return_llik_contri = TRUE})
 during \link{fit_angmix} call), \code{loo.array} is used; otherwise \code{loo.function} is
 called. Computation is much faster if the likelihood contributions are available - however, they are very

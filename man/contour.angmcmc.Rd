@@ -44,19 +44,19 @@ passed to the \link{contour} function in graphics.}
 \item{nlevels}{number of contour levels desired \strong{if} levels is not supplied;
 passed to the \link{contour} function in graphics.}
 
-\item{cex, col, pch}{graphical parameters passed to \code{\link{points}} from graphics for plotting the data points.
-Ignored if {show.data == FALSE}.}
+\item{cex, col, pch}{graphical parameters passed to \link{points} from graphics for plotting the data points.
+Ignored if \code{show.data == FALSE}.}
 
-\item{alpha}{color transparency for the data points, implemented via \code{\link[scales]{alpha}} from package \code{scales}.
-Ignored if {show.data == FALSE}.}
+\item{alpha}{color transparency for the data points, implemented via \link[scales]{alpha} from package \code{scales}.
+Ignored if \code{show.data == FALSE}.}
 
-\item{...}{additional arguments to be passed to the function \code{\link{contour}}.}
+\item{...}{additional arguments to be passed to the function \link{contour}.}
 }
 \description{
 Contour plot for angmcmc objects with bivariate data
 }
 \details{
-\code{contour.angmcmc} is an S3 function for angmcmc objects that calls \code{\link{contour}} from graphics.
+\code{contour.angmcmc} is an S3 function for \code{angmcmc} objects that calls \link{contour} from graphics.
 
 To estimate the mixture density required to construct the contour plot, first the parameter vector \eqn{\eta} is estimated
 by applying \code{fn} on the MCMC samples, yielding the (consistent) Bayes estimate \eqn{\hat{\eta}}. Then the mixture density

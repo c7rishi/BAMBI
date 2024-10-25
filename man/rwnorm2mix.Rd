@@ -18,7 +18,7 @@ dwnorm2mix(x, kappa1, kappa2, kappa3, mu1, mu2, pmix, int.displ, log = FALSE)
 
 \item{pmix}{vector of mixture proportions.}
 
-\item{...}{additional arguments passed to \link{rmvnorm} from package \code{mvtnorm}}
+\item{...}{additional arguments passed to \link[mvtnorm]{rmvnorm} from package \code{mvtnorm}}
 
 \item{x}{matrix of angles (in radians) where the density is to be evaluated, with each row being a
 single bivariate vector of angles.}

@@ -1,3 +1,41 @@
+# BAMBI v2.3.6
+
+
+## Resubmission
+
+This is a re-submission, with typo corrections in the documentations
+
+
+## Changelog
+
+- fix typos in the documentations, particularly on equation expressions inside \eqn{} and texts inside \code{} block as picked up by R CMD check on version 2.3.5.
+
+
+
+## Test environment:
+
+- local Windows 10 install, R version 4.4.1 (2024-06-14 ucrt)
+
+- local Ubuntu release 20.04, R version 4.4.1 (2024-06-14)
+
+- online win-builder (devel, release, and old release)
+
+- online mac-builder
+
+
+## R CMD check results
+
+There were no ERRORs or WARNINGs in any platforms, and no NOTES on local Windows, online mac-builder and online win-builder (release, old-release, devel).
+
+There was a NOTE on Ubuntu 20.04 about the installed size of the installed package: 
+```
+❯ checking installed package size ... NOTE
+    installed size is 12.4Mb
+    sub-directories of 1Mb or more:
+      libs  11.9Mb
+```
+
+
 # BAMBI v2.3.5
 
 ## Resubmission
@@ -56,6 +94,9 @@ Maintainer: 'Saptarshi Chakraborty <chakra.saptarshi@gmail.com>'
 Possibly mis-spelled words in DESCRIPTION:
   Chakraborty (9:116)
 ```
+
+
+# BAMBI v2.3.4
 
 ## Resubmission
 

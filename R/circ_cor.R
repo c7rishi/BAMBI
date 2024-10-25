@@ -251,7 +251,7 @@ circ_cor <- function(x, type="js", alternative = "two.sided",
 #' argument \code{qrnd}, which must be a two column matrix, with each element being
 #' a  (quasi) random number between 0 and 1. Alternatively, if \code{n_qrnd} is
 #' provided (and \code{qrnd} is missing), a two dimensional sobol sequence of size \code{n_qrnd} is
-#' generated via the function \link{sobol} from the R package \code{qrng}. If none of \code{qrnd}
+#' generated via the function \link[qrng]{sobol} from the R package \code{qrng}. If none of \code{qrnd}
 #' or \code{n_qrnd} is available, a two dimensional sobol sequence of size 1e4 is used.
 #'
 #'

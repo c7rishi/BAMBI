@@ -67,7 +67,7 @@ by applying \code{fn} on the MCMC samples, yielding the (consistent) Bayes estim
 
 Note that \code{densityplot.angmcmc} \strong{does not} plot the kernel densitie estimates
 of the MCMC parameters. (These plots can be obtained by first converting an \code{angmcmc}
-object to an \code{mcmc} object via \link{as.mcmc.list}, and then
+object to an \code{mcmc} object via \link[coda]{as.mcmc.list}, and then
 by using \code{densplot} from package coda on the resulting \code{mcmc.list} object. Instead,
 \code{densityplot.angmcmc} returns the surface (if 2-D) or the curve (if 1-D)
 of the fitted model density evaluated at the estimated parameter vector (obtain through \link{pointest}).

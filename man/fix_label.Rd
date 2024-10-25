@@ -10,18 +10,18 @@ fix_label(object, ...)
 \item{object}{angular MCMC object.}
 
 \item{...}{arguments other than \code{z, K, complete, mcmc, p}
-and \code{data} passed to \link{label.switching}. See details.}
+and \code{data} passed to \link[label.switching]{label.switching}. See details.}
 }
 \value{
 Returns a single \code{angmcmc} object or a list of \code{angmcmc} objects (according as whether
 the argument \code{method} is a scalar or vector) with label switchings corrected (after burn-in and thin)
-according to the resulting permutation from \link{label.switching}.
+according to the resulting permutation from \link[label.switching]{label.switching}.
 }
 \description{
 Fix label switching in angmcmc objects
 }
 \details{
-\code{fix_label} is a wrapper for  \link{label.switching} from
+\code{fix_label} is a wrapper for  \link[label.switching]{label.switching} from
 package \code{label.switching} for \code{angmcmc} objects. The arguments
 \code{z, K, complete, mcmc, p} and \code{data} are appropriately filled in
 from \code{object}. The \code{label.switching} argument \code{method} can

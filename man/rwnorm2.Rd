@@ -27,7 +27,7 @@ and \code{kappa3^2 < kappa1*kappa2}.}
 
 \item{mu1, mu2}{vectors of mean parameters.}
 
-\item{...}{additional arguments passed to \link{rmvnorm} from package \code{mvtnorm}}
+\item{...}{additional arguments passed to \link[mvtnorm]{rmvnorm} from package \code{mvtnorm}}
 
 \item{x}{bivariate vector  or a two-column matrix with each row being a bivariate vector of angles
 (in radians)  where the densities are to be evaluated.}
@@ -54,13 +54,10 @@ and is approximated by a sum over \eqn{(\omega_1, \omega_2)} in \eqn{\{-M, -M+1,
 
 Note that above density is essentially the "wrapped" version of a bivariate normal density with mean
 \deqn{\mu = (\mu_1, \mu_2)}
-and dispersion matrix  \eqn{\Sigma = \Delta^{-1}}, where
-
-\tabular{lrrr}{
-               \tab \eqn{\kappa_1} \tab  \eqn{ } \tab \eqn{\kappa_3} \cr
-\eqn{\Delta =} \tab \eqn{ }        \tab  \eqn{ } \tab \eqn{ } \cr
-               \tab \eqn{\kappa_3} \tab  \eqn{ } \tab  \eqn{\kappa_2}.
-}
+and dispersion matrix  \eqn{\Sigma = \Delta^{-1}}, with \eqn{\Delta} being a \eqn{2 \times 2}
+symmetric, positive definite matrix
+with diagonal entries \eqn{\kappa_1} and \eqn{\kappa_2} and the off-diagonal entries
+\eqn{\kappa_3}.
 }
 \examples{
 kappa1 <- c(1, 2, 3)

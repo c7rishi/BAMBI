@@ -1,91 +1,91 @@
 #' Stepwise fitting of angular mixture models with incremental component sizes and optimum model selection
 #' @inheritParams pointest
 #' @inheritParams fit_angmix
-#' @param start_ncomp starting component size. A single component model is fitted if \code{start_ncomp} is equal to one.
+#' @param start_ncomp starting component size. A single component model is fitted if `start_ncomp` is equal to one.
 #' @param max_ncomp maximum number of components allowed in the mixture model.
-#' @param crit model selection criteria, one of \code{"LOOIC", "WAIC", "AIC", "BIC", "DIC"} or \code{"LOGML"}. Default is
-#' \code{"LOOIC"}.
+#' @param crit model selection criteria, one of `"LOOIC"`, `"WAIC"`, `"AIC"`, `"BIC"`, `"DIC"` or `"LOGML"`. Default is
+#' `"LOOIC"`.
 #' @param L HMC tuning parameter (trajectory length) passed to \link{fit_angmix}. Can be a numeric vetor (or scalar), in which case
-#' the same \code{L} is passed to all \link{fit_angmix} calls, or can be a list of length \code{max_ncomp-start_ncomp+1},
-#' so that \code{L_list[[i]]} is passed as the argument \code{L} to \link{fit_angmix} call with \code{ncomp = max_ncomp+i-1}. See
-#' \link{fit_angmix} for more details on \code{L} including its default values. Ignored if \code{method = "rwmh"}.
+#' the same `L` is passed to all \link{fit_angmix} calls, or can be a list of length `max_ncomp-start_ncomp+1`,
+#' so that `L_list[[i]]` is passed as the argument `L` to \link{fit_angmix} call with `ncomp = max_ncomp+i-1`. See
+#' \link{fit_angmix} for more details on `L` including its default values. Ignored if `method = "rwmh"`.
 #' @param fn function to evaluate on MCMC samples to estimate parameters.
-#' Defaults to \code{mean}, which computes the estimated posterior means. If \code{fn = max},
-#' then MAP estimate is calculated from the MCMC run. Used only if \code{crit = "DIC"}, and ignored otherwise.
-#' @param prev_par logical. Should the MAP estimated parameters from the model with \code{ncomp = K} be used in the model
-#' with \code{ncomp = K+1} as the starting parameters, with the component with largest mixing proportion appearing twice in the
+#' Defaults to `mean`, which computes the estimated posterior means. If `fn = max`,
+#' then MAP estimate is calculated from the MCMC run. Used only if `crit = "DIC"`, and ignored otherwise.
+#' @param prev_par logical. Should the MAP estimated parameters from the model with `ncomp = K` be used in the model
+#' with `ncomp = K+1` as the starting parameters, with the component with largest mixing proportion appearing twice in the
 #' bigger model?
-#' @param form form of crit to be used. Available choices are 1 and 2. Used only if \code{crit} is \code{"DIC"} and ignored otherwise.
+#' @param form form of crit to be used. Available choices are 1 and 2. Used only if `crit` is `"DIC"` and ignored otherwise.
 #' @param ... additional arguments passed to \link{fit_angmix}.
-#' @param logml_maxiter maximum number of iterations (\code{maxiter}) passed to \link{bridge_sampler} for calculating
-#' \code{LOGML}. Ignored if \code{crit} is not \code{LOGML}.
-#' @param fix_label logical. Should the label switchings on the current fit (only the corresponding "best chain" if \code{use_best_chain = TRUE})
-#' be fixed before computing parameter estimates and model selection criterion? Defaults to \code{TRUE} if \code{perm_sampling} is true in
-#' the \link{fit_angmix} call, or if \code{crit = "DIC"} and \code{form = 1}.
+#' @param logml_maxiter maximum number of iterations (`maxiter`) passed to \link[bridgesampling]{bridge_sampler} for calculating
+#' `LOGML`. Ignored if `crit` is not `LOGML`.
+#' @param fix_label logical. Should the label switchings on the current fit (only the corresponding "best chain" if `use_best_chain = TRUE`)
+#' be fixed before computing parameter estimates and model selection criterion? Defaults to `TRUE` if `perm_sampling` is true in
+#' the \link{fit_angmix} call, or if `crit = "DIC"` and `form = 1`.
 #' @param silent logical. Should the current status (such as what is the current component labels, which job is being done etc.)
-#' be printed? Defaults to \code{TRUE}.
+#' be printed? Defaults to `TRUE`.
 #' @param return_all logical. Should all angmcmc objects obtained during step-wise run be returned? *Warning*: depending on the
-#' sizes of \code{n.iter}, \code{start_ncomp}, \code{max_ncomp} and \code{n.chains}, this can be very memory intesive. In such
-#' cases, it is recommended that \code{return_all} be set to \code{FALSE}, and, if required, the intermediate fitted objects be
-#' saved to file by setting \code{save_fits = TRUE}.
+#' sizes of `n.iter`, `start_ncomp`, `max_ncomp` and `n.chains`, this can be very memory intesive. In such
+#' cases, it is recommended that `return_all` be set to `FALSE`, and, if required, the intermediate fitted objects be
+#' saved to file by setting `save_fits = TRUE`.
 #' @param save_fits logical. Should the intermediate angmcmc objects obtained during step-wise run be saved
-#'  to file using \link{save}? Defaults to TRUE. See \code{save_file} and \code{save_dir}.
-#' @param save_file,save_dir \code{save_file} is a list of size \code{max_ncomp-start_ncomp+1},
-#' with k-th entry providing the \code{file}
-#' argument used to \link{save} the intermediate angmcmc object with \code{ncomp = k} (titled \code{"fit_angmcmc"}).
+#'  to file using \link{save}? Defaults to TRUE. See `save_file` and `save_dir`.
+#' @param save_file,save_dir `save_file` is a list of size `max_ncomp-start_ncomp+1`,
+#' with k-th entry providing the `file`
+#' argument used to \link{save} the intermediate angmcmc object with `ncomp = k` (titled `"fit_angmcmc"`).
 #' If not provided, then k-th element
-#' of \code{save_file[[k]]} is taken to be \code{\link{paste}(save_dir, "comp_k", sep="/")}. Both are ignored if
-#' \code{save_fits = FALSE}.
+#' of `save_file[[k]]` is taken to be `paste(save_dir, "comp_k", sep="/")`. Both are ignored if
+#' `save_fits = FALSE`.
 #' @param use_best_chain logical. Should only the "best" chain obtained during each intermediate fit be used during
 #' computation of model selection criterion? Here "best" means the chain
 #' with largest (mean over iterations) log-posterior density. This can be helpful if one of the chains gets stuck at local optima. Defaults to TRUE.
-#' @param return_llik_contri passed to \link{fit_angmix}. By default, set to \code{TRUE} if \code{crit} is either \code{"LOOIC"}
-#' or \code{"WAIC"}, and to \code{FALSE} otherwise.
-#' @param alpha significance level used in the test H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
-#' with K + 1 components if \code{crit} is \code{"LOOIC"} or \code{"WAIC"}.
-#' Must be a scalar between 0 and 1. Defaults to 0.05. See Details. Ignored for any other \code{crit}.
-#' @param bonferroni_alpha logical. Should a Bonferroni correction be made on the test size \code{alpha} to adjust for
-#' multiplicity due to (\code{max_ncomp} - \code{start_ncomp}) possible hypothesis tests? Defaults to TRUE.
-#' Relevant only if \code{crit} is in  \code{c("LOOIC", "WAIC")}, and ignored otherwise. See Details.
+#' @param return_llik_contri passed to \link{fit_angmix}. By default, set to `TRUE` if `crit` is either `"LOOIC"`
+#' or `"WAIC"`, and to `FALSE` otherwise.
+#' @param alpha significance level used in the test \eqn{H_{0K}}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
+#' with K + 1 components if `crit` is `"LOOIC"` or `"WAIC"`.
+#' Must be a scalar between 0 and 1. Defaults to 0.05. See Details. Ignored for any other `crit`.
+#' @param bonferroni_alpha logical. Should a Bonferroni correction be made on the test size `alpha` to adjust for
+#' multiplicity due to (`max_ncomp` - `start_ncomp`) possible hypothesis tests? Defaults to TRUE.
+#' Relevant only if `crit` is in  `c("LOOIC", "WAIC")`, and ignored otherwise. See Details.
 #' @param bonferroni_adj_type character string. Denoting type of Bonferroni adjustment to make.
-#' Possible choices are \code{"decreasing"} (default) and \code{"equal"}. Ignored if either \code{bonferroni_alpha}
-#' is FALSE, or \code{crit} is outside \code{c("LOOIC", "WAIC")}. See Details.
+#' Possible choices are `"decreasing"` (default) and `"equal"`. Ignored if either `bonferroni_alpha`
+#' is `FALSE`, or `crit` is outside `c("LOOIC", "WAIC")`. See Details.
 #'
 #' @details
 #' The goal is to fit an angular mixture model with an optimally chosen component size K.
 #' To obtain an optimum K, mixture models with incremental component sizes
-#' between \code{start_ncomp} and \code{max_ncomp} are fitted incrementally using \link{fit_angmix},
+#' between `start_ncomp` and `max_ncomp` are fitted incrementally using \link{fit_angmix},
 #' starting from K = 1.
-#' If the model selection criterion \code{crit} is \code{"LOOIC"} or \code{"WAIC"}, then a test of hypothesis
-#' H_{0K}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
+#' If the model selection criterion `crit` is `"LOOIC"` or `"WAIC"`, then a test of hypothesis
+#' \eqn{H_{0K}}: expected log predictive density (elpd) for the fitted model with  K components >= elpd for the fitted model
 #' with K + 1 components, is performed at every K >= 1. The test-statistic used for the test is an approximate z-score
 #' based on the normalized estimated elpd difference between the two models obtained from \link[loo]{compare}, which provides
 #' estimated elpd difference along with its standard error estimate. Because the computed standard error of elpd difference
 #' can be overly optimistic when the elpd difference is small (in particular < 4),
 #' a conservative worst-case estimate (equal to twice of the computed standard error)
 #' is used in such cases. To account for multiplicity among the M =
-#' (\code{max_ncomp} - \code{start_ncomp}) possible sequential tests performed,
-#' by default a Bonferroni adjustment to the test level \code{alpha} is made.
-#' Set \code{bonferroni_alpha = FALSE} to remove the adjustment. To encourage
-#' parsimony in the final model, by default (\code{bonferroni_adj_type = "decreasing"})
-#' a decreasing sequence of adjusted alphas of the form \code{alpha * (0.5)^(1:M) / sum((0.5)^(1:M))}
-#' is used. Set \code{bonferroni_adj_type = "equal"}
-#' to use equal sequence of adjusted alphas (i.e., \code{alpha/M}) instead.
+#' (`max_ncomp` - `start_ncomp`) possible sequential tests performed,
+#' by default a Bonferroni adjustment to the test level `alpha` is made.
+#' Set `bonferroni_alpha = FALSE} to remove the adjustment. To encourage
+#' parsimony in the final model, by default (`bonferroni_adj_type = "decreasing"`)
+#' a decreasing sequence of adjusted alphas of the form `alpha * (0.5)^(1:M) / sum((0.5)^(1:M))`
+#' is used. Set `bonferroni_adj_type = "equal"`
+#' to use equal sequence of adjusted alphas (i.e., `alpha/M`) instead.
 #'
-#' The incremental fitting stops if  H_{0K} cannot be rejected
-#' (at level \code{alpha}) for some K >= 1; this K is then regarded as the optimum number of components.
-#' If \code{crit} is not \code{"LOOIC"} or \code{"WAIC"} then mixture model with the first minimum value of the model selection criterion \code{crit}
+#' The incremental fitting stops if  \eqn{H_{0K}} cannot be rejected
+#' (at level `alpha`) for some K >= 1; this K is then regarded as the optimum number of components.
+#' If `crit` is not `"LOOIC"` or `"WAIC"` then mixture model with the first minimum value of the model selection criterion `crit`
 #' is taken as the best model.
 #'
 #' Note that in each intermediate fitted model, the total number of components (instead of the number of
 #' "non-empty components") in the model is used to estimate of the true component
 #' size, and then the fitted model is penalized for model complexity (via the model selection criterion used).
 #' This approach of selecting an optimal K follows the perspective "let two component specific parameters
-#' be identical" for overfitting mixtures, and as such the  Dirichlet prior hyper-parameters \code{pmix.alpha}
+#' be identical" for overfitting mixtures, and as such the  Dirichlet prior hyper-parameters `pmix.alpha`
 #' (passed to \link{fit_angmix}) should be large. See  Fruhwirth-Schnatter (2011) for more deltails.
 #'
-#' Note that the stability of \link{bridge_sampler} used in marginal likelihood estimation heavily depends on stationarity of the
-#' chains. As such, while using this criterion, we recommending running the chain long engouh, and setting \code{fix_label = TRUE}
+#' Note that the stability of \link[bridgesampling]{bridge_sampler} used in marginal likelihood estimation heavily depends on stationarity of the
+#' chains. As such, while using this criterion, we recommending running the chain long enough, and setting `fix_label = TRUE`
 #' for optimal performance.
 #'
 #' @references
@@ -95,26 +95,26 @@
 #'
 #'
 #'
-#' @return Returns a named list (with class = \code{stepfit}) with the following seven elements:
+#' @return Returns a named list (with class = `stepfit`) with the following seven elements:
 #'
-#' \code{fit.all} (if \code{return_all = TRUE}) - a list all angmcmc objects created at each component size;
+#' `fit.all` (if `return_all = TRUE`) - a list all angmcmc objects created at each component size;
 #'
-#' \code{fit.best} - angmcmc object corresponding to the optimum component size;
+#' `fit.best` - angmcmc object corresponding to the optimum component size;
 #'
-#' \code{ncomp.best} - optimum component size (integer);
+#' `ncomp.best` - optimum component size (integer);
 #'
-#' \code{crit} - which model comparison criterion used (one of \code{"LOOIC", "WAIC", "AIC", "BIC", "DIC"} or \code{"LOGML"});
+#' `crit` - which model comparison criterion used (one of `"LOOIC", "WAIC", "AIC", "BIC", "DIC"` or `"LOGML"`);
 #'
-#' \code{crit.all} - all \code{crit} values calculated (for all component sizes);
+#' `crit.all` - all `crit` values calculated (for all component sizes);
 #'
-#' \code{crit.best} - \code{crit} value for the optimum component size; and
+#' `crit.best` - `crit` value for the optimum component size; and
 #'
-#' \code{maxllik.all} - maximum (obtained from MCMC iterations) log likelihood for all fitted models
+#' `maxllik.all` - maximum (obtained from MCMC iterations) log likelihood for all fitted models
 #'
-#' \code{maxllik.best} - maximum log likelihodd for the optimal model; and
+#' `maxllik.best` - maximum log likelihodd for the optimal model; and
 #'
-#' \code{check_min} - logical; is the optimum component size less than \code{max_ncomp}?
-#'
+#' `check_min` - logical; is the optimum component size less than `max_ncomp`?
+#' @md
 #' @examples
 #' # illustration only - more iterations needed for convergence
 #' set.seed(1)
@@ -123,6 +123,7 @@
 #'                                           n.chains = 1, save_fits=FALSE)
 #' (fit.vmsin.best.15 <- bestmodel(fit.vmsin.step.15))
 #' lattice::densityplot(fit.vmsin.best.15)
+#'
 #'
 #' @export
 
@@ -577,21 +578,22 @@ fit_incremental_angmix <- function(model, data,
 #'
 #' @param step_object stepwise fitted object obtained from \link{fit_incremental_angmix}.
 #'
-#' @return \code{bestmodel} returns an \code{angmcmc} object, and
-#' \code{bestcriterion} returns the  corresponding value of model selection criterion  for the best fitted model in \code{step_object}.
+#' @return `bestmodel` returns an `angmcmc` object, and
+#' `bestcriterion` returns the  corresponding value of model selection criterion  for the best fitted model in `step_object`.
 #'
 #' @details
 #' These are convenience functions; the best fitted model and the corresponding value of model selection criterion
 #' can also be directly obtained by
-#' extracting the elements \code{"fit.best"} and \code{"crit.best"} from \code{step_object} respectively.
-#' Note that \code{bestcriterion} returns:
-#' (a) a scalar number (class = \code{numeric}) if \code{crit}
-#' used in original \code{fit_incremental_angmix} call is \code{'AIC'}, \code{'BIC'} or \code{'DIC'},
-#' (b) an element of class \code{bridge} from package \code{bridgesampling} if \code{crit} is
-#' \code{LOGML}, (c) an element of class \code{c("waic", "loo")} if \code{crit = 'WAIC'}, and (d) an element of
-#' class \code{c("psis_loo", "loo")} if \code{crit = "LOOIC"}. See documentations of these model
+#' extracting the elements `"fit.best"` and `"crit.best"` from `step_object` respectively.
+#' Note that `bestcriterion} returns:
+#' (a) a scalar number (class = `numeric`) if `crit`
+#' used in original `fit_incremental_angmix` call is `'AIC'`, `'BIC'` or `'DIC'`,
+#' (b) an element of class `bridge` from package `bridgesampling` if `crit` is
+#' `LOGML`, (c) an element of class `c("waic", "loo")` if `crit = 'WAIC'`, and (d) an element of
+#' class `c("psis_loo", "loo")` if `crit = "LOOIC"`. See documentations of these model
 #' selection criteria for more details.
 #'
+#' @md
 #' @examples
 #' # illustration only - more iterations needed for convergence
 #' set.seed(1)
@@ -604,6 +606,7 @@ fit_incremental_angmix <- function(model, data,
 #'
 #' crit.best <- bestcriterion(fit.vmsin.step.15)
 #' crit.best
+#'
 #' @export
 
 bestmodel <- function(step_object) {
