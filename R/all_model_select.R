@@ -507,11 +507,17 @@ fit_incremental_angmix <- function(model, data,
           x = crit_list
         )
 
-        E_diff <-  (
-          compare_crit_obj["comp_j", "elpd_diff"]
-          - compare_crit_obj["comp_j_minus_1", "elpd_diff"]
-        )
-        E_diff_se <- sum(compare_crit_obj[, "se_diff"])
+        if ("model" %in% colnames(compare_crit_obj)) {
+          idx_curr <- which(compare_crit_obj$model == "comp_j")
+          idx_prev <- which(compare_crit_obj$model == "comp_j_minus_1")
+        } else {
+          idx_curr <- which(rownames(compare_crit_obj) == "comp_j")
+          idx_prev <- which(rownames(compare_crit_obj) == "comp_j_minus_1")
+        }
+
+        E_diff <- compare_crit_obj[idx_curr, "elpd_diff"] -
+          compare_crit_obj[idx_prev, "elpd_diff"]
+        E_diff_se <- sum(compare_crit_obj[c(idx_curr, idx_prev), "se_diff"])
 
         if (abs(E_diff) < 4) {
           E_diff_se <- 2 * E_diff_se

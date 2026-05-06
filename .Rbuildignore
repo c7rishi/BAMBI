@@ -3,3 +3,5 @@
 ^NEWS\.md$
 ^.*\.md$
 ^.github/*
+^\.positai$
+^\.claude$

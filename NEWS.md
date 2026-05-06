@@ -1,3 +1,8 @@
+# BAMBI 2.3.7
+* updated compatibility with upcoming changes to `loo_compare()` output
+  structure in the `loo` package (> 2.9.0), which now returns a data frame
+  instead of a matrix and includes additional diagnostic columns (thanks to @florence-bockting).
+
 # BAMBI 2.1.0
 * fixed bugs that were causing some examples to fail 
 (due to an update in package loo)

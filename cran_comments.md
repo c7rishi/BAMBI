@@ -1,3 +1,43 @@
+# BAMBI v2.3.7
+
+## Resubmission
+
+This is a re-submission, with patches to ensure compatibility with upcoming changes to `loo_compare()` output structure in the `loo` package (> 2.9.0)
+
+## Changelog
+
+- updated compatibility with upcoming changes to `loo_compare()` output
+  structure in the `loo` package (> 2.9.0), which now returns a data frame
+  instead of a matrix and includes additional diagnostic columns (thanks to @florence-bockting).
+
+
+
+## Test environment:
+
+- local Windows 11 install, R version 4.6.0 (2026-04-24 ucrt)
+
+- local Ubuntu release 24.04, R version 4.5.2 (2025-10-31)
+
+- online win-builder (devel, release, and old release)
+
+- online mac-builder at mac.r-project.org (devel, release)
+
+
+
+## R CMD check results
+
+There were no ERRORs or WARNINGs in any platforms, and no NOTES on local Windows, online mac-builder and online win-builder (release, old-release, devel).
+
+There was a NOTE on Ubuntu 20.04 about the installed size of the installed package: 
+```
+❯ checking installed package size ... NOTE
+    installed size is 12.4Mb
+    sub-directories of 1Mb or more:
+      libs  11.9Mb
+```
+
+
+
 # BAMBI v2.3.6
 
 
